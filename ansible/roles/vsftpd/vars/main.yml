@@ -1,0 +1,25 @@
+#             __ _             _    __                    
+# __   _____ / _| |_ _ __   __| |  / /_   ____ _ _ __ ___ 
+# \ \ / / __| |_| __| '_ \ / _` | / /\ \ / / _` | '__/ __|
+#  \ V /\__ \  _| |_| |_) | (_| |/ /  \ V / (_| | |  \__ \
+#   \_/ |___/_|  \__| .__/ \__,_/_/    \_/ \__,_|_|  |___/
+#                   |_|                                   
+vsftpd:
+  started: 0
+  rebuild: 0
+  version: 3.0.2
+  serverroot: '/usr/local/vsftpd'
+  patches:
+    - 'vsftpd-2009-10-19-localconfig.patch'
+
+  user:
+    username: 'vsftpd'
+    password: ''
+    uid: 9261
+    gid: 9261
+    group: 'vsftpd'
+    shell: '/sbin/nolgin'
+    comment: 'vsftpd FTP Server'
+  conf:
+    banner: 'FTP Server'
+

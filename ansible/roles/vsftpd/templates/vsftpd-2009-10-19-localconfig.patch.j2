@@ -1,0 +1,453 @@
+--- FAQ	2009-02-19 07:33:04.000000000 +0900
++++ FAQ	2010-02-01 17:55:39.000000000 +0900
+@@ -28,7 +28,7 @@
+ 
+ Q) Help! I'm getting the error message "str_getpwnam".
+ A) The most likely cause of this is that the user that is configured as the
+-'nopriv_user' setting (often 'nobody') does not exist on your system. vsftpd
++'nopriv_user' setting (often 'vsftpd') does not exist on your system. vsftpd
+ needs this user to run bits of itself with no privilege.
+ 
+ Q) Help! Local users cannot log in.
+--- Makefile	2009-05-23 04:44:52.000000000 +0900
++++ Makefile	2010-02-01 17:52:56.000000000 +0900
+@@ -1,6 +1,7 @@
+ # Makefile for systems with GNU tools
+ CC 	=	gcc
+ INSTALL	=	install
++PREFIX  =       {{ vsftpd.serverroot }}
+ IFLAGS  = -idirafter dummyinc
+ #CFLAGS = -g
+ CFLAGS	=	-O2 -Wall -W -Wshadow #-pedantic -Werror -Wconversion
+@@ -24,19 +25,22 @@
+ 	$(CC) -o vsftpd $(OBJS) $(LINK) $(LIBS) $(LDFLAGS)
+ 
+ install:
+-	if [ -x /usr/local/sbin ]; then \
+-		$(INSTALL) -m 755 vsftpd /usr/local/sbin/vsftpd; \
++	mkdir -p $(PREFIX)/sbin $(PREFIX)/share/man $(PREFIX)/var $(PREFIX)/etc; \
++	mkdir -p $(PREFIX)/share/man/man5 $(PREFIX)/share/man/man8; \
++	mkdir -p $(PREFIX)/var/empty $(PREFIX)/var/log; \
++	if [ -x /usr/local/vsftpd/sbin ]; then \
++		$(INSTALL) -m 755 vsftpd {{ vsftpd.serverroot }}/sbin/vsftpd; \
+ 	else \
+-		$(INSTALL) -m 755 vsftpd /usr/sbin/vsftpd; fi
+-	if [ -x /usr/local/man ]; then \
+-		$(INSTALL) -m 644 vsftpd.8 /usr/local/man/man8/vsftpd.8; \
+-		$(INSTALL) -m 644 vsftpd.conf.5 /usr/local/man/man5/vsftpd.conf.5; \
++		$(INSTALL) -m 755 vsftpd /usr/local/sbin/vsftpd; fi
++	if [ -x {{ vsftpd.serverroot }}/share/man ]; then \
++		$(INSTALL) -m 644 vsftpd.8 {{ vsftpd.serverroot }}/share/man/man8/vsftpd.8; \
++		$(INSTALL) -m 644 vsftpd.conf.5 {{ vsftpd.serverroot }}/share/man/man5/vsftpd.conf.5; \
+ 	elif [ -x /usr/share/man ]; then \
+-		$(INSTALL) -m 644 vsftpd.8 /usr/share/man/man8/vsftpd.8; \
+-		$(INSTALL) -m 644 vsftpd.conf.5 /usr/share/man/man5/vsftpd.conf.5; \
++		$(INSTALL) -m 644 vsftpd.8 /usr/local/share/man/man8/vsftpd.8; \
++		$(INSTALL) -m 644 vsftpd.conf.5 /usr/local/share/man/man5/vsftpd.conf.5; \
+ 	else \
+-		$(INSTALL) -m 644 vsftpd.8 /usr/man/man8/vsftpd.8; \
+-		$(INSTALL) -m 644 vsftpd.conf.5 /usr/man/man5/vsftpd.conf.5; fi
++		$(INSTALL) -m 644 vsftpd.8 /usr/share/man/man8/vsftpd.8; \
++		$(INSTALL) -m 644 vsftpd.conf.5 /usr/share/man/man5/vsftpd.conf.5; fi
+ 	if [ -x /etc/xinetd.d ]; then \
+ 		$(INSTALL) -m 644 xinetd.d/vsftpd /etc/xinetd.d/vsftpd; fi
+ 
+--- INSTALL	2008-02-02 10:30:39.000000000 +0900
++++ INSTALL	2010-02-01 17:55:19.000000000 +0900
+@@ -21,17 +21,17 @@
+ -rwxrwxr-x    1 chris    chris       61748 Sep 27 00:26 vsftpd
+ 
+ Step 2) Satisfy vsftpd pre-requisites
+-2a) vsftpd needs the user "nobody" in the default configuration. Add this
++2a) vsftpd needs the user "{{ vsftpd.user.username }}" in the default configuration. Add this
+ user in case it does not already exist. e.g.:
+ 
+-[root@localhost root]# useradd nobody
+-useradd: user nobody exists
++[root@localhost root]# useradd {{ vsftpd.user.username }}
++useradd: user {{ vsftpd.user.username }} exists
+ 
+ 2b) vsftpd needs the (empty) directory /usr/share/empty in the default
+ configuration. Add this directory in case it does not already exist. e.g.:
+ 
+-[root@localhost root]# mkdir /usr/share/empty/
+-mkdir: cannot create directory `/usr/share/empty': File exists
++[root@localhost root]# mkdir {{ vsftpd.serverroot }}/var/empty/
++mkdir: cannot create directory `{{ vsftpd.serverroot }}/var/empty': File exists
+ 
+ 2c) For anonymous FTP, you will need the user "ftp" to exist, and have a
+ valid home directory (which is NOT owned or writable by the user "ftp").
+@@ -50,20 +50,20 @@
+ Running "make install" will try to copy the binary, man pages, etc. to
+ somewhere sensible.
+ Or you might want to copy these things by hand, e.g.:
+-cp vsftpd /usr/local/sbin/vsftpd
+-cp vsftpd.conf.5 /usr/local/man/man5
+-cp vsftpd.8 /usr/local/man/man8
++cp vsftpd {{ vsftpd.serverroot }}/sbin/vsftpd
++cp vsftpd.conf.5 {{ vsftpd.serverroot }}/share/man/man5
++cp vsftpd.8 {{ vsftpd.serverroot }}/share/man/man8
+ 
+ "make install" doesn't copy the sample config file. It is recommended you
+ do this:
+-cp vsftpd.conf /etc
++cp vsftpd.conf {{ vsftpd.serverroot }}/etc
+ 
+ Step 4) Smoke test (without an inetd).
+ 
+ vsftpd can run standalone or via an inetd (such as inetd or xinetd). You will
+ typically get more control running vsftpd from an inetd. But first we will run
+ it without, so we can check things are going well so far.
+-Edit /etc/vsftpd.conf, and add this line at the bottom:
++Edit {{ vsftpd.serverroot }}/etc/vsftpd.conf, and add this line at the bottom:
+ 
+ listen=YES
+ 
+@@ -74,7 +74,7 @@
+ to use the FTP port, 21).
+ Run the binary from wherever you put it, e.g.:
+ 
+-[root@localhost root]# /usr/local/sbin/vsftpd &
++[root@localhost root]# {{ vsftpd.serverroot }}/sbin/vsftpd &
+ [1] 2104
+ 
+ If all is well, you can now connect! e.g.:
+@@ -108,7 +108,7 @@
+ 5a) If using standard "inetd", you will need to edit /etc/inetd.conf, and add
+ a line such as:
+ 
+-ftp stream tcp nowait root /usr/sbin/tcpd /usr/local/sbin/vsftpd
++ftp stream tcp nowait root /usr/sbin/tcpd {{ vsftpd.serverroot }}/sbin/vsftpd
+ 
+ (Make sure to remove or comment out any existing ftp service lines. If you
+ don't have tcp_wrappers installed, or don't want to use them, take out the
+@@ -135,11 +135,12 @@
+ Step 7) Customize your configuration
+ 
+ As well as the above three pre-requisites, you are recommended to install a
+-config file. The default location for the config file is /etc/vsftpd.conf.
+-There is a sample vsftpd.conf in the distribution tarball. You probably want
+-to copy that to /etc/vsftpd.conf as a basis for modification, i.e.:
++config file. The default location for the config file is {{ vsftpd.serverroot }}
++etc/vsftpd.conf.  There is a sample vsftpd.conf in the distribution tarball. 
++You probably want to copy that to {{ vsftpd.serverroot }}/etc/vsftpd.conf as a basis
++for modification, i.e.:
+ 
+-cp vsftpd.conf /etc
++cp vsftpd.conf {{ vsftpd.serverroot }}/etc
+ 
+ The default configuration allows neither local user logins nor anonymous
+ uploads. You may wish to change these defaults.
+--- vsftpd.conf	2009-10-19 11:04:23.000000000 +0900
++++ vsftpd.conf	2010-02-01 16:53:07.000000000 +0900
+@@ -48,10 +48,11 @@
+ #
+ # You may override where the log file goes if you like. The default is shown
+ # below.
+-#xferlog_file=/var/log/vsftpd.log
++#xferlog_file={{ vsftpd.serverroot }}/var/log/vsftpd.log
+ #
+ # If you want, you can have your log file in standard ftpd xferlog format.
+-# Note that the default log file location is /var/log/xferlog in this case.
++# Note that  the default log file location  is {{ vsftpd.serverroot }}/var/log/
++# xferlog in this case.
+ #xferlog_std_format=YES
+ #
+ # You may change the default value for timing out an idle session.
+@@ -87,7 +88,7 @@
+ # useful for combatting certain DoS attacks.
+ #deny_email_enable=YES
+ # (default follows)
+-#banned_email_file=/etc/vsftpd.banned_emails
++#banned_email_file={{ vsftpd.serverroot }}/etc/banned-emails
+ #
+ # You may specify an explicit list of local users to chroot() to their home
+ # directory. If chroot_local_user is YES, then this list becomes a list of
+@@ -95,7 +96,7 @@
+ #chroot_local_user=YES
+ #chroot_list_enable=YES
+ # (default follows)
+-#chroot_list_file=/etc/vsftpd.chroot_list
++#chroot_list_file={{ vsftpd.serverroot }}/etc/chroot-list
+ #
+ # You may activate the "-R" option to the builtin ls. This is disabled by
+ # default to avoid remote users being able to cause excessive I/O on large
+--- vsftpd.conf.5	2009-10-19 11:46:30.000000000 +0900
++++ vsftpd.conf.5	2010-02-01 17:56:24.000000000 +0900
+@@ -4,7 +4,7 @@
+ .SH DESCRIPTION
+ vsftpd.conf may be used to control various aspects of vsftpd's behaviour. By
+ default, vsftpd looks for this file at the location
+-.BR /etc/vsftpd.conf .
++.BR {{ vsftpd.serverroot }}/etc/vsftpd.conf .
+ However, you may override this by specifying a command line argument to
+ vsftpd. The command line argument is the pathname of the configuration file
+ for vsftpd. This behaviour is useful because you may wish to use an advanced
+@@ -138,7 +138,7 @@
+ different if chroot_local_user is set to YES. In this case, the list becomes
+ a list of users which are NOT to be placed in a chroot() jail.
+ By default, the file containing this list is
+-/etc/vsftpd.chroot_list, but you may override this with the
++{{ vsftpd.serverroot }}/etc/chroot-list, but you may override this with the
+ .BR chroot_list_file
+ setting.
+ 
+@@ -177,7 +177,7 @@
+ .B deny_email_enable
+ If activated, you may provide a list of anonymous password e-mail responses
+ which cause login to be denied. By default, the file containing this list is
+-/etc/vsftpd.banned_emails, but you may override this with the
++{{ vsftpd.serverroot }}/etc/banned-emails, but you may override this with the
+ .BR banned_email_file
+ setting.
+ 
+@@ -203,9 +203,9 @@
+ .TP
+ .B dual_log_enable
+ If enabled, two log files are generated in parallel, going by default to
+-.BR /var/log/xferlog
++.BR {{ vsftpd.serverroot }}/var/log/xferlog
+ and
+-.BR /var/log/vsftpd.log .
++.BR {{ vsftpd.serverroot }}/var/log/vsftpd.log .
+ The former is a wu-ftpd style transfer log, parseable by standard tools. The
+ latter is vsftpd's own style log.
+ 
+@@ -433,7 +433,7 @@
+ file specified by the
+ .BR email_password_file
+ setting. The file format is one password per line, no extra whitespace. The
+-default filename is /etc/vsftpd.email_passwords.
++default filename is {{ vsftpd.serverroot }}/etc/email-passwords.
+ 
+ Default: NO
+ .TP
+@@ -517,8 +517,9 @@
+ Default: NO
+ .TP
+ .B syslog_enable
+-If enabled, then any log output which would have gone to /var/log/vsftpd.log
+-goes to the system log instead. Logging is done under the FTPD facility.
++If enabled, then any log output which would have gone to {{ vsftpd.serverroot }}/var/
++log/vsftpd.log goes to the system log instead. Logging is done under the  FTPD 
++facility.
+ 
+ Default: NO
+ .TP
+@@ -603,8 +604,8 @@
+ .TP
+ .B xferlog_enable
+ If enabled, a log file will be maintained detailling uploads and downloads.
+-By default, this file will be placed at /var/log/vsftpd.log, but this location
+-may be overridden using the configuration setting
++By default, this file will be placed at {{ vsftpd.serverroot }}/var/log/vsftpd.log,
++but this location may be overridden using the configuration setting
+ .BR vsftpd_log_file .
+ 
+ Default: NO (but the sample config file enables it)
+@@ -613,8 +614,8 @@
+ If enabled, the transfer log file will be written in standard xferlog format,
+ as used by wu-ftpd. This is useful because you can reuse existing transfer
+ statistics generators. The default format is more readable, however. The
+-default location for this style of log file is /var/log/xferlog, but you may
+-change it with the setting
++default location for  this style of log file  is {{ vsftpd.serverroot }}/var/log/
++xferlog, but you may change it with the setting
+ .BR xferlog_file .
+ 
+ Default: NO
+@@ -764,7 +765,7 @@
+ .BR deny_email_enable
+ is enabled.
+ 
+-Default: /etc/vsftpd.banned_emails
++Default: {{ vsftpd.serverroot }}/etc/banned-emails
+ .TP
+ .B banner_file
+ This option is the name of a file containing text to display when someone
+@@ -803,7 +804,7 @@
+ is enabled, then the list file becomes a list of users to NOT place in a
+ chroot() jail.
+ 
+-Default: /etc/vsftpd.chroot_list
++Default: {{ vsftpd.serverroot }}/etc/chroot-list
+ .TP
+ .B cmds_allowed
+ This options specifies a comma separated list of allowed FTP commands (post
+@@ -864,7 +865,7 @@
+ .BR secure_email_list_enable
+ setting.
+ 
+-Default: /etc/vsftpd.email_passwords
++Default: {{ vsftpd.serverroot }}/etc/email-passwords
+ .TP
+ .B ftp_username
+ This is the name of the user we use for handling anonymous FTP. The home
+@@ -932,10 +933,10 @@
+ .B nopriv_user
+ This is the name of the user that is used by vsftpd when it wants to be
+ totally unprivileged. Note that this should be a dedicated user, rather
+-than nobody. The user nobody tends to be used for rather a lot of important
++than {{ vsftpd.user.username }}. The user {{ vsftpd.user.username }} tends to be used for rather a lot of important
+ things on most machines.
+ 
+-Default: nobody
++Default: {{ vsftpd.user.username }}
+ .TP
+ .B pam_service_name
+ This string is the name of the PAM service vsftpd will use.
+@@ -955,7 +956,7 @@
+ This option specifies the location of the RSA certificate to use for SSL
+ encrypted connections.
+ 
+-Default: /usr/share/ssl/certs/vsftpd.pem
++Default: {{ vsftpd.serverroot }}/etc/vsftpd.pem
+ .TP
+ .B rsa_private_key_file
+ This option specifies the location of the RSA private key to use for SSL
+@@ -969,7 +970,7 @@
+ directory should not be writable by the ftp user. This directory is used
+ as a secure chroot() jail at times vsftpd does not require filesystem access.
+ 
+-Default: /usr/share/empty
++Default: {{ vsftpd.serverroot }}/var/empty
+ .TP
+ .B ssl_ciphers
+ This option can be used to select which SSL ciphers vsftpd will allow for
+@@ -987,10 +988,10 @@
+ with an example. If you set
+ .BR user_config_dir
+ to be
+-.BR /etc/vsftpd_user_conf
++.BR {{ vsftpd.serverroot }}/etc/userconf
+ and then log on as the user "chris", then vsftpd will apply the settings in
+ the file
+-.BR /etc/vsftpd_user_conf/chris
++.BR {{ vsftpd.serverroot }}/etc/userconf/chris
+ for the duration of the session. The format of this file is as detailed in
+ this manual page! PLEASE NOTE that not all settings are effective on a
+ per-user basis. For example, many settings only prior to the user's session
+@@ -1026,7 +1027,7 @@
+ .BR userlist_enable
+ option is active.
+ 
+-Default: /etc/vsftpd.user_list
++Default: {{ vsftpd.serverroot }}/etc/ftp-users
+ .TP
+ .B vsftpd_log_file
+ This option is the name of the file to which we write the vsftpd style
+@@ -1040,7 +1041,7 @@
+ .BR syslog_enable ,
+ then this file is not written and output is sent to the system log instead.
+ 
+-Default: /var/log/vsftpd.log
++Default: {{ vsftpd.serverroot }}/var/log/vsftpd.log
+ .TP
+ .B xferlog_file
+ This option is the name of the file to which we write the wu-ftpd style
+@@ -1051,7 +1052,7 @@
+ Alternatively, it is written if you have set the option
+ .BR dual_log_enable .
+ 
+-Default: /var/log/xferlog
++Default: {{ vsftpd.serverroot }}/var/log/xferlog
+ 
+ .SH AUTHOR
+ scarybeasts@gmail.com
+--- tunables.c	2009-07-16 05:08:27.000000000 +0900
++++ tunables.c	2010-02-01 17:54:58.000000000 +0900
+@@ -246,19 +246,19 @@
+   /* -rw------- */
+   tunable_chown_upload_mode = 0600;
+ 
+-  install_str_setting("/usr/share/empty", &tunable_secure_chroot_dir);
++  install_str_setting("{{ vsftpd.serverroot }}/var/empty", &tunable_secure_chroot_dir);
+   install_str_setting("ftp", &tunable_ftp_username);
+   install_str_setting("root", &tunable_chown_username);
+-  install_str_setting("/var/log/xferlog", &tunable_xferlog_file);
+-  install_str_setting("/var/log/vsftpd.log", &tunable_vsftpd_log_file);
++  install_str_setting("{{ vsftpd.serverroot }}/var/log/xferlog", &tunable_xferlog_file);
++  install_str_setting("{{ vsftpd.serverroot }}/var/log/vsftpd.log", &tunable_vsftpd_log_file);
+   install_str_setting(".message", &tunable_message_file);
+-  install_str_setting("nobody", &tunable_nopriv_user);
++  install_str_setting("{{ vsftpd.user.username }}", &tunable_nopriv_user);
+   install_str_setting(0, &tunable_ftpd_banner);
+-  install_str_setting("/etc/vsftpd.banned_emails", &tunable_banned_email_file);
+-  install_str_setting("/etc/vsftpd.chroot_list", &tunable_chroot_list_file);
++  install_str_setting("{{ vsftpd.serverroot }}/etc/banned-emails", &tunable_banned_email_file);
++  install_str_setting("{{ vsftpd.serverroot }}/etc/chroot-list", &tunable_chroot_list_file);
+   install_str_setting("ftp", &tunable_pam_service_name);
+   install_str_setting("ftp", &tunable_guest_username);
+-  install_str_setting("/etc/vsftpd.user_list", &tunable_userlist_file);
++  install_str_setting("{{ vsftpd.serverroot }}/etc/ftp-users", &tunable_userlist_file);
+   install_str_setting(0, &tunable_anon_root);
+   install_str_setting(0, &tunable_local_root);
+   install_str_setting(0, &tunable_banner_file);
+@@ -271,9 +271,9 @@
+   install_str_setting(0, &tunable_hide_file);
+   install_str_setting(0, &tunable_deny_file);
+   install_str_setting(0, &tunable_user_sub_token);
+-  install_str_setting("/etc/vsftpd.email_passwords",
++  install_str_setting("{{ vsftpd.serverroot }}/etc/email-passwords",
+                       &tunable_email_password_file);
+-  install_str_setting("/usr/share/ssl/certs/vsftpd.pem",
++  install_str_setting("{{ vsftpd.serverroot }}/etc/vsftpd.pem",
+                       &tunable_rsa_cert_file);
+   install_str_setting(0, &tunable_dsa_cert_file);
+   install_str_setting("DES-CBC3-SHA", &tunable_ssl_ciphers);
+--- defs.h	2009-01-08 05:22:22.000000000 +0900
++++ defs.h	2010-02-01 16:23:29.000000000 +0900
+@@ -1,7 +1,7 @@
+ #ifndef VSF_DEFS_H
+ #define VSF_DEFS_H
+ 
+-#define VSFTP_DEFAULT_CONFIG    "/etc/vsftpd.conf"
++#define VSFTP_DEFAULT_CONFIG    "{{ vsftpd.serverroot }}/etc/vsftpd.conf"
+ 
+ #define VSFTP_COMMAND_FD        0
+ 
+--- vsftpd.8	2009-07-18 05:56:23.000000000 +0900
++++ vsftpd.8	2010-02-01 16:44:04.000000000 +0900
+@@ -21,7 +21,7 @@
+ recommended. It is activated by setting
+ .Pa listen=YES
+ in
+-.Pa /etc/vsftpd.conf .
++.Pa {{ vsftpd.serverroot }}/etc/vsftpd.conf .
+ Direct execution of the
+ .Nm vsftpd
+ binary will then launch the FTP service ready for immediate client connections.
+@@ -33,7 +33,7 @@
+ as a config file that will be loaded. Note that config files are loaded in the
+ strict order that they are encountered on the command line.
+ If no config files are specified, the default configuration file of
+-.Pa /etc/vsftpd.conf
++.Pa {{ vsftpd.serverroot }}/etc/vsftpd.conf
+ will be loaded, after all other command line options are processed.
+ .Pp
+ Supported options are:
+@@ -47,14 +47,15 @@
+ config files.
+ .El
+ .Sh EXAMPLES
+-vsftpd -olisten=NO /etc/vsftpd.conf -oftpd_banner=blah
++vsftpd -olisten=NO {{ vsftpd.serverroot }}/etc/vsftpd.conf -oftpd_banner=blah
+ .Pp
+ That example overrides vsftpd's built-in default for the "listen" option to be
+-NO, but then loads /etc/vsftpd.conf which may override that setting. Finally,
+-the "ftpd_banner" setting is set to "blah", which overrides any default vsftpd
+-setting and any identical setting that was in the config file.
++NO,  but then loads {{ vsftpd.serverroot }}/etc/vsftpd.conf  which may override that
++setting. Finally, the "ftpd_banner"  setting is set to "blah", which overrides
++any  default  vsftpd setting and  any identical setting that was in the config
++file.
+ .Sh FILES
+-.Pa /etc/vsftpd.conf
++.Pa {{ vsftpd.serverroot }}/etc/vsftpd.conf
+ .Sh SEE ALSO
+ .Xr vsftpd.conf 5
+ .end
+--- /dev/null	2010-04-29 11:26:36.000000000 +0900
++++ vsftpd-2009-10-19-localconfig.patch.ok	2010-04-29 11:26:21.000000000 +0900
+@@ -0,0 +1 @@
++ok

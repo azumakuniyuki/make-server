@@ -1,0 +1,98 @@
+#!/bin/bash
+#
+# vsftpd -     This shell script takes care of starting and stopping
+#              standalone vsftpd. Customized to be used with CentOS 5.4
+#              and Monit by creating PID files for each process,
+#              based on https://gist.github.com/dtjm/508889
+#
+# chkconfig:   - 60 50
+# description: Vsftpd is a ftp daemon, which is the program \
+#              that answers incoming ftp service requests.
+# processname: vsftpd
+# config:      {{ vsftpd.serverroot }}/etc/vsftpd.conf
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+pidfileFromConf() {
+    echo {{ vsftpd.serverroot }}/var/run/`basename $1 .conf`.pid
+}
+
+pidFromConf() {
+    ps auxf | grep -v grep | grep $1 | awk '{print $2}'
+}
+
+RETVAL=0
+prog="vsftpd"
+
+start() {
+        # Start daemons.
+        [ -x {{ vsftpd.serverroot }}/sbin/vsftpd ] || exit 4
+
+        CONFS=`ls {{ vsftpd.serverroot }}/etc/*.conf 2>/dev/null`
+        [ -z "$CONFS" ] && exit 6
+        for i in $CONFS; do
+            site=`basename $i .conf`
+            echo -n $"Starting $prog for $site: "
+            daemon {{ vsftpd.serverroot }}/sbin/vsftpd $i
+            RETVAL=$?
+            [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
+            echo
+
+            echo -n "Creating pidfile for $site: "
+            echo `pidFromConf $i` > `pidfileFromConf $i`
+            [ $? -eq 0 ] && success || failure
+            echo
+        done
+        return $RETVAL
+}
+
+stop() {
+        # Stop daemons.
+        echo -n $"Shutting down $prog: "
+        killproc $prog
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
+
+        echo -n "Deleting pidfiles: "
+        rm -f /var/run/vsftpd/*.pid
+        [ $? -eq 0 ] && success || failure
+        echo
+
+        return $RETVAL
+}
+
+# See how we were called.
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|reload)
+        stop
+        start
+        RETVAL=$?
+        ;;
+  condrestart)
+        if [ -f /var/lock/subsys/$prog ]; then
+            stop
+            start
+            RETVAL=$?
+        fi
+        ;;
+  status)
+        status $prog
+        RETVAL=$?
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|condrestart|status}"
+        exit 2
+esac
+
+exit $RETVAL
