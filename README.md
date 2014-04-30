@@ -2,6 +2,9 @@ make-server
 ===========
 Files for making servers with Ansible, Vagrant and serverspec.
 
+サーバの構成管理を目的として、AnsibleとVagrantとserverspecのファイルを管理できる
+かもしれない何かです。
+
 ## Setup
 
     $ mkdir -p ~/var/rhosts/
@@ -12,11 +15,27 @@ Files for making servers with Ansible, Vagrant and serverspec.
 If you want to use other directory, edit Makefile and change the value of EXAMPLE
 macro.
 
+~/var/rhosts以外のディレクトリを使う場合はMakefileのEXAMPLEマクロを直してください。
+
 ## Make node
+In this file, you build some web servers and a mail server of example.jp domain.
+
+ここではexample.jp配下のWebサーバ数台とメールサーバを構築・構成管理することにします。
 
     $ mkdir -p ~/var/rhosts/example.jp
     $ cd ~/var/rhosts/example.jp
     $ cp ../make-server/Makefile ./
+
+    $ vi ansible/product
+    [product]
+    www[01:25].example.jp
+    mail.example.jp
+
+    [webservers]
+    www[01:25].example.jp
+
+    [mailservers]
+    mail.example.jp
 
 ## Prepare Vagrant vm as a sandbox
 
@@ -36,6 +55,22 @@ macro.
     ==> default: Clearing any previously set forwarded ports...
     ==> default: Clearing any previously set network interfaces...
     ...
+
+## Copy roles
+
+    $ cd ~/var/rhosts/example.jp
+    $ make apache-role sendmail-role mysql-role
+    ...
+
+When `make apache-role` executed, roles/apache will be copied from
+make-server/ansible/roles directory to current `ansible/` directory if 
+roles/apache exists in this repository. 
+
+However, when make-server/ansible/roles/apache does not exist, only directory
+tree will be created in ./ansible/roles directory followed Best Practices.
+
+`make apache-role`を実行すると、このリポジトリにansible/roles/apacheがある場合は
+それがコピーされ、無ければBest Practicesに従ったディレクトリ構造だけを作ります。
 
 ## List of files in make-server
 
