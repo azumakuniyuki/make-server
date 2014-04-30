@@ -1,0 +1,24 @@
+#                                               __                    
+#   ___ ___  _ __ ___  _ __ ___   ___  _ __    / /_   ____ _ _ __ ___ 
+#  / __/ _ \| '_ ` _ \| '_ ` _ \ / _ \| '_ \  / /\ \ / / _` | '__/ __|
+# | (_| (_) | | | | | | | | | | | (_) | | | |/ /  \ V / (_| | |  \__ \
+#  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/    \_/ \__,_|_|  |___/
+#
+local:
+  dir: /usr/local
+  src: /usr/local/src
+
+# How do I generate crypted passwords for the user module?
+#   $ python -c 'import crypt; print crypt.crypt("password", "$1$Hakata$")'
+#   $ perl -le 'print crypt( q|password|, q|$1$Hakata$| );'
+#   $1$Hakata$nJo4GtuzhwXFJQ3NxXSKU/
+#
+# See also
+#   http://docs.ansible.com/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
+unixusers:
+  - username: admin
+    password: $1$HakataNo$9.s0dLxBeUTgTarKe3uU//
+    shell: /bin/bash
+    home: /home/admin
+    uid: 500
+    gid: 500
