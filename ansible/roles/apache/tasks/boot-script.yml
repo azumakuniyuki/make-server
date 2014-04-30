@@ -1,0 +1,18 @@
+- name: '(RedHat) Deploy init script /etc/rc.d/init.d/apache'
+  when: ansible_os_family == "RedHat"
+  template: >
+    src=redhat-init-script.j2
+    dest=/etc/init.d/apache
+    mode=0755
+    owner=root
+    group=root
+
+- name: '(RedHat) Install init script /etc/rc.d/init.d/apache'
+  when: ansible_os_family == "RedHat"
+  shell: >
+    /sbin/chkconfig --add apache
+    creates=/etc/rc.d/rc0.d/K15apache
+
+- name: 'Turn on init script /etc/rc.d/init.d/apache'
+  service: name=apache enabled=yes
+

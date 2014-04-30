@@ -1,0 +1,53 @@
+#                         _             ___            _        
+#   __ _ _ __   __ _  ___| |__   ___   / / |_ __ _ ___| | _____ 
+#  / _` | '_ \ / _` |/ __| '_ \ / _ \ / /| __/ _` / __| |/ / __|
+# | (_| | |_) | (_| | (__| | | |  __// / | || (_| \__ \   <\__ \
+#  \__,_| .__/ \__,_|\___|_| |_|\___/_/   \__\__,_|___/_|\_\___/
+#       |_|                                                     
+#                            _ _                         
+#   ___ ___  _ __ ___  _ __ (_) | ___       ___ _ __ ___ 
+#  / __/ _ \| '_ ` _ \| '_ \| | |/ _ \_____/ __| '__/ __|
+# | (_| (_) | | | | | | |_) | | |  __/_____\__ \ | | (__ 
+#  \___\___/|_| |_| |_| .__/|_|_|\___|     |___/_|  \___|
+#                     |_|                                
+- name: '(REBUILD) make clean'
+  command: >
+    make clean
+    chdir={{ local.src }}/httpd-{{ apache.version }}/
+    removes=Makefile
+  when: apache.rebuild == 1
+
+- name: 'configure apache {{ apache.version }}'
+  notify: Restart Apache
+  command: >
+    chdir={{ local.src }}/httpd-{{ apache.version }}/
+    /bin/sh configure
+    --prefix={{ apache.serverroot }}
+    --enable-vhost-alias
+    --enable-rewrite
+    --enable-so
+    --enable-logio
+    --disable-include
+    --disable-filter
+    --disable-charset-lite
+    --disable-autoindex
+    --disable-cgi
+    --disable-cgid
+    --disable-userdir
+    creates=Makefile
+
+- name: 'make apache {{ apache.version }}'
+  notify: Restart Apache
+  command: >
+    make
+    chdir={{ local.src }}/httpd-{{ apache.version }}/
+    creates=httpd
+  register: make_apache_binary
+
+- name: 'make install apache {{ apache.version }}'
+  when: make_apache_binary.changed
+  notify: Restart Apache
+  command: >
+    make install
+    chdir={{ local.src }}/httpd-{{ apache.version }}/
+
