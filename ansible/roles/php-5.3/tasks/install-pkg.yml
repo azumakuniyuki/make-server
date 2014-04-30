@@ -1,0 +1,137 @@
+#  ____  _   _ ____      ____   _____   ___            _        
+# |  _ \| | | |  _ \    | ___| |___ /  / / |_ __ _ ___| | _____ 
+# | |_) | |_| | |_) |___|___ \   |_ \ / /| __/ _` / __| |/ / __|
+# |  __/|  _  |  __/_____|__) | ___) / / | || (_| \__ \   <\__ \
+# |_|   |_| |_|_|       |____(_)____/_/   \__\__,_|___/_|\_\___/
+#                                                               
+#  _           _        _ _             _         
+# (_)_ __  ___| |_ __ _| | |      _ __ | | ____ _ 
+# | | '_ \/ __| __/ _` | | |_____| '_ \| |/ / _` |
+# | | | | \__ \ || (_| | | |_____| |_) |   < (_| |
+# |_|_| |_|___/\__\__,_|_|_|     | .__/|_|\_\__, |
+#                                |_|        |___/ 
+- name: 'Install dependencies for PHP {{ php.version }}'
+  when: ansible_os_family == "RedHat"
+  yum:  name={{ item }} state=present
+  ignore_errors: False
+  with_items:
+    - aspell
+    - aspell-devel
+    - bison
+    - bzip2 
+    - bzip2-devel
+    - bzip2-libs
+    - cairo
+    - curl
+    - curl-devel
+    - db4
+    - db4-devel
+    - enchant
+    - enchant-devel
+    - fontconfig
+    - fontconfig-devel
+    - freetds
+    - freetds-devel
+    - freetype 
+    - freetype-devel
+    - gd 
+    - gd-devel
+    - gdbm 
+    - gdbm-devel
+    - glib2 
+    - glib2-devel 
+    - gmp
+    - gmp-devel
+    - krb5-devel
+    - krb5-libs
+    - libICE
+    - libSM
+    - libXau 
+    - libXau-devel
+    - libXpm 
+    - libXpm-devel
+    - libacl 
+    - libaio 
+    - libattr
+    - libgcrypt
+    - libgcrypt-devel
+    - libicu
+    - libicu-devel
+    - libidn
+    - libidn-devel
+    - libjpeg
+    - libjpeg-devel
+    - libmcrypt
+    - libmcrypt-devel
+    - libpng
+    - libpng-devel
+    - libsepol
+    - libsepol-devel
+    - libtidy
+    - libtidy-devel
+    - libtiff 
+    - libXpm
+    - libXpm-devel
+    - libxml2 
+    - libxml2-devel 
+    - libxslt
+    - libxslt-devel 
+    - openjpeg 
+    - openjpeg-devel 
+    - openjpeg-libs 
+    - pango 
+    - pixman 
+    - pixman-devel
+    - pkgconfig 
+    - t1lib 
+    - t1lib-devel 
+    - xmlrpc-c
+    - xmlrpc-c-client 
+    - zip 
+    - zlib 
+    - zlib-devel
+
+- name: 'Download GD {{ php.depends.gd.version }}'
+  get_url: >
+      url=http://ring.u-toyama.ac.jp/archives/graphics/gd/oldreleases/gd-{{ php.depends.gd.version }}.tar.gz
+      dest={{ local.src }}
+
+- name: 'Extract GD {{ php.depends.gd.version }}'
+  unarchive: >
+    src={{ local.src }}/gd-{{ php.depends.gd.version }}.tar.gz
+    dest={{ local.src }}
+    copy=no
+
+- name: 'configure GD {{ php.depends.gd.version }}'
+  command: >
+    chdir={{ local.src }}/gd-{{ php.depends.gd.version }}
+    /bin/sh configure 
+      --prefix={{ php.depends.gd.install }} 
+      --with-png=/usr
+      --with-freetype=/usr
+      --with-fontconfig=/usr
+      --with-jpeg=/usr
+      --with-xpm=/usr
+    creates=Makefile
+
+- name: 'make GD {{ php.depends.gd.version }}'
+  command: >
+    chdir={{ local.src }}/gd-{{ php.depends.gd.version }} 
+    make 
+    creates=gd.o
+  register: make_gd_binary
+
+- name: 'make install GD {{ php.depends.gd.version }}'
+  when: make_gd_binary.changed
+  command: >
+    chdir={{ local.src }}/gd-{{ php.depends.gd.version }}
+    make install 
+
+- name: 'Create symbolic link at lib64 at {{ php.depends.gd.install }}/lib64'
+  when: ansible_userspace_bits == 64
+  file: >
+    src={{ php.depends.gd.install }}/lib/{{ item }} 
+    dest={{ php.depends.gd.install }}/lib64/{{ item }}
+    state=link
+  with_items: [ libgd.a, libgd.la, libgd.so, libgd.so.2, libgd.so.2.0.0 ]
+
