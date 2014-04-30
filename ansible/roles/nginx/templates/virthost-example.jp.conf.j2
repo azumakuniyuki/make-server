@@ -1,0 +1,43 @@
+#              _                __      _      _   _               _   
+#  _ __   __ _(_)_ __ __  __   / /_   _(_)_ __| |_| |__   ___  ___| |_ 
+# | '_ \ / _` | | '_ \\ \/ /  / /\ \ / / | '__| __| '_ \ / _ \/ __| __|
+# | | | | (_| | | | | |>  <  / /  \ V /| | |  | |_| | | | (_) \__ \ |_ 
+# |_| |_|\__, |_|_| |_/_/\_\/_/    \_/ |_|_|   \__|_| |_|\___/|___/\__|
+#        |___/                                                         
+# {{ nginx.serverroot }}/conf/virthost/*.conf
+
+# http://nginx.org/en/docs/http/ngx_http_upstream_module.html
+upstream example.jp.app {
+    server 127.0.0.1:2222;
+}
+
+server {
+    listen 80;
+    server_name {{ nginx.conf.servername }};
+    port_in_redirect on;
+
+    if ( $http_host = www.example.jp ) {
+        rewrite  (.*)  http://example.jp$1;
+    }
+
+    location / {
+        root    /dev/null;
+        index   index.html index.htm;
+
+        proxy_connect_timeout   60;
+        proxy_read_timeout      90;
+        proxy_send_timeout      90;
+
+        proxy_pass          http://example.jp.app;
+        proxy_set_header    Host $host;
+        proxy_set_header    Port $server_port;
+        proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header    X-Forwarded-HTTPS 0;
+    }
+
+    location /static {
+        root    /;
+        index   index.html;
+    }
+}
+

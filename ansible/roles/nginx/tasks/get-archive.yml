@@ -1,0 +1,25 @@
+#              _                ___            _        
+#  _ __   __ _(_)_ __ __  __   / / |_ __ _ ___| | _____ 
+# | '_ \ / _` | | '_ \\ \/ /  / /| __/ _` / __| |/ / __|
+# | | | | (_| | | | | |>  <  / / | || (_| \__ \   <\__ \
+# |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
+#        |___/                                          
+#             _                       _     _           
+#   __ _  ___| |_       __ _ _ __ ___| |__ (_)_   _____ 
+#  / _` |/ _ \ __|____ / _` | '__/ __| '_ \| \ \ / / _ \
+# | (_| |  __/ ||_____| (_| | | | (__| | | | |\ V /  __/
+#  \__, |\___|\__|     \__,_|_|  \___|_| |_|_| \_/ \___|
+#  |___/                                                
+- name: 'Download nginx {{ nginx.version }} at {{ local.src }}'
+  get_url: >
+    url=http://nginx.org/download/nginx-{{ nginx.version }}.tar.gz
+    dest={{ local.src }}/nginx-{{ nginx.version }}.tar.gz
+
+- name: 'Extract {{ local.src }}/nginx-{{ nginx.version }}'
+# parameter ``creates'' is available from 1.6
+#   creates={{ local.src }}/nginx-{{ nginx.version }}
+  unarchive: >
+    src={{ local.src }}/nginx-{{ nginx.version }}.tar.gz
+    dest={{ local.src }}
+    copy=no
+

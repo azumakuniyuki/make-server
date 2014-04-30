@@ -1,0 +1,23 @@
+#              _                __                    
+#  _ __   __ _(_)_ __ __  __   / /_   ____ _ _ __ ___ 
+# | '_ \ / _` | | '_ \\ \/ /  / /\ \ / / _` | '__/ __|
+# | | | | (_| | | | | |>  <  / /  \ V / (_| | |  \__ \
+# |_| |_|\__, |_|_| |_/_/\_\/_/    \_/ \__,_|_|  |___/
+#        |___/                                        
+nginx:
+  started: 0
+  rebuild: 0
+  version: 1.5.12
+  serverroot: '/usr/local/nginx'
+  user:
+    username: 'nginx'
+    password: ''
+    uid: 8192
+    gid: 8192
+    group: 'nginx'
+    shell: '/sbin/nolgin'
+    comment: 'nginx httpd server'
+  conf:
+    servername: '127.0.0.1'
+    documentroot: '/usr/local/nginx/html'
+
