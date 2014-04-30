@@ -58,10 +58,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :shell do |shell|
     shell.inline = "sudo perl -i -ple 's/nameserver .+\z/nameserver 8.8.8.8/' /etc/resolv.conf"
     shell.inline = "sudo hostname " + HOSTNAME
-    shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/elff.repo"
-    shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/prosvc.repo"
-    shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/puppetlabs.repo"
-    shell.inline = "sudo yum -y install python-jinja2 python-simplejson"
+    if /centos.+/ =~ config.vm.box then
+        shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/elff.repo"
+        shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/prosvc.repo"
+        shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/puppetlabs.repo"
+        shell.inline = "sudo yum -y install python-simplejson"
+    end
   end
 end
 
