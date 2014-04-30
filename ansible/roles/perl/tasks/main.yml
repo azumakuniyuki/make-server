@@ -1,0 +1,12 @@
+#                  _    ___            _        
+#  _ __   ___ _ __| |  / / |_ __ _ ___| | _____ 
+# | '_ \ / _ \ '__| | / /| __/ _` / __| |/ / __|
+# | |_) |  __/ |  | |/ / | || (_| \__ \   <\__ \
+# | .__/ \___|_|  |_/_/   \__\__,_|___/_|\_\___/
+# |_|                                           
+#
+- include: install-pkg.yml
+- include: get-archive.yml
+- include: compile-src.yml
+- include: make-module.yml
+
