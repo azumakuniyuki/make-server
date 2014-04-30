@@ -1,0 +1,21 @@
+#  __  __       ____   ___  _         ____   ____    ___            _        
+# |  \/  |_   _/ ___| / _ \| |       | ___| | ___|  / / |_ __ _ ___| | _____ 
+# | |\/| | | | \___ \| | | | |   ____|___ \ |___ \ / /| __/ _` / __| |/ / __|
+# | |  | | |_| |___) | |_| | |__|_____|__) | ___) / / | || (_| \__ \   <\__ \
+# |_|  |_|\__, |____/ \__\_\_____|   |____(_)____/_/   \__\__,_|___/_|\_\___/
+#         |___/                                                              
+- include: install-pkg.yml
+- include: create-user.yml
+- include: get-archive.yml
+- include: compile-src.yml
+- include: make-config.yml
+- include: boot-script.yml
+
+- name: 'Start MySQL Server'
+  when: mysql.started == 1
+  service: name=mysql state=started
+
+- name: 'Stop MySQL Server'
+  when: mysql.started == 0
+  service: name=mysql state=stopped
+
