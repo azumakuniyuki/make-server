@@ -8,7 +8,7 @@
 HEREIAM    = $(shell pwd)
 ANSIBLE    = $(shell which ansible)
 PWDNAME    = $(shell echo $(HEREIAM) | xargs basename)
-EXAMPLE    = ~/var/rhosts/192.0.2.1
+EXAMPLE    = ~/var/rhosts/make-server
 
 ANSIBLEDIR = ansible
 ANSIBLELOG = ./$(ANSIBLEDIR)/log
