@@ -1,0 +1,30 @@
+#                                               ___            _        
+#   ___ ___  _ __ ___  _ __ ___   ___  _ __    / / |_ __ _ ___| | _____ 
+#  / __/ _ \| '_ ` _ \| '_ ` _ \ / _ \| '_ \  / /| __/ _` / __| |/ / __|
+# | (_| (_) | | | | | | | | | | | (_) | | | |/ / | || (_| \__ \   <\__ \
+#  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/   \__\__,_|___/_|\_\___/
+#                      _                                 
+#   ___ _ __ ___  __ _| |_ ___       _   _ ___  ___ _ __ 
+#  / __| '__/ _ \/ _` | __/ _ \_____| | | / __|/ _ \ '__|
+# | (__| | |  __/ (_| | ||  __/_____| |_| \__ \  __/ |   
+#  \___|_|  \___|\__,_|\__\___|      \__,_|___/\___|_|   
+#                                                        
+- name: 'Be sure each group should be exist'
+  group: >
+    name={{ item.user.group }}
+    gid={{ item.user.gid }}
+    state=present
+  with_items: unixusers
+
+- name: 'Be sure each user should be exist'
+  user: >
+    name={{ item.username }} 
+    password={{ item.password }}
+    uid={{ item.uid }}
+    group={{ item.group }} 
+    shell={{ item.shell }}
+    home={{ item.home }}
+    createhome=yes
+    state=present
+  with_items: unixusers
+
