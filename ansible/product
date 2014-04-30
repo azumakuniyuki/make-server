@@ -1,0 +1,15 @@
+#  ____                _            _   
+# |  _ \ _ __ ___   __| |_   _  ___| |_ 
+# | |_) | '__/ _ \ / _` | | | |/ __| __|
+# |  __/| | | (_) | (_| | |_| | (__| |_ 
+# |_|   |_|  \___/ \__,_|\__,_|\___|\__|
+#                                       
+# Ansible inventory file for production servers
+#
+# [product]
+# 192.0.2.3
+
+# [product:vars]
+# ansible_ssh_port=22
+# ansible_ssh_user=neko
+

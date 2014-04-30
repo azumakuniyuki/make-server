@@ -1,0 +1,15 @@
+#  ____                 _             
+# |  _ \  _____   _____| | ___  _ __  
+# | | | |/ _ \ \ / / _ \ |/ _ \| '_ \ 
+# | |_| |  __/\ V /  __/ | (_) | |_) |
+# |____/ \___| \_/ \___|_|\___/| .__/ 
+#                              |_|    
+# Ansible inventory file for development hosts
+#
+# [develop]
+# 192.0.2.1
+
+# [develop:vars]
+# ansible_ssh_port=2222
+# ansible_ssh_user=neko
+
