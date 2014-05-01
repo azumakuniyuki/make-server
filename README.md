@@ -49,11 +49,15 @@ In this file, you build some web servers and a mail server of example.jp domain.
     openbsd53-x86_64 (virtualbox)
 
     $ make centos64-x86_64-box ansible
+    if [ ! -f "./Vagrantfile" ]; then \
+        ...
+    `vagrantup.com` for more information on using Vagrant.
+    mkdir -p ./ansible
+    make common-role
+    ...
     $ make up
-    vagrant up
-    Bringing machine 'default' up with 'virtualbox' provider...
-    ==> default: Clearing any previously set forwarded ports...
-    ==> default: Clearing any previously set network interfaces...
+    ==> default: Importing base box 'centos64-x86_64'...
+    Progress: 50%
     ...
 
 ## Copy roles
@@ -88,4 +92,11 @@ tree will be created in ./ansible/roles directory followed Best Practices.
 | ansible/log       | Log file specified in ansible/config file |
 | ansible/role/     | Ansible roles |
 
+REPOSITORY
+----------
+https://github.com/azumakuniyuki/make-server
+
+AUTHOR
+------
+azumakuniyuki
 
