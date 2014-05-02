@@ -30,7 +30,7 @@
 
 - name: 'Deploy {{ vsftpd.serverroot }}/etc/ftp-users'
   template: >
-    src=usr/local/src/vsftpd/etc/ftp-users.j2
+    src=usr/local/vsftpd/etc/ftp-users.j2
     dest={{ vsftpd.serverroot }}/etc/ftp-users
     mode=0644
     owner=root
