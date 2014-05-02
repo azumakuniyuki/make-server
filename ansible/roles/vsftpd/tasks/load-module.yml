@@ -11,14 +11,10 @@
 # |_|\___/ \__,_|\__,_|     |_| |_| |_|\___/ \__,_|\__,_|_|\___|
 #                                                               
 - name: 'Kernel modules for FTP PASV connection should be loaded'
-#   modprobe: name={{ item }} state=present
-  shell: >
-    ( /sbin/lsmod | grep '^{{ item }}' ) && echo '[ok]' || /sbin/modprobe {{ item }} 
-  register: loadmodule
-  changed_when: '"[ok]" not in loadmodule.stdout'
+  modprobe: name={{ item }} state=present
   with_items:
-    - ip_conntrack_ftp
-    - ip_nat_ftp
+    - nf_conntrack_ftp
+    - nf_nat_ftp
 
 - name: '(RedHat) Update /etc/sysconfig/iptables-config (1)'
   when: ansible_os_family == "RedHat"
@@ -28,7 +24,7 @@
     backrefs=yes
     backup=no
     regexp='^IPTABLES_MODULES="([0-9a-zA-Z_]+)"$'
-    line='IPTABLES_MODULES="\1 ip_conntrack_ftp ip_nat_ftp"'
+    line='IPTABLES_MODULES="\1 nf_conntrack_ftp nf_nat_ftp"'
 
 - name: '(RedHat) Update /etc/sysconfig/iptables-config (2)'
   when: ansible_os_family == "RedHat"
@@ -38,5 +34,5 @@
     backrefs=yes
     backup=no
     regexp='^IPTABLES_MODULES=""$'
-    line='IPTABLES_MODULES="ip_conntrack_ftp ip_nat_ftp"'
+    line='IPTABLES_MODULES="nf_conntrack_ftp nf_nat_ftp"'
 
