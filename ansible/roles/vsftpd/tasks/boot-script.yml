@@ -13,7 +13,7 @@
 - name: '(RedHat) Deploy init script /etc/rc.d/init.d/vsftpd'
   when: ansible_os_family == "RedHat"
   template: >
-    src=redhat-init-script.j2
+    src=etc/init.d/vsftpd.j2
     dest=/etc/init.d/vsftpd
     mode=0755
     owner=root

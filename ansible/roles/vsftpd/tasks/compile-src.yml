@@ -19,7 +19,7 @@
 
 - name: 'Copy patches'
   template: >
-    src={{ item }}.j2
+    src=usr/local/src/{{ item }}.j2
     dest={{ local.src }}/vsftpd-{{ vsftpd.version }}/{{ item }}
   with_items: vsftpd.patches
 

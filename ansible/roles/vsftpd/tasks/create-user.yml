@@ -23,7 +23,7 @@
     group={{ vsftpd.user.group }} 
     shell={{ vsftpd.user.shell }}
     home={{ vsftpd.serverroot }}
-    comment='{{ vsftpd.user.comment }}'
+    comment={{ vsftpd.user.comment }}
     createhome=no
     state=present
 

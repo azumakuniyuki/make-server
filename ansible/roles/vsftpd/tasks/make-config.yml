@@ -22,7 +22,7 @@
 - name: 'Deploy {{ vsftpd.serverroot }}/etc/vsftpd.conf'
   notify: Restart vsftpd
   template: >
-    src=vsftpd.conf.j2
+    src=usr/local/vsftpd/etc/vsftpd.conf.j2
     dest={{ vsftpd.serverroot }}/etc/vsftpd.conf
     mode=0644
     owner=root
@@ -30,7 +30,7 @@
 
 - name: 'Deploy {{ vsftpd.serverroot }}/etc/ftp-users'
   template: >
-    src=ftp-users.j2
+    src=usr/local/src/vsftpd/etc/ftp-users.j2
     dest={{ vsftpd.serverroot }}/etc/ftp-users
     mode=0644
     owner=root
