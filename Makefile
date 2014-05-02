@@ -120,7 +120,7 @@ list:
 	vagrant box list
 
 init-vm:
-	vagrant destory && vagrant up
+	vagrant destroy && vagrant up
 
 help:
 	vagrant --help
