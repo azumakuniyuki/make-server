@@ -14,12 +14,11 @@ vsftpd:
 
   user:
     username: 'vsftpd'
-    password: ''
     uid: 9261
     gid: 9261
     group: 'vsftpd'
     shell: '/sbin/nolgin'
-    comment: 'vsftpd FTP Server'
+    comment: "'vsftpd FTP Server'"
   conf:
     banner: 'FTP Server'
 
