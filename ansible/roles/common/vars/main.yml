@@ -10,8 +10,8 @@ local:
 
 # How do I generate crypted passwords for the user module?
 #   $ python -c 'import crypt; print crypt.crypt("password", "$1$Hakata$")'
-#   $ perl -le 'print crypt( q|password|, q|$1$Hakata$| );'
-#   $1$Hakata$nJo4GtuzhwXFJQ3NxXSKU/
+#   $ perl -MCrypt::Passwd::XS -lE 'print +Crypt::Passwd::XS::crypt( shift, q|$6$|.int(rand(2**32)))' password
+#   $ $6$7727282$k3l39lq5PyKPnqxew6jIiroBTs7.E5S7jBl2rJtlB.i6kbiiyFzmVzHVV0BUHXAYarA6oOa0DlDm18B2EUgVX/
 #
 # See also
 #   http://docs.ansible.com/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
