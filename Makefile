@@ -107,6 +107,7 @@ test:
 			-e "s/__IPV4ADDRESS__/$(VAGRANTNET).$$X.$$Y/g" \
 			-e 's/__VIRTUALBOX__/$*/g' > ./$(VAGRANTFILE) ;\
 	fi
+	mkdir -p ./data
 
 addr:
 	@if [ -f "./$(VAGRANTFILE)" ]; then \
