@@ -10,6 +10,14 @@
 # | | | | | | (_| |   <  __/_____| (_| (_) | | | |  _| | (_| |
 # |_| |_| |_|\__,_|_|\_\___|      \___\___/|_| |_|_| |_|\__, |
 #                                                       |___/ 
+- name: 'Be sure {{ postgresql.datadirectory }} should be 0700 permission'
+  file: >
+    path={{ postgresql.datadirectory }}
+    mode=0700
+    state=directory
+    owner={{ postgresql.user.username }}
+    group={{ postgresql.user.group }}
+
 - name: 'Be sure each directory exists'
   file: >
     path={{ postgresql.serverroot }}/{{ item }}
@@ -18,7 +26,6 @@
     owner={{ postgresql.user.username }}
     group={{ postgresql.user.group }}
   with_items:
-    - data
     - dump
     - logs
 
@@ -28,4 +35,13 @@
     sudo -u {{ postgresql.user.username }} 
     -s {{ postgresql.serverroot }}/bin/initdb --no-locale -EUTF-8 -D{{ postgresql.datadirectory }}
     creates={{ postgresql.datadirectory }}/base
+
+- name: 'Deploy configuration files into {{ postgresql.datadirectory }}'
+  notify: Restart PostgreSQL
+  template: >
+    src=data/{{ item }}.j2
+    dest={{ postgresql.datadirectory }}/{{ item }}
+  with_items:
+    - postgresql.conf
+    - pg_hba.conf
 
