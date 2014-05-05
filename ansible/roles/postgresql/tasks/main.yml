@@ -1,0 +1,22 @@
+#  ____           _                 ____   ___  _        ___            _        
+# |  _ \ ___  ___| |_ __ _ _ __ ___/ ___| / _ \| |      / / |_ __ _ ___| | _____ 
+# | |_) / _ \/ __| __/ _` | '__/ _ \___ \| | | | |     / /| __/ _` / __| |/ / __|
+# |  __/ (_) \__ \ || (_| | | |  __/___) | |_| | |___ / / | || (_| \__ \   <\__ \
+# |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/   \__\__,_|___/_|\_\___/
+#                    |___/                                                       
+- include: install-pkg.yml
+- include: create-user.yml
+- include: get-archive.yml
+- include: compile-src.yml
+- include: make-config.yml
+- include: boot-script.yml
+
+- name: 'Start PostgreSQL Server'
+  when: postgresql.started == 1
+  service: name=postgresql state=started
+
+- name: 'Stop PostgreSQL Server'
+  when: postgresql.started == 0
+  service: name=postgresql state=stopped
+
+

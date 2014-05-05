@@ -1,0 +1,29 @@
+#  ____           _                 ____   ___  _        ___            _        
+# |  _ \ ___  ___| |_ __ _ _ __ ___/ ___| / _ \| |      / / |_ __ _ ___| | _____ 
+# | |_) / _ \/ __| __/ _` | '__/ _ \___ \| | | | |     / /| __/ _` / __| |/ / __|
+# |  __/ (_) \__ \ || (_| | | |  __/___) | |_| | |___ / / | || (_| \__ \   <\__ \
+# |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/   \__\__,_|___/_|\_\___/
+#                    |___/                                                       
+#                      _                                 
+#   ___ _ __ ___  __ _| |_ ___       _   _ ___  ___ _ __ 
+#  / __| '__/ _ \/ _` | __/ _ \_____| | | / __|/ _ \ '__|
+# | (__| | |  __/ (_| | ||  __/_____| |_| \__ \  __/ |   
+#  \___|_|  \___|\__,_|\__\___|      \__,_|___/\___|_|   
+#                                                        
+- name: 'Be sure group {{ postgresql.user.group }}({{ postgresql.user.gid }}) exists'
+  group: >
+    gid={{ postgresql.user.gid }}
+    name={{ postgresql.user.group }}
+    state=present
+
+- name: 'Be sure user {{ postgresql.user.username }}({{ postgresql.user.uid }}) exists'
+  user: >
+    name={{ postgresql.user.username }} 
+    uid={{ postgresql.user.uid }}
+    group={{ postgresql.user.group }} 
+    shell={{ postgresql.user.shell }}
+    home={{ postgresql.serverroot }}
+    comment={{ postgresql.user.comment }}
+    createhome=no
+    state=present
+
