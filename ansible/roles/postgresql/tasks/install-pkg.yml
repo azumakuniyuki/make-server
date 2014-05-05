@@ -10,11 +10,11 @@
 # | | | | \__ \ || (_| | | |_____| |_) |   < (_| |
 # |_|_| |_|___/\__\__,_|_|_|     | .__/|_|\_\__, |
 #                                |_|        |___/ 
-#- name: 'Install dependencies for PostgreSQL {{ postgresql.version }}'
-#  yum: >
-#    name={{ item }}
-#    state=present
-#  with_items:
-#    - cmake
+- name: 'Install dependencies for PostgreSQL {{ postgresql.version }}'
+  yum: >
+    name={{ item }}
+    state=present
+  with_items:
+    - python-psycopg2
 
 
