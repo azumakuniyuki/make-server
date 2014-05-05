@@ -16,10 +16,13 @@ ANSIBLECFG = ./$(ANSIBLEDIR)/config
 INVENTORY  = ./$(ANSIBLEDIR)/hosts
 SERVERSPEC = ./spec
 VAGRANTNET = 172.25
-VAGRANTSSH = ~/.ssh/vagrant-ssh-key
+VAGRANTSSH = ~/.vagrant.d/insecure_private_key
 VAGRANTFILE= Vagrantfile
 
 .PHONY: clean
+login:
+	ssh -l vagrant -i $(VAGRANTSSH) `make addr`
+
 here:
 	@echo $(PWDNAME)
 
