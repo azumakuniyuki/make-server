@@ -11,13 +11,13 @@ postgresql:
   serverroot: '/opt/postgresql'
   datadirectory: '/opt/postgresql/data'
   user:
-    username: 'postgresql'
+    username: 'postgres'
     uid: 5432
     gid: 5432
-    home: '/opt/postgresql'
+    home: '/opt/postgres'
     group: 'postgres'
     shell: '/bin/sh'
     comment: "'PostgreSQL Server'"
   conf:
-    listen: 127.0.0.1
+    listen: '*'
     port: 5432
