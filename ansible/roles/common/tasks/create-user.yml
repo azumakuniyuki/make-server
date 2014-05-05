@@ -11,8 +11,8 @@
 #                                                        
 - name: 'Be sure each group should be exist'
   group: >
-    name={{ item.user.group }}
-    gid={{ item.user.gid }}
+    name={{ item.group }}
+    gid={{ item.gid }}
     state=present
   with_items: unixusers
 

@@ -16,9 +16,11 @@ local:
 # See also
 #   http://docs.ansible.com/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
 unixusers:
-  - username: admin
+  - username: deploy
     password: $1$HakataNo$9.s0dLxBeUTgTarKe3uU//
     shell: /bin/bash
+    group: deploy
+    groups: wheel
     home: /home/admin
-    uid: 500
-    gid: 500
+    uid: 1001
+    gid: 1001
