@@ -12,14 +12,14 @@
 #                     |_|                                
 #
 - name: '(REBUILD) make clean'
-  command: >
-    make clean
+  shell: >
+    make clean distclean
     chdir={{ local.src }}/perl-{{ perl.version }}/
     removes=Makefile
   when: perl.rebuild == 1
 
 - name: 'Configure Perl {{ perl.version }}'
-  command: >
+  shell: >
     /bin/sh Configure -des -Dprefix={{ perl.install }}
     creates=Makefile
     chdir={{ local.src }}/perl-{{ perl.version }}/
