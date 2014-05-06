@@ -4,6 +4,12 @@
 # | (_| (_) | | | | | | | | | | | (_) | | | |/ / | || (_| \__ \   <\__ \
 #  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/   \__\__,_|___/_|\_\___/
 #                                                                       
+- name: 'Deploy .profile and .bash_profile into /root'
+  template: src=root/dot.{{ item }}.j2 dest=/root/.{{ item }}
+  with_items:
+    - profile
+    - bash_profile
+
 - include: install-pkg.yml
 - include: create-user.yml
 - include: make-config.yml
