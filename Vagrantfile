@@ -62,6 +62,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/elff.repo"
         shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/prosvc.repo"
         shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/puppetlabs.repo"
+        shell.inline = "sudo perl -i -ple 's|secure_path = .+$|secure_path = /usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin/:sbin|' /etc/sudoers"
         shell.inline = "sudo yum -y install python-simplejson"
     end
   end
