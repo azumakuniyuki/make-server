@@ -4,12 +4,12 @@
 # | (__| |_) | (_| | | | | | | | | |/ / | || (_| \__ \   <\__ \
 #  \___| .__/ \__,_|_| |_| |_|_| |_/_/   \__\__,_|___/_|\_\___/
 #      |_|                                                     
-- name: 'Download cpanm'
+- name: 'main | Download cpanm'
   get_url: >
     url='http://xrl.us/cpanm';
     dest={{ local.src }}/cpanm
 
-- name: 'Install cpanm = {{ local.dir }}/bin/cpanm'
+- name: 'main | Install cpanm into {{ local.dir }}/bin/cpanm'
   shell: >
     chdir={{ local.src }}
     install -o root -m 0755 cpanm {{ local.dir }}/bin
