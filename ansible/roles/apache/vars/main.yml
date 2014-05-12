@@ -1,14 +1,14 @@
-#                         _             __                    
-#   __ _ _ __   __ _  ___| |__   ___   / /_   ____ _ _ __ ___ 
-#  / _` | '_ \ / _` |/ __| '_ \ / _ \ / /\ \ / / _` | '__/ __|
-# | (_| | |_) | (_| | (__| | | |  __// /  \ V / (_| | |  \__ \
-#  \__,_| .__/ \__,_|\___|_| |_|\___/_/    \_/ \__,_|_|  |___/
-#       |_|                                                   
+#     _                     _             __                    
+#    / \   _ __   __ _  ___| |__   ___   / /_   ____ _ _ __ ___ 
+#   / _ \ | '_ \ / _` |/ __| '_ \ / _ \ / /\ \ / / _` | '__/ __|
+#  / ___ \| |_) | (_| | (__| | | |  __// /  \ V / (_| | |  \__ \
+# /_/   \_\ .__/ \__,_|\___|_| |_|\___/_/    \_/ \__,_|_|  |___/
+#         |_|                                                   
 apache:
-  started: 0
+  started: 1
   rebuild: 0
   version: 2.2.27
-  serverroot: '/usr/local/httpd'
+  serverroot: '/opt/httpd'
   user:
     username: 'apache'
     password: ''
@@ -16,10 +16,10 @@ apache:
     uid: 8000
     gid: 8000
     shell: '/sbin/nolgin'
-    comment: 'Apache httpd server'
+    comment: "'Apache httpd server'"
   conf:
-    listen: '127.0.0.1:8000'
-    servername: 'www.example.jp:8000'
+    listen: 80
+    servername: 'www.example.jp'
     serveradmin: 'webmaster@example.jp'
-    documentroot: '/usr/local/httpd/htdocs'
+    documentroot: '/opt/httpd/htdocs'
 
