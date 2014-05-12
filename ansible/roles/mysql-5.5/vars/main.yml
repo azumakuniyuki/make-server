@@ -5,20 +5,20 @@
 # |_|  |_|\__, |____/ \__\_\_____|   |____(_)____/_/    \_/ \__,_|_|  |___/
 #         |___/                                                            
 mysql:
-  started: 0
+  started: 1
   rebuild: 0
   version: 5.5.37
-  serverroot: '/usr/local/mysql'
-  datadirectory: '/usr/local/mysql/data'
+  serverroot: '/opt/mysql'
+  datadirectory: '/opt/mysql/data'
   user:
     username: 'mysql'
-    password: ''
     uid: 3306
     gid: 3306
     group: 'mysql'
     shell: '/bin/sh'
-    comment: 'MySQL Server'
+    comment: '"MySQL Server"'
   conf:
+    port: 3306
     socket: '/tmp/mysql.sock'
     rootpasswd: ''
 
