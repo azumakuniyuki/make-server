@@ -1,18 +1,26 @@
-- name: '(RedHat) Deploy init script /etc/rc.d/init.d/apache'
+#     _                     _             ___            _        
+#    / \   _ __   __ _  ___| |__   ___   / / |_ __ _ ___| | _____ 
+#   / _ \ | '_ \ / _` |/ __| '_ \ / _ \ / /| __/ _` / __| |/ / __|
+#  / ___ \| |_) | (_| | (__| | | |  __// / | || (_| \__ \   <\__ \
+# /_/   \_\ .__/ \__,_|\___|_| |_|\___/_/   \__\__,_|___/_|\_\___/
+#         |_|                                                     
+# boot-script
+#
+- name: 'boot-script | RedHat | Deploy /etc/init.d/httpd'
   when: ansible_os_family == "RedHat"
   template: >
-    src=redhat-init-script.j2
-    dest=/etc/init.d/apache
+    src=etc/init.d/httpd.RedHat.j2
+    dest=/etc/init.d/httpd
     mode=0755
     owner=root
     group=root
 
-- name: '(RedHat) Install init script /etc/rc.d/init.d/apache'
+- name: 'boot-script | RedHat | Install init script /etc/rc.d/init.d/httpd'
   when: ansible_os_family == "RedHat"
   shell: >
-    /sbin/chkconfig --add apache
-    creates=/etc/rc.d/rc0.d/K15apache
+    /sbin/chkconfig --add httpd
+    creates=/etc/rc.d/rc0.d/K15httpd
 
-- name: 'Turn on init script /etc/rc.d/init.d/apache'
-  service: name=apache enabled=yes
+- name: 'boot-script | Turn on init script /etc/rc.d/init.d/httpd'
+  service: name=httpd enabled=yes
 

@@ -1,24 +1,20 @@
-#                         _             ___            _        
-#   __ _ _ __   __ _  ___| |__   ___   / / |_ __ _ ___| | _____ 
-#  / _` | '_ \ / _` |/ __| '_ \ / _ \ / /| __/ _` / __| |/ / __|
-# | (_| | |_) | (_| | (__| | | |  __// / | || (_| \__ \   <\__ \
-#  \__,_| .__/ \__,_|\___|_| |_|\___/_/   \__\__,_|___/_|\_\___/
-#       |_|                                                     
-#                  _                               __ _       
-#  _ __ ___   __ _| | _____        ___ ___  _ __  / _(_) __ _ 
-# | '_ ` _ \ / _` | |/ / _ \_____ / __/ _ \| '_ \| |_| |/ _` |
-# | | | | | | (_| |   <  __/_____| (_| (_) | | | |  _| | (_| |
-# |_| |_| |_|\__,_|_|\_\___|      \___\___/|_| |_|_| |_|\__, |
-#                                                       |___/ 
-- name: 'Deploy {{ apache.serverroot }}/conf/httpd.conf'
+#     _                     _             ___            _        
+#    / \   _ __   __ _  ___| |__   ___   / / |_ __ _ ___| | _____ 
+#   / _ \ | '_ \ / _` |/ __| '_ \ / _ \ / /| __/ _` / __| |/ / __|
+#  / ___ \| |_) | (_| | (__| | | |  __// / | || (_| \__ \   <\__ \
+# /_/   \_\ .__/ \__,_|\___|_| |_|\___/_/   \__\__,_|___/_|\_\___/
+#         |_|                                                     
+# make-config
+#
+- name: 'make-config | Deploy {{ apache.serverroot }}/conf/httpd.conf'
+  notify: Restart Apache
   template: >
-    src=httpd.conf.j2
+    src=opt/apache/conf/httpd.conf.j2
     dest={{ apache.serverroot }}/conf/httpd.conf
-  notify: Restart Apache
 
-- name: 'Deploy {{ apache.serverroot }}/conf/extra/httpd-info.conf'
-  copy: >
-    src=httpd-info.conf
-    dest={{ apache.serverroot }}/conf/extra/
+- name: 'make-config | Deploy {{ apache.serverroot }}/conf/extra/httpd-info.conf'
   notify: Restart Apache
+  template: >
+    src=opt/apache/conf/extra/httpd-info.conf.j2
+    dest={{ apache.serverroot }}/conf/extra/
 
