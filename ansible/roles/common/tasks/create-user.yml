@@ -3,20 +3,17 @@
 #  / __/ _ \| '_ ` _ \| '_ ` _ \ / _ \| '_ \  / /| __/ _` / __| |/ / __|
 # | (_| (_) | | | | | | | | | | | (_) | | | |/ / | || (_| \__ \   <\__ \
 #  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/   \__\__,_|___/_|\_\___/
-#                      _                                 
-#   ___ _ __ ___  __ _| |_ ___       _   _ ___  ___ _ __ 
-#  / __| '__/ _ \/ _` | __/ _ \_____| | | / __|/ _ \ '__|
-# | (__| | |  __/ (_| | ||  __/_____| |_| \__ \  __/ |   
-#  \___|_|  \___|\__,_|\__\___|      \__,_|___/\___|_|   
-#                                                        
-- name: 'Be sure each group should be exist'
+#
+# create-user
+#
+- name: 'create-user | Each group should be created'
   group: >
     name={{ item.group }}
     gid={{ item.gid }}
     state=present
   with_items: unixusers
 
-- name: 'Be sure each user should be exist'
+- name: 'create-user | Each user should be created'
   user: >
     name={{ item.username }} 
     password={{ item.password }}

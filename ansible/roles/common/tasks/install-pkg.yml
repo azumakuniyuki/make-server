@@ -3,14 +3,10 @@
 #  / __/ _ \| '_ ` _ \| '_ ` _ \ / _ \| '_ \  / /| __/ _` / __| |/ / __|
 # | (_| (_) | | | | | | | | | | | (_) | | | |/ / | || (_| \__ \   <\__ \
 #  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/   \__\__,_|___/_|\_\___/
-#  _           _        _ _             _         
-# (_)_ __  ___| |_ __ _| | |      _ __ | | ____ _ 
-# | | '_ \/ __| __/ _` | | |_____| '_ \| |/ / _` |
-# | | | | \__ \ || (_| | | |_____| |_) |   < (_| |
-# |_|_| |_|___/\__\__,_|_|_|     | .__/|_|\_\__, |
-#                                |_|        |___/ 
-#                                                                           
-- name: '(RedHat) Be sure each package for development is installed'
+#
+# install-pkg
+#
+- name: 'install-pkg | RedHat | Each package for development should be installed'
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   with_items: 
@@ -27,7 +23,7 @@
     - readline
     - readline-devel
 
-- name: '(RedHat) Be sure each package for archive is installed'
+- name: 'install-pkg | RedHat | Each package for archive should be installed'
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   with_items: 
@@ -36,13 +32,13 @@
     - zlib
     - zlib-devel
 
-- name: '(RedHat) Be sure each package for Python is installed'
+- name: 'install-pkg | RedHat | Each package for Python should be installed'
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   with_items:
     - python-pip
 
-- name: '(Debian) Be sure each package for development is installed'
+- name: 'install-pkg | Debian | Each package for development should be installed'
   when: ansible_os_family == "Debian"
   apt: pkg={{ item }} state=present
   with_items:
@@ -59,7 +55,7 @@
     - openssl
     - libreadline6
 
-- name: '(Debian) Be sure each package for archive is installed'
+- name: 'install-pkg | Debian | Each package for archive should be installed'
   when: ansible_os_family == "Debian"
   yum:  name={{ item }} state=present
   with_items: 
@@ -68,7 +64,7 @@
     - zlib1g
     - zlib1g-dev
 
-- name: '(Debian) Be sure each package for Python is installed'
+- name: 'install-pkg | Debian | Each package for Python should be installed'
   when: ansible_os_family == "Debian"
   apt:  name={{ item }} state=present
   with_items:
