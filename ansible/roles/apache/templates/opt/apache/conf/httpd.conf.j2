@@ -128,7 +128,7 @@ DocumentRoot "{{ apache.conf.documentroot }}"
 #
 # This should be changed to whatever you set DocumentRoot to.
 #
-<Directory "/usr/local/httpd/htdocs">
+<Directory "{{ apache.conf.documentroot }}">
     #
     # Possible values for the Options directive are "None", "All",
     # or any combination of:
@@ -248,7 +248,7 @@ LogLevel warn
     # client.  The same rules about trailing "/" apply to ScriptAlias
     # directives as to Alias.
     #
-    #ScriptAlias /cgi-bin/ "/usr/local/httpd/cgi-bin/"
+    #ScriptAlias /cgi-bin/ "{{ apache.serverroot }}/cgi-bin/"
 
 </IfModule>
 
@@ -261,7 +261,7 @@ LogLevel warn
 </IfModule>
 
 #
-# "/usr/local/httpd/cgi-bin" should be changed to whatever your ScriptAliased
+# "{{ apache.serverroot }}/cgi-bin" should be changed to whatever your ScriptAliased
 # CGI directory exists, if you have that configured.
 #
 #<Directory "/usr/local/httpd/cgi-bin">
@@ -392,7 +392,7 @@ Include conf/extra/httpd-mpm.conf
 Include conf/extra/httpd-info.conf
 
 # Virtual hosts
-Include conf/extra/httpd-vhosts.conf
+#Include conf/extra/httpd-vhosts.conf
 
 # Local access to the Apache HTTP Server Manual
 #Include conf/extra/httpd-manual.conf
