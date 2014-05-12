@@ -21,6 +21,7 @@ unixusers:
     shell: /bin/bash
     group: deploy
     groups: wheel
-    home: /home/admin
+    home: /home/deploy
     uid: 1001
     gid: 1001
+
