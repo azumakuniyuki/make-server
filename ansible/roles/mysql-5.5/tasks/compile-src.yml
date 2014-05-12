@@ -4,27 +4,23 @@
 # | |  | | |_| |___) | |_| | |__|_____|__) | ___) / / | || (_| \__ \   <\__ \
 # |_|  |_|\__, |____/ \__\_\_____|   |____(_)____/_/   \__\__,_|___/_|\_\___/
 #         |___/                                                              
-#                            _ _                         
-#   ___ ___  _ __ ___  _ __ (_) | ___       ___ _ __ ___ 
-#  / __/ _ \| '_ ` _ \| '_ \| | |/ _ \_____/ __| '__/ __|
-# | (_| (_) | | | | | | |_) | | |  __/_____\__ \ | | (__ 
-#  \___\___/|_| |_| |_| .__/|_|_|\___|     |___/_|  \___|
-#                     |_|                                
-- name: '(REBUILD) Remove CMakeCache.txt'
+# compile-src
+#
+- name: 'compile-src | REBUILD | Remove CMakeCache.txt'
   command: >
     chdir={{ local.src }}/mysql-{{ mysql.version }}/
     removes=CMakeCache.txt
     rm CMakeCache.txt
   when: mysql.rebuild == 1
 
-- name: '(REBUILD) make clean'
+- name: 'compile-src | REBUILD | make clean'
   command: >
     chdir={{ local.src }}/mysql-{{ mysql.version }}/
     make clean
     removes=CMakeCache.txt
   when: mysql.rebuild == 1
 
-- name: 'cmake MySQL {{ mysql.version }}'
+- name: 'compile-src | cmake MySQL {{ mysql.version }}'
   notify: Restart MySQL
   command: >
     chdir={{ local.src }}/mysql-{{ mysql.version }}
@@ -36,7 +32,7 @@
       -DDEFAULT_COLLATION=utf8_general_ci
     creates=CMakeCache.txt
 
-- name: 'make MySQL {{ mysql.version }}'
+- name: 'compile-src | make MySQL {{ mysql.version }}'
   notify: Restart MySQL
   command: >
     chdir={{ local.src }}/mysql-{{ mysql.version }}
@@ -44,7 +40,7 @@
     creates=client/mysql
   register: make_mysql_binary
 
-- name: 'make insall MySQL-{{ mysql.version }}'
+- name: 'compile-src | make insall MySQL-{{ mysql.version }}'
   when: make_mysql_binary.changed
   notify: Restart MySQL
   command: >

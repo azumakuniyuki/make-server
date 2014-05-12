@@ -4,26 +4,21 @@
 # | |  | | |_| |___) | |_| | |__|_____|__) | ___) / / | || (_| \__ \   <\__ \
 # |_|  |_|\__, |____/ \__\_\_____|   |____(_)____/_/   \__\__,_|___/_|\_\___/
 #         |___/                                                              
-#                      _                                 
-#   ___ _ __ ___  __ _| |_ ___       _   _ ___  ___ _ __ 
-#  / __| '__/ _ \/ _` | __/ _ \_____| | | / __|/ _ \ '__|
-# | (__| | |  __/ (_| | ||  __/_____| |_| \__ \  __/ |   
-#  \___|_|  \___|\__,_|\__\___|      \__,_|___/\___|_|   
-#                                                        
-- name: 'Be sure group {{ mysql.user.group }}({{ mysql.user.gid }}) exists'
+# create-user
+- name: 'create-user | Group {{ mysql.user.group }}({{ mysql.user.gid }}) should be created'
   group: >
     gid={{ mysql.user.gid }}
     name={{ mysql.user.group }}
     state=present
 
-- name: 'Be sure user {{ mysql.user.username }}({{ mysql.user.uid }}) exists'
+- name: 'create-user | User {{ mysql.user.username }}({{ mysql.user.uid }}) should be created'
   user: >
     name={{ mysql.user.username }} 
     uid={{ mysql.user.uid }}
     group={{ mysql.user.group }} 
     shell={{ mysql.user.shell }}
     home={{ mysql.serverroot }}
-    comment="{{ mysql.user.comment }}" 
+    comment={{ mysql.user.comment }}
     createhome=no
     state=present
 
