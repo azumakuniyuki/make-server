@@ -18,6 +18,7 @@ mysql:
     shell: '/bin/sh'
     comment: '"MySQL Server"'
   conf:
+    file: my-small.cnf
     port: 3306
     socket: '/tmp/mysql.sock'
     rootpasswd: ''
