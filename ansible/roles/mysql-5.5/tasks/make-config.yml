@@ -31,6 +31,12 @@
     src=opt/mysql/etc/{{ mysql.conf.file }}.j2
     dest={{ mysql.serverroot }}/etc/my.cnf
 
+- name: 'make-config | Deploy /etc/logrotate.d/mysql'
+  when: ansible_os_family in [ 'RedHat', 'Debian' ]
+  template: >
+    src=etc/logrotate.d/mysql-log-rotate.j2
+    dest=/etc/logrotate.d/mysql
+
 - name: 'make-config | MySQL database should be installed'
   command: >
     chdir={{ mysql.serverroot }}
