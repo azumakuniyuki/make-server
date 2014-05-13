@@ -4,13 +4,8 @@
 # |  __/ (_) \__ \ || (_| | | |  __/___) | |_| | |___ / / | || (_| \__ \   <\__ \
 # |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/   \__\__,_|___/_|\_\___/
 #                    |___/                                                       
-#  _                 _                      _       _   
-# | |__   ___   ___ | |_      ___  ___ _ __(_)_ __ | |_ 
-# | '_ \ / _ \ / _ \| __|____/ __|/ __| '__| | '_ \| __|
-# | |_) | (_) | (_) | ||_____\__ \ (__| |  | | |_) | |_ 
-# |_.__/ \___/ \___/ \__|    |___/\___|_|  |_| .__/ \__|
-#                                            |_|        
-- name: '(RedHat) Deploy init script /etc/rc.d/init.d/postgresql'
+# boot-script
+- name: 'boot-script | RedHat | Deploy /etc/init.d/postgresql'
   when: ansible_os_family == "RedHat"
   template: >
     src=etc/init.d/postgresql.{{ ansible_os_family }}.j2
@@ -19,12 +14,12 @@
     owner=root
     group=root
 
-- name: '(RedHat) Install init script /etc/rc.d/init.d/postgresql'
+- name: 'boot-script | RedHat | Install /etc/rc.d/init.d/postgresql'
   when: ansible_os_family == "RedHat"
   shell: >
     /sbin/chkconfig --add postgresql
     creates=/etc/rc.d/rc0.d/K36postgresql
 
-- name: 'Turn on init script'
+- name: 'boot-script | Turn on init script'
   service: name=postgresql enabled=yes
 

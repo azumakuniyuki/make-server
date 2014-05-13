@@ -4,21 +4,15 @@
 # |  __/ (_) \__ \ || (_| | | |  __/___) | |_| | |___ / / | || (_| \__ \   <\__ \
 # |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/   \__\__,_|___/_|\_\___/
 #                    |___/                                                       
-#             _                       _     _           
-#   __ _  ___| |_       __ _ _ __ ___| |__ (_)_   _____ 
-#  / _` |/ _ \ __|____ / _` | '__/ __| '_ \| \ \ / / _ \
-# | (_| |  __/ ||_____| (_| | | | (__| | | | |\ V /  __/
-#  \__, |\___|\__|     \__,_|_|  \___|_| |_|_| \_/ \___|
-#  |___/                                                
-- name: 'Download PostgreSQL {{ postgresql.version }} at {{ local.src }}'
+# get-archive
+- name: 'get-archive | Download PostgreSQL {{ postgresql.version }} at {{ local.src }}'
   get_url: >
     url=http://ftp.postgresql.org/pub/source/v{{ postgresql.version }}/postgresql-{{ postgresql.version }}.tar.gz
     dest={{ local.src }}/postgresql-{{ postgresql.version }}.tar.gz
 
-- name: 'Extract PostgreSQL {{ local.src }}/postgresql-{{ postgresql.version }}.tar.gz'
+- name: 'get-archive | Extract {{ local.src }}/postgresql-{{ postgresql.version }}.tar.gz'
   unarchive: >
     src={{ local.src }}/postgresql-{{ postgresql.version }}.tar.gz
     dest={{ local.src }}
     copy=no
-
 
