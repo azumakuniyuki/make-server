@@ -8,7 +8,7 @@ nginx:
   started: 0
   rebuild: 0
   version: 1.5.12
-  serverroot: '/usr/local/nginx'
+  serverroot: '/opt/nginx'
   user:
     username: 'nginx'
     password: ''
@@ -16,8 +16,8 @@ nginx:
     gid: 8192
     group: 'nginx'
     shell: '/sbin/nolgin'
-    comment: 'nginx httpd server'
+    comment: "'nginx httpd server'"
   conf:
     servername: '127.0.0.1'
-    documentroot: '/usr/local/nginx/html'
+    documentroot: '/opt/nginx/html'
 
