@@ -8,10 +8,9 @@ vsftpd:
   started: 0
   rebuild: 0
   version: 3.0.2
-  serverroot: '/usr/local/vsftpd'
+  serverroot: '/opt/vsftpd'
   patches:
     - 'vsftpd-2009-10-19-localconfig.patch'
-
   user:
     username: 'vsftpd'
     uid: 9261
