@@ -4,26 +4,22 @@
 # | | | | (_| | | | | |>  <  / / | || (_| \__ \   <\__ \
 # |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
 #        |___/                                          
-#                      _                                 
-#   ___ _ __ ___  __ _| |_ ___       _   _ ___  ___ _ __ 
-#  / __| '__/ _ \/ _` | __/ _ \_____| | | / __|/ _ \ '__|
-# | (__| | |  __/ (_| | ||  __/_____| |_| \__ \  __/ |   
-#  \___|_|  \___|\__,_|\__\___|      \__,_|___/\___|_|   
-#                                                        
-- name: 'Be sure group {{ nginx.user.group }}({{ nginx.user.gid }}) exists'
+# create-user
+#
+- name: 'create-user | Group {{ nginx.user.group }}({{ nginx.user.gid }}) should be created'
   group: >
     name={{ nginx.user.group }}
     gid={{ nginx.user.gid }}
     state=present
 
-- name: 'Be sure user {{ nginx.user.username }}({{ nginx.user.uid }}) exists'
+- name: 'create-user | User {{ nginx.user.username }}({{ nginx.user.uid }}) should be created'
   user: >
     name={{ nginx.user.username }} 
     uid={{ nginx.user.uid }}
     group={{ nginx.user.group }} 
     shell={{ nginx.user.shell }}
     home={{ nginx.serverroot }}
-    comment='{{ nginx.user.comment }}'
+    comment={{ nginx.user.comment }}
     createhome=no
     state=present
 

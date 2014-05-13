@@ -4,20 +4,15 @@
 # | | | | (_| | | | | |>  <  / / | || (_| \__ \   <\__ \
 # |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
 #        |___/                                          
-#                            _ _                         
-#   ___ ___  _ __ ___  _ __ (_) | ___       ___ _ __ ___ 
-#  / __/ _ \| '_ ` _ \| '_ \| | |/ _ \_____/ __| '__/ __|
-# | (_| (_) | | | | | | |_) | | |  __/_____\__ \ | | (__ 
-#  \___\___/|_| |_| |_| .__/|_|_|\___|     |___/_|  \___|
-#                     |_|                                
-- name: '(REBUILD) make clean'
+# compile-src
+- name: 'compile-src | REBUILD | make clean'
   command: >
     make clean
     chdir={{ local.src }}/nginx-{{ nginx.version }}/
     removes=Makefile
   when: nginx.rebuild == 1
 
-- name: 'Be sure nginx {{ nginx.version }} has been configured'
+- name: 'compile-src | nginx {{ nginx.version }} should be configured'
   notify: Restart nginx
   command: >
     /bin/sh configure
@@ -38,7 +33,7 @@
     creates=Makefile
     chdir={{ local.src }}/nginx-{{ nginx.version }}/
 
-- name: 'make nginx {{ nginx.version }}'
+- name: 'compile-src | make nginx {{ nginx.version }}'
   notify: Restart nginx
   command: >
     make
@@ -46,7 +41,7 @@
     creates=objs/nginx
   register: make_nginx_binary
 
-- name: 'Be sure nginx {{ nginx.version }} is installed'
+- name: 'compile-src | nginx {{ nginx.version }} should be installed'
   when: make_nginx_binary.changed
   notify: Restart nginx
   command: >
