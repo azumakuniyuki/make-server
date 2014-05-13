@@ -4,22 +4,16 @@
 # |  __/|  _  |  __/_____|__) | ___) / / | || (_| \__ \   <\__ \
 # |_|   |_| |_|_|       |____(_)____/_/   \__\__,_|___/_|\_\___/
 #                                                               
-#             _                       _     _           
-#   __ _  ___| |_       __ _ _ __ ___| |__ (_)_   _____ 
-#  / _` |/ _ \ __|____ / _` | '__/ __| '_ \| \ \ / / _ \
-# | (_| |  __/ ||_____| (_| | | | (__| | | | |\ V /  __/
-#  \__, |\___|\__|     \__,_|_|  \___|_| |_|_| \_/ \___|
-#  |___/                                                
-- name: 'Download PHP {{ php.version }} at {{ local.src }}'
+# get-archive
+- name: 'get-archive | Download PHP {{ php.version }} at {{ local.src }}'
   get_url: >
     url=http://jp1.php.net/distributions/php-{{ php.version }}.tar.bz2
     dest={{ local.src }}/php-{{ php.version }}.tar.bz2
 
-- name: 'Extract PHP = {{ local.src }}/php-{{ php.version }}.tar.bz2'
-# parameter ``creates'' is available from 1.6
-#   creates={{ local.src }}/php-{{ php.version }}
+- name: 'get-archive | Extract {{ local.src }}/php-{{ php.version }}.tar.bz2'
   unarchive: >
     src={{ local.src }}/php-{{ php.version }}.tar.bz2
     dest={{ local.src }}
+    creates={{ local.src }}/php-{{ php.version }}
     copy=no
 

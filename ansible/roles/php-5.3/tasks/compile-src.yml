@@ -3,93 +3,88 @@
 # | |_) | |_| | |_) |___|___ \   |_ \ / /| __/ _` / __| |/ / __|
 # |  __/|  _  |  __/_____|__) | ___) / / | || (_| \__ \   <\__ \
 # |_|   |_| |_|_|       |____(_)____/_/   \__\__,_|___/_|\_\___/
-#                            _ _                         
-#   ___ ___  _ __ ___  _ __ (_) | ___       ___ _ __ ___ 
-#  / __/ _ \| '_ ` _ \| '_ \| | |/ _ \_____/ __| '__/ __|
-# | (_| (_) | | | | | | |_) | | |  __/_____\__ \ | | (__ 
-#  \___\___/|_| |_| |_| .__/|_|_|\___|     |___/_|  \___|
-#                     |_|                                
-- name: '(REBUILD) make clean'
+# compile-src
+- name: 'compile-src | REBUILD | make clean'
   command: >
     make clean
     chdir={{ local.src }}/php-{{ php.version }}/
     removes=Makefile
   when: php.rebuild == 1
 
-- name: 'configure PHP-{{ php.version }}'
+- name: 'compile-src | PHP-{{ php.version }} should be configured'
   command: >
     chdir={{ local.src }}/php-{{ php.version }}
     /bin/sh configure 
-      --prefix={{ php.install }} 
-      --with-apxs2filter={{ php.depends.apache.serverroot }}/bin/apxs
-      --with-libdir=lib64
-      --with-config-file-path={{ php.install }}/etc
-      --with-config-file-scan-dir={{ php.install }}/etc/php.d
-      --enable-pdo=shared
-      --disable-debug
-      --with-pic
-      --disable-rpath
-      --with-pear
-      --with-freetype-dir=/usr
-      --with-png-dir=/usr
-      --with-xpm-dir=/usr
-      --enable-gd-native-ttf
-      --with-gdbm
-      --with-gettext
-      --with-iconv
-      --with-jpeg-dir=/usr
-      --with-openssl
-      --with-pcre-regex
-      --with-zlib
-      --with-layout=GNU
-      --enable-exif
-      --enable-ftp
-      --enable-magic-quotes
-      --enable-sockets
-      --enable-sysvsem
-      --enable-sysvshm
-      --enable-sysvmsg
-      --with-kerberos
-      --enable-shmop
-      --enable-calendar
-      --without-sqlite
-      --with-libxml-dir=/usr
-      --enable-pcntl
-      --enable-mbstring
-      --enable-mbregex
-      --with-gd={{ php.depends.gd.install }}
-      --enable-bcmath=shared
-      --with-xmlrpc=shared
-      --enable-dom=shared
-      --with-mysql=mysqlnd
-      --with-mysqli=mysqlnd
-      --with-pdo-mysql=shared,mysqlnd
-      --with-mysql-sock={{ php.depends.mysql.socket }}
-      --with-xsl=shared,/usr
-      --enable-xmlreader=shared
-      --enable-xmlwriter=shared
-      --with-curl=shared,/usr
-      --with-pdo-sqlite=shared,/usr
-      --with-pdo-dblib=shared,/usr
-      --enable-json=shared
-      --enable-zip=shared
-      --with-readline
-      --enable-phar=shared
-      --enable-sysvmsg=shared
-      --enable-sysvshm=shared
-      --enable-sysvsem=shared
-      --enable-posix=shared
-      --enable-fileinfo=shared
+    --prefix={{ php.install }} 
+    --with-apxs2filter={{ php.depends.apache.serverroot }}/bin/apxs
+    --with-libdir=lib64
+    --with-config-file-path={{ php.install }}/etc
+    --with-config-file-scan-dir={{ php.install }}/etc/php.d
+    --enable-pdo=shared
+    --disable-debug
+    --with-pic
+    --disable-rpath
+    --with-pear
+    --with-freetype-dir=/usr
+    --with-png-dir=/usr
+    --with-xpm-dir=/usr
+    --enable-gd-native-ttf
+    --with-gdbm
+    --with-gettext
+    --with-iconv
+    --with-jpeg-dir=/usr
+    --with-openssl
+    --with-pcre-regex
+    --with-zlib
+    --with-layout=GNU
+    --enable-exif
+    --enable-ftp
+    --enable-magic-quotes
+    --enable-sockets
+    --enable-sysvsem
+    --enable-sysvshm
+    --enable-sysvmsg
+    --with-kerberos
+    --enable-shmop
+    --enable-calendar
+    --without-sqlite
+    --with-libxml-dir=/usr
+    --enable-pcntl
+    --enable-mbstring
+    --enable-mbregex
+    --with-gd={{ php.depends.gd.install }}
+    --enable-bcmath=shared
+    --with-xmlrpc=shared
+    --enable-dom=shared
+    --with-mysql=mysqlnd
+    --with-mysqli=mysqlnd
+    --with-pdo-mysql=shared,mysqlnd
+    --with-mysql-sock={{ php.depends.mysql.socket }}
+    --with-xsl=shared,/usr
+    --enable-xmlreader=shared
+    --enable-xmlwriter=shared
+    --with-curl=shared,/usr
+    --with-pdo-sqlite=shared,/usr
+    --with-pdo-dblib=shared,/usr
+    --enable-json=shared
+    --enable-zip=shared
+    --with-readline
+    --enable-phar=shared
+    --enable-sysvmsg=shared
+    --enable-sysvshm=shared
+    --enable-sysvsem=shared
+    --enable-posix=shared
+    --enable-fileinfo=shared
     creates=Makefile
 
-- name: 'make PHP {{ php.version }}'
+- name: 'compile-src | make PHP {{ php.version }}'
   command: >
     chdir={{ local.src }}/php-{{ php.version }}
     make
     creates=libs/libphp5.so
   register: make_php_binary
 
-- name: 'make install PHP {{ php.version }}'
+- name: 'compile-src | make install PHP {{ php.version }}'
   when: make_php_binary.changed
   command: >
     chdir={{ local.src }}/php-{{ php.version }}

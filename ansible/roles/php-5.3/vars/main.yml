@@ -9,7 +9,7 @@ php:
   version: 5.3.27
   install: '/usr/local'
   depends:
-    apache: { serverroot: '/usr/local/httpd' }
-    mysql:  { serverroot: '/usr/local/mysql', socket: '/tmp/mysql.sock' }
+    apache: { serverroot: '/opt/httpd' }
+    mysql:  { serverroot: '/opt/mysql', socket: '/tmp/mysql.sock' }
     gd:     { version: 2.0.33, install: '/usr/local' }
 
