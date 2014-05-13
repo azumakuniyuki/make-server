@@ -4,23 +4,17 @@
 # | |_) |  __/ |  | |/ / | || (_| \__ \   <\__ \
 # | .__/ \___|_|  |_/_/   \__\__,_|___/_|\_\___/
 # |_|                                           
-#             _                       _     _           
-#   __ _  ___| |_       __ _ _ __ ___| |__ (_)_   _____ 
-#  / _` |/ _ \ __|____ / _` | '__/ __| '_ \| \ \ / / _ \
-# | (_| |  __/ ||_____| (_| | | | (__| | | | |\ V /  __/
-#  \__, |\___|\__|     \__,_|_|  \___|_| |_|_| \_/ \___|
-#  |___/                                                
+# get-archive
 #
-- name: 'Download Perl {{ perl.version }} at {{ local.src }}'
+- name: 'get-archive | Download Perl {{ perl.version }} at {{ local.src }}'
   get_url: >
     url=http://www.cpan.org/src/5.0/perl-{{ perl.version }}.tar.gz
     dest={{ local.src }}/perl-{{ perl.version }}.tar.gz
 
-- name: 'Extract Perl {{ local.src }}/perl-{{ perl.version }}.tar.gz'
-# parameter ``creates'' is available from 1.6
-#   creates={{ local.src }}/perl-{{ perl.version }}
+- name: 'get-archive | Extract Perl {{ local.src }}/perl-{{ perl.version }}.tar.gz'
   unarchive: >
     src={{ local.src }}/perl-{{ perl.version }}.tar.gz
     dest={{ local.src }}
+    creates={{ local.src }}/perl-{{ perl.version }}
     copy=no
 
