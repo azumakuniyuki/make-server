@@ -4,19 +4,14 @@
 #  \ V /\__ \  _| |_| |_) | (_| |/ / | || (_| \__ \   <\__ \
 #   \_/ |___/_|  \__| .__/ \__,_/_/   \__\__,_|___/_|\_\___/
 #                   |_|                                     
-#                      _                                 
-#   ___ _ __ ___  __ _| |_ ___       _   _ ___  ___ _ __ 
-#  / __| '__/ _ \/ _` | __/ _ \_____| | | / __|/ _ \ '__|
-# | (__| | |  __/ (_| | ||  __/_____| |_| \__ \  __/ |   
-#  \___|_|  \___|\__,_|\__\___|      \__,_|___/\___|_|   
-#                                                        
-- name: 'Be sure group {{ vsftpd.user.group }} exists'
+# create-user
+- name: 'create-user | Group {{ vsftpd.user.group }} should be created'
   group: >
     name={{ vsftpd.user.group }}
     gid={{ vsftpd.user.gid }}
     state=present
 
-- name: 'Be sure user {{ vsftpd.user.username }} exists'
+- name: 'create-user | User {{ vsftpd.user.username }} should be created'
   user: >
     name={{ vsftpd.user.username }} 
     uid={{ vsftpd.user.uid }}

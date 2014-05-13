@@ -4,20 +4,15 @@
 #  \ V /\__ \  _| |_| |_) | (_| |/ / | || (_| \__ \   <\__ \
 #   \_/ |___/_|  \__| .__/ \__,_/_/   \__\__,_|___/_|\_\___/
 #                   |_|                                     
-#  _           _        _ _             _         
-# (_)_ __  ___| |_ __ _| | |      _ __ | | ____ _ 
-# | | '_ \/ __| __/ _` | | |_____| '_ \| |/ / _` |
-# | | | | \__ \ || (_| | | |_____| |_) |   < (_| |
-# |_|_| |_|___/\__\__,_|_|_|     | .__/|_|\_\__, |
-#                                |_|        |___/ 
-- name: '(RedHat) Install dependencies for vsftpd {{ vsftpd.version }}'
+# install-pkg
+- name: 'install-pkg | RedHat | Install dependencies for vsftpd {{ vsftpd.version }}'
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   with_items:
     - libcap
     - libcap-devel
 
-- name: '(Debian) Install dependencies for vsftpd {{ vsftpd.version }}'
+- name: 'install-pkg | Debian | Install dependencies for vsftpd {{ vsftpd.version }}'
   when: ansible_os_family == "Debian"
   yum:  name={{ item }} state=present
   with_items:

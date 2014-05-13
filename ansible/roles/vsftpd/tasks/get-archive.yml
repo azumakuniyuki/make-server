@@ -4,23 +4,17 @@
 #  \ V /\__ \  _| |_| |_) | (_| |/ / | || (_| \__ \   <\__ \
 #   \_/ |___/_|  \__| .__/ \__,_/_/   \__\__,_|___/_|\_\___/
 #                   |_|                                     
-#             _                       _     _           
-#   __ _  ___| |_       __ _ _ __ ___| |__ (_)_   _____ 
-#  / _` |/ _ \ __|____ / _` | '__/ __| '_ \| \ \ / / _ \
-# | (_| |  __/ ||_____| (_| | | | (__| | | | |\ V /  __/
-#  \__, |\___|\__|     \__,_|_|  \___|_| |_|_| \_/ \___|
-#  |___/                                                
-- name: 'Download vsftpd {{ vsftpd.version }} at {{ local.src }}'
+# get-archive
+- name: 'get-archive | Download vsftpd {{ vsftpd.version }} at {{ local.src }}'
   get_url: >
     url=https://security.appspot.com/downloads/vsftpd-{{ vsftpd.version }}.tar.gz
     dest={{ local.src }}/vsftpd-{{ vsftpd.version }}.tar.gz
     validate_certs=no
 
-- name: 'Extract vsftpd {{ vsftpd.version }} at {{ local.src }}'
-# parameter ``creates'' is available from 1.6
-#   creates={{ local.src }}/vsftpd-{{ vsftpd.version }}
+- name: 'get-archive | Extract vsftpd {{ vsftpd.version }} at {{ local.src }}'
   unarchive: >
     src={{ local.src }}/vsftpd-{{ vsftpd.version }}.tar.gz
     dest={{ local.src }}
+    creates={{ local.src }}/vsftpd-{{ vsftpd.version }}
     copy=no
 
