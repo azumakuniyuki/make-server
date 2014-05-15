@@ -38,6 +38,7 @@
   yum:  name={{ item }} state=present
   with_items:
     - python-pip
+    - libselinux-python
 
 - name: 'install-pkg | Debian | Each package for development should be installed'
   when: ansible_os_family == "Debian"
@@ -71,4 +72,5 @@
   apt:  name={{ item }} state=present
   with_items:
     - python-pip
+    - python-selinux
 
