@@ -18,6 +18,7 @@
     - ncurses
     - ncurses-devel
     - openssl-devel
+    - patch
     - pcre
     - pcre-devel
     - readline
@@ -51,9 +52,10 @@
     - libpcre3
     - libpcre3-dev
     - libreadline6-dev
+    - libreadline6
     - ncurses-dev
     - openssl
-    - libreadline6
+    - patch
 
 - name: 'install-pkg | Debian | Each package for archive should be installed'
   when: ansible_os_family == "Debian"
