@@ -4,7 +4,10 @@
 # | (_| (_) | | | | | | | | | | | (_) | | | |/ / | || (_| \__ \   <\__ \
 #  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/   \__\__,_|___/_|\_\___/
 #                                                                       
-- name: 'main | Deploy .profile and .bash_profile into /root'
+- name: main | wheel group should be created
+  group: name=wheel system=yes state=present
+
+- name: main | Deploy .profile and .bash_profile into /root
   template: >
     src=root/dot.{{ item }}.j2
     dest=/root/.{{ item }}
