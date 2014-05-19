@@ -10,6 +10,9 @@
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   with_items: 
+    - autoconf
+    - autotools
+    - automake
     - gcc
     - gcc-c++
     - gettext
@@ -44,6 +47,7 @@
   when: ansible_os_family == "Debian"
   apt: pkg={{ item }} state=present
   with_items:
+    - autotools-devel
     - autoconf2.59
     - automake1.11
     - gcc
