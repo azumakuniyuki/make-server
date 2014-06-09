@@ -1,0 +1,45 @@
+#   ___                   ____ ____  _        ___            _        
+#  / _ \ _ __   ___ _ __ / ___/ ___|| |      / / |_ __ _ ___| | _____ 
+# | | | | '_ \ / _ \ '_ \\___ \___ \| |     / /| __/ _` / __| |/ / __|
+# | |_| | |_) |  __/ | | |___) |__) | |___ / / | || (_| \__ \   <\__ \
+#  \___/| .__/ \___|_| |_|____/____/|_____/_/   \__\__,_|___/_|\_\___/
+#       |_|                                                           
+#
+- name: get-archive | Download OpenSSL archive
+  get_url: >
+    url=http://www.openssl.org/source/openssl-{{ openssl.version }}.tar.gz
+    dest={{ local.src }}/openssl-{{ openssl.version }}.tar.gz
+
+- name: get-archive | Extract {{ local.src }}/openssl-{{ openssl.version }}.tar.gz
+  unarchive: >
+    src={{ local.src }}/openssl-{{ openssl.version }}.tar.gz
+    dest={{ local.src }}
+    creates={{ local.src }}/openssl-{{ openssl.version }}
+    copy=no
+
+- name: compile-src | REBUILD | make clean
+  command: >
+    make clean
+    chdir={{ local.src }}/openssl-{{ openssl.version }}/
+    removes=./crypto/opensslconf.h.bak
+  when: openssl.rebuild == 1
+
+- name: compile-src | OpenSSL {{ openssl.version }} should be configured
+  shell: >
+    /bin/sh ./config --prefix={{ openssl.install }}
+    creates=./crypto/opensslconf.h.bak
+    chdir={{ local.src }}/openssl-{{ openssl.version }}/
+
+- name: compile-src | OpenSSL {{ openssl.version }} should be made
+  command: >
+    make
+    chdir={{ local.src }}/openssl-{{ openssl.version }}/
+    creates=libcrypto.a
+  register: make_openssl_binary
+
+- name: compile-src | OpenSSL {{ openssl.version }} should be installed
+  when: make_openssl_binary.changed
+  command: >
+    make install
+    chdir={{ local.src }}/openssl-{{ openssl.version }}/
+
