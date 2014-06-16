@@ -1,0 +1,89 @@
+#  _     _           _  ___    ___            _        
+# | |__ (_)_ __   __| |/ _ \  / / |_ __ _ ___| | _____ 
+# | '_ \| | '_ \ / _` | (_) |/ /| __/ _` / __| |/ / __|
+# | |_) | | | | | (_| |\__, / / | || (_| \__ \   <\__ \
+# |_.__/|_|_| |_|\__,_|  /_/_/   \__\__,_|___/_|\_\___/
+#                                                      
+# make-config
+#
+- name: make-config | Each directory for bind9 should be created
+  file: >
+    path={{ bind.serverroot }}/{{ item }}
+    mode=0755
+    state=directory
+    owner={{ bind.user.username }}
+    group={{ bind.user.group }}
+  with_items:
+    - etc
+    - var/run
+    - var/log
+    - var/data/masters/l
+    - var/data/masters/1
+    - var/data/slaves
+    - tmp
+
+- name: make-config | Deploy {{ bind.serverroot }}/etc/named.conf
+  notify: Restart bind
+  template: >
+    src=opt/named/etc/named.conf.j2
+    dest={{ bind.serverroot }}/etc/named.conf
+
+
+- name: make-config | localtime file must exist
+  shell: >
+    /bin/cp /etc/localtime {{ bind.serverroot }}/etc/localtime
+    chdir={{ bind.serverroot }}
+    creates={{ bind.serverroot }}/etc/localtime
+
+- name: make-config | {{ bind.serverroot }}/etc/rndc.key should be created
+  shell: >
+    chdir={{ bind.serverroot }}
+    ./sbin/rndc-confgen -a -p 953
+    -c /etc/{{ ansible_hostname }}-rndc-key 
+    -k {{ ansible_hostname }}-rndc-key
+    -r /dev/urandom
+    -u {{ bind.user.username }}
+    -t {{ bind.serverroot }}
+    creates={{ bind.serverroot }}/etc/{{ ansible_hostname }}-rndc-key
+
+- name: make-config | {{ bind.serverroot }}/etc/rndc.key should be linked
+  file: >
+    src={{ bind.serverroot }}/etc/{{ ansible_hostname }}-rndc-key
+    path={{ bind.serverroot }}/etc/rndc.key
+    state=link
+
+- name: make-config | {{ bind.serverroot }}/etc/rootzone-dnssec-keys should be deployed
+  shell: >
+    chdir={{ bind.workingdir }}/bind-{{ bind.version }}
+    /bin/cp bind.keys {{ bind.serverroot }}/etc/rootzone-dnssec-keys
+    creates={{ bind.serverroot }}/etc/rootzone-dnssec-keys
+
+- name: make-config | {{ bind.serverroot }}/var/data/named.root should be deployed
+  get_url: >
+    url=ftp://rs.internic.net/domain/named.root
+    dest={{ bind.serverroot }}/var/data/named.root
+
+- name: make-config | localhost.zone and 127.in-addr.arpa.rev should be deployed
+  copy: >
+    src=opt/named/var/data/masters/{{ item }}
+    dest={{ bind.serverroot }}/var/data/masters/{{ item }}
+  with_items:
+    - l/localhost.zone
+    - 1/127.in-addr.arpa.rev
+
+- name: make-config | localhost.zone and 127.in-addr.arpa.rev should be owned by {{ bind.user.username }}
+  file: >
+    path={{ bind.serverroot }}/var/data/masters/{{ item }}
+    owner={{ bind.user.username }}
+    group={{ bind.user.group }}
+    mode=0644
+  with_items:
+    - l/localhost.zone
+    - 1/127.in-addr.arpa.rev
+
+- name: make-config | dig command should be linked to /usr/local/bin/dig
+  file: >
+    src={{ bind.serverroot }}/bin/dig
+    dest=/usr/local/bin/dig
+    state=link
+

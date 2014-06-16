@@ -1,0 +1,271 @@
+#!/bin/bash
+#
+# bind            This shell script takes care of starting and stopping
+#                 named (BIND DNS server).
+#
+# chkconfig: - 13 87
+# description: named (BIND) is a Domain Name Server (DNS) \
+# that is used to resolve host names to IP addresses.
+# probe: true
+
+### BEGIN INIT INFO
+# Provides: $named
+# Required-Start: $local_fs $network $syslog
+# Required-Stop: $local_fs $network $syslog
+# Default-Start:
+# Default-Stop: 0 1 2 3 4 5 6
+# Short-Description: start|stop|status|restart|try-restart|reload|force-reload DNS server
+# Description: control ISC BIND implementation of DNS server
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+[ -r /etc/sysconfig/bind ] && . /etc/sysconfig/bind
+
+RETVAL=0
+export KRB5_KTNAME=${KEYTAB_FILE:-/etc/named.keytab}
+export ROOTDIR=${ROOTDIR:-{{ bind.serverroot }}}
+export OPTIONS="-4 -c /etc/named.conf"
+
+named='named'
+if [ -x {{ bind.serverroot }}/sbin/named-sdb ]; then
+    named='named-sdb'
+fi
+
+# Don't kill named during clean-up
+NAMED_SHUTDOWN_TIMEOUT=${NAMED_SHUTDOWN_TIMEOUT:-25}
+
+if [ -n "$ROOTDIR" ]; then
+   ROOTDIR=`echo $ROOTDIR | sed 's#//*#/#g;s#/$##'`;
+   rdl=`/usr/bin/readlink $ROOTDIR`;
+   if [ -n "$rdl" ]; then
+      ROOTDIR="$rdl";
+   fi;
+fi
+
+ROOTDIR_MOUNT='/etc/named /etc/pki/dnssec-keys /var/named /etc/named.conf
+/etc/rootzone-dnssec-keys /etc/named.rfc1912.zones /etc/rndc.conf /etc/rndc.key
+/usr/lib64/bind /usr/lib/bind /etc/named.iscdlv.key'
+
+mount_chroot_conf()
+{
+  if [ -n "$ROOTDIR" ]; then
+    for all in $ROOTDIR_MOUNT; do
+      # Skip nonexistant files
+      [ -e "$all" ] || continue
+
+      # If mount source is a file
+      if ! [ -d "$all" ]; then
+        # mount it only if it is not present in chroot or it is empty
+        if ! [ -e "$ROOTDIR$all" ] || [ `stat -c'%s' "$ROOTDIR$all"` -eq 0 ]; then
+          touch "$ROOTDIR$all"
+          mount --bind "$all" "$ROOTDIR$all"
+        fi
+      else
+        # Mount source is a directory. Mount it only if directory in chroot is
+        # empty.
+    if [ -e "$all" ] && [ `ls -1A $ROOTDIR$all | wc -l` -eq 0 ]; then
+          mount --bind "$all" "$ROOTDIR$all"
+    fi
+      fi
+    done
+  fi
+}
+
+umount_chroot_conf()
+{
+  for all in $ROOTDIR_MOUNT; do
+    # Check if file is mount target. Do not use /proc/mounts because detecting
+    # of modified mounted files can fail.
+    if mount | grep -q '.* on '"$ROOTDIR$all"' .*'; then
+      umount "$ROOTDIR$all"
+      # Remove temporary created files
+      [ -f "$all" ] && rm -f "$ROOTDIR$all"
+    fi
+  done
+}
+
+# Check if all what named needs running
+start()
+{
+  [ "$EUID" != "0" ] && exit 4
+
+  # Source networking configuration.
+  [ -r /etc/sysconfig/network ] && . /etc/sysconfig/network
+
+  # Check that networking is up
+  [ "${NETWORKING}" = "no" ] && exit 1
+
+
+  [ -x {{ bind.serverroot }}/sbin/"$named" ] || exit 5
+
+  # Handle -c option
+  previous_option='unspecified';
+  for a in $OPTIONS; do
+    if [ $previous_option = '-c' ]; then
+      named_conf=$a;
+    fi;
+    previous_option=$a;
+  done;
+
+  named_conf=${named_conf:-/etc/named.conf};
+
+  mount_chroot_conf
+
+  if [ ! -r $ROOTDIR$named_conf ]; then
+    echo 'Cannot find configuration file. You could create it by system-config-bind'
+    exit 6;
+  fi;
+
+  # all pre-start is done, lets start named
+  echo -n $"Starting named: "
+  if [ -n "`/sbin/pidof -o %PPID "$named"`" ]; then
+    echo -n $"named: already running"
+    success
+    echo
+    exit 0;
+  fi;
+
+  ckcf_options='-z'; # enable named-checkzone for each zone (9.3.1+) !
+  if [ -n "${ROOTDIR}" -a "x${ROOTDIR}" != "x/" ]; then
+    OPTIONS="${OPTIONS} -t ${ROOTDIR}"
+    ckcf_options="$ckcf_options -t ${ROOTDIR}";
+    [ -s /etc/localtime ] && cp -fp /etc/localtime ${ROOTDIR}/etc/localtime;
+  fi
+
+  RETVAL=0
+  # check if configuration is correct
+  if [ -x {{ bind.serverroot }}/sbin/named-checkconf ] && [ -x {{ bind.serverroot }}/sbin/named-checkzone ] && {{ bind.serverroot }}/sbin/named-checkconf $ckcf_options ${named_conf} >/dev/null 2>&1; then
+
+    daemon {{ bind.serverroot }}/sbin/"$named" -u named ${OPTIONS};
+    RETVAL=$?
+    if [ $RETVAL -eq 0 ]; then
+      rm -f /var/run/{named,named-sdb}.pid;
+      ln -s $ROOTDIR/var/run/named/"$named".pid /var/run/"$named".pid;
+    fi;
+
+    if [ -n "`/sbin/pidof -o %PPID "$named"`" ]; then
+      # Verify that named actually started (JM 2006-10-04)
+      if [ ! -e $ROOTDIR/var/run/"$named".pid ]; then
+      # If there is not a file containing the PID of the now running named daemon then create it (JM 2006-10-04)
+        echo `/sbin/pidof -o %PPID "$named"` > $ROOTDIR/var/run/"$named".pid;
+      fi;
+    fi;
+  else
+    named_err="`{{ bind.serverroot }}/sbin/named-checkconf $ckcf_options $named_conf 2>&1`";    
+    echo
+    echo "Error in named configuration:";
+    echo "$named_err";
+    failure
+    echo
+    [ -x /usr/bin/logger ] && echo "$named_err" | /usr/bin/logger -pdaemon.error -tnamed;
+    umount_chroot_conf
+    exit 2;
+  fi;
+  echo
+  if [ $RETVAL -eq 0 ]; then
+    touch /var/lock/subsys/named;
+  else
+    umount_chroot_conf
+    exit 7;
+  fi
+  return 0;
+}
+
+stop() {
+  [ "$EUID" != "0" ] && exit 4
+
+  # Stop daemons.
+  echo -n $"Stopping named: "
+  [ -x {{ bind.serverroot }}/sbin/rndc ] && {{ bind.serverroot }}/sbin/rndc stop >/dev/null 2>&1;
+  RETVAL=$?
+  # was rndc successful?
+  [ "$RETVAL" -eq 0 ] || killproc "$named" -TERM >/dev/null 2>&1
+
+  timeout=0
+  RETVAL=0
+  while /sbin/pidof -o %PPID "$named" >/dev/null; do
+    if [ $timeout -ge $NAMED_SHUTDOWN_TIMEOUT ]; then
+      RETVAL=1
+      break
+    else
+      sleep 2 && echo -n "."
+      timeout=$((timeout+2))
+    fi;
+  done
+
+  umount_chroot_conf
+
+  # remove pid files
+  if [ $RETVAL -eq 0 ]; then
+    rm -f /var/lock/subsys/named
+    rm -f /var/run/{named,named-sdb}.pid
+  fi;
+
+  if [ $RETVAL -eq 0 ]; then
+    success
+  else
+    failure
+    RETVAL=1
+  fi;
+  echo
+  return $RETVAL
+}
+
+
+rhstatus() {
+  [ -x {{ bind.serverroot }}/sbin/rndc ] && {{ bind.serverroot }}/sbin/rndc status;
+  status {{ bind.serverroot }}/sbin/"$named";
+  return $?
+}   
+restart() {
+    stop
+    start
+}   
+reload() {
+        [ "$EUID" != "0" ] && exit 
+
+        echo -n $"Reloading "$named": "
+    p=`/sbin/pidof -o %PPID "$named"`
+    RETVAL=$?
+    if [ "$RETVAL" -eq 0 ]; then 
+        {{ bind.serverroot }}/sbin/rndc reload >/dev/null 2>&1 || /bin/kill -HUP $p;
+        RETVAL=$?
+        fi
+    [ "$RETVAL" -eq 0 ] && success $"$named reload" || failure $"$named reload"
+        echo
+    return $RETVAL
+}
+
+# See how we were called.
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        rhstatus;
+        RETVAL=$?
+        ;;
+    restart)
+        restart
+        ;;
+    condrestart|try-restart)
+        if [ -e /var/lock/subsys/named ]; then restart; fi
+                ;;
+    reload)
+        reload
+        ;;
+    force-reload)
+        if ! reload; then restart; fi
+        ;;
+    *)
+            echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload}"
+        [ "x$1" = "x" ] && exit 0
+        exit 2
+esac
+
+exit $RETVAL

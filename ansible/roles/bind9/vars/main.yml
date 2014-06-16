@@ -1,0 +1,20 @@
+#  _     _           _  ___    __                    
+# | |__ (_)_ __   __| |/ _ \  / /_   ____ _ _ __ ___ 
+# | '_ \| | '_ \ / _` | (_) |/ /\ \ / / _` | '__/ __|
+# | |_) | | | | | (_| |\__, / /  \ V / (_| | |  \__ \
+# |_.__/|_|_| |_|\__,_|  /_/_/    \_/ \__,_|_|  |___/
+#                                                    
+bind:
+  started: 1
+  rebuild: 0
+  version: 9.10.0-P2
+  serverroot: /opt/named
+  workingdir: /usr/local/src
+  user:
+    username: named
+    uid: 953
+    gid: 953
+    group: named
+    shell: /sbin/nolgin
+    comment: "'DNS BIND9'"
+

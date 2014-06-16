@@ -1,0 +1,200 @@
+// {{ ansible_fqdn }} = {{ ansible_default_ipv4.address }}
+//
+/****************************************************************************
+ ** Access Control List
+ ***************************************************************************/
+acl "localnetworks" {
+    /* The following networks are RFC3300 and RFC1918. */
+    127.0.0.0/8;
+};
+
+acl "masterservers" {
+};
+
+acl "publicslaves"  {
+};
+
+acl "stealthslaves" {
+};
+
+
+/****************************************************************************
+ ** Log configurations
+ ***************************************************************************/
+logging {
+    channel log_default {
+        file            "/var/log/named-daemon.log" versions 32 size 1m;
+        severity        info;
+        print-time      yes;
+        print-category  yes;
+    };
+
+    channel log_transfer {
+        file            "/var/log/named-transfer.log" versions 32 size 1m;
+        severity        info;
+        print-time      yes;
+        print-category  yes;
+    };
+
+    channel log_queries {
+        file            "/var/log/named-queries.log" versions 32 size 1m;
+        severity        info;
+        print-time      yes;
+        print-category  yes;
+    };
+
+    channel log_security {
+        file            "/var/log/named-security.log" versions 32 size 1m;
+        severity        info;
+        print-time      yes;
+    };
+
+    channel log_lameservers {
+        file            "/var/log/named-lameservers.log" versions 32 size 1m;
+        severity        info;
+        print-time      yes;
+    };
+
+    category default        { "log_default"; };
+    category general        { "log_default"; };
+    category xfer-in        { "log_transfer"; };
+    category xfer-out       { "log_transfer"; };
+    category notify         { "log_transfer"; };
+    category security       { "log_security"; };
+    category dnssec         { "log_security"; };
+    category queries        { null; };
+    //category queries      { "log_queries"; };
+    //category lame-servers { null; };
+    category lame-servers   { "log_lameservers"; };
+
+}; /* End of logging{} */
+
+
+/****************************************************************************
+ ** Options
+ ***************************************************************************/
+options {
+    directory       "/tmp";
+    version         "0.0.0";
+    recursion       yes;
+    pid-file        "/var/run/named.pid";
+    session-keyfile "/var/run/session.key";
+    statistics-file "/var/tmp/named-statistics";
+    dump-file       "/var/tmp/named-dumpedcache";
+
+    recursive-clients             128;
+    // max-ncache-ttl             300;
+    // max-cache-ttl             3600;
+    // lame-ttl                   600;
+    // cleaning-interval           60;
+    // max-cache-size       unlimited;
+
+    // Zone Transfer Configuration
+    transfers-in        32;
+    transfers-out       32;
+    tcp-clients         32;
+
+    listen-on port 53   { any;  };
+    allow-query         { any;  };
+    allow-notify        { none; };
+    allow-update        { none; };
+    allow-transfer      { none; };
+    allow-recursion     { localnetworks; };
+
+    /*
+     * If there is a firewall between you and nameservers you want
+     * to talk to, you might need to uncomment the query-source
+     * directive below.  Previous versions of BIND always asked
+     * questions using port 53, but BIND 8.1 uses an unprivileged
+     * port by default.
+     */
+     query-source address * port *;
+
+     dnssec-enable      yes;
+     dnssec-validation  yes;
+
+}; /* End of options{} */
+
+/****************************************************************************
+ ** DNSSEC Configurations
+ ***************************************************************************/
+include "/etc/rootzone-dnssec-keys";
+
+/****************************************************************************
+ ** RNDC Configurations
+ ***************************************************************************/
+include "/etc/{{ ansible_hostname }}-rndc-key";
+controls { 
+    inet 127.0.0.1 port 953
+    allow { 127.0.0.1; }
+    keys { "{{ ansible_hostname }}-rndc-key"; };
+
+}; /* End of controls{} */
+
+/****************************************************************************
+ ** Local zone configuration(RFC1700)
+ ***************************************************************************/
+zone "." IN {
+    type hint;
+    file "/var/data/named.root";
+};
+
+zone "localhost" IN {
+    type master;
+    file "/var/data/masters/l/localhost.zone";
+    allow-update { none; };
+    allow-transfer { 127.0.0.1; };
+};
+
+zone "127.in-addr.arpa" IN {
+    type master;
+    file "/var/data/masters/1/127.in-addr.arpa.rev";
+    allow-update { none; };
+    allow-transfer { 127.0.0.1; };
+
+};
+
+zone "com" { type delegation-only; };
+zone "net" { type delegation-only; };
+zone "cc"  { type delegation-only; };
+
+
+/****************************************************************************
+ ** Local zone configuration(RFC1918)
+ ***************************************************************************/
+
+
+/****************************************************************************
+ ** Master server configuration
+ ** Following zones are sorted by alphabetical
+ ***************************************************************************/
+/** 
+zone "example.jp" {
+    type master;
+    file "/var/data/masters/e/example.jp.zone";
+    allow-transfer {
+        localnetworks;
+        publicslaves;
+        stealthslaves;
+    };
+};
+**/
+
+/****************************************************************************
+ ** Slave server configuration
+ ** Following zones are sorted by alphabetical
+ ***************************************************************************/
+/**
+zone "example.co.jp" {
+    type slave;
+    file "/var/data/slaves/e/example.co.jp.zone.bak";
+    masters { 192.0.2.53; };
+    allow-transfer {
+        localnetworks;
+        masterservers;
+        stealthslaves;
+    };
+};
+**/
+
+/* End of named.conf */
