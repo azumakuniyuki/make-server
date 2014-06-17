@@ -16,6 +16,7 @@
     - firewall-rules
     - trusted-hosts
     - extroot-hosts
+    - monitor-hosts
 
 - name: make-config | Be sure the wall should be deployed
   when: ansible_system == "Linux" and firewall.started
