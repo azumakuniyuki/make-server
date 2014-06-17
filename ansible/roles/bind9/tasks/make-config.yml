@@ -22,12 +22,29 @@
     - var/data/slaves
     - tmp
 
+- name: make-config | Sub directories for master zone should be created
+  file: >
+    path={{ bind.serverroot }}/var/data/masters/{{ item }}
+    mode=0755
+    owner={{ bind.user.username }}
+    group={{ bind.user.group }}
+    state=directory
+  with_items: bind.zone.masters
+
+- name: make-config | Sub directories for slave zone should be created
+  file: >
+    path={{ bind.serverroot }}/var/data/slaves/{{ item }}
+    mode=0755
+    owner={{ bind.user.username }}
+    group={{ bind.user.group }}
+    state=directory
+  with_items: bind.zone.slaves
+
 - name: make-config | Deploy {{ bind.serverroot }}/etc/named.conf
   notify: Restart bind
   template: >
     src=opt/named/etc/named.conf.j2
     dest={{ bind.serverroot }}/etc/named.conf
-
 
 - name: make-config | localtime file must exist
   shell: >
