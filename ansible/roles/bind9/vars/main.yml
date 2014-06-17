@@ -17,4 +17,6 @@ bind:
     group: named
     shell: /sbin/nolgin
     comment: "'DNS BIND9'"
-
+  zone:
+   masters: []
+   slaves:  []
