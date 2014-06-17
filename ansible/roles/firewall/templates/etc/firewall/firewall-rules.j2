@@ -1,0 +1,94 @@
+# $Id: firewall-rules,v 1.2 2009/04/29 13:55:29 ak Exp $
+# vim: ts=8
+#
+# Policy Configuration
+ALLOW_ANY_CONNECTION_FROM_TRUSTEDHOSTS=1	# Allow any connections from ./trusted-hosts
+ALLOW_ANY_CONNECTION_FROM_EXTERNALROOT=0	# Allow any connections from ./extroot-hosts
+ALLOW_ANY_CONNECTION_FROM_MONITORHOSTS=0	# Allow any connections from ./monitor-hosts
+ALLOW_SSH_CONNECTION_FROM_WORLDWIDENET=1
+ALLOW_FTP_CONNECTION_FROM_WORLDWIDENET=0
+DENY_ANY_CONNECTION_FROM_ATTACKERHOSTS=1	# Reject any connections from ./attacker-hosts
+DONOT_COMMIT_IMMEDIATELY_FIREWALL_RULE=0
+
+USE_IP4_TCP_SYNCOOKIES=1
+IGNORE_ICMP_BROADCASTS=1
+DROP_IPFRAGMENT_PACKET=1
+DROP_IPMULTICASTPACKET=1
+DROP_NETBIOS_AND_DHSMB=1
+
+# * Host Group
+#   T = Trusted hosts		./trusted-hosts
+#   M = Monitoring hosts	./monitor-hosts
+#   X = External superusers	./extroot-hosts
+#   A = Anywhere
+#
+# * Remote administration, Host Groups:Default Port
+port_opensshd={{ firewall.port.ssh }}		# TX:22		SSH(Default)
+#port_telnetd=23		# T:23		TELNET
+#port_fingerd=79		# TX:79		Finger
+
+# Monitoring
+#port_netsnmpd=161		# MT:161	SNMP(UDP)
+#port_muninsrv=4949		# MT:4949	Munin
+#port_zabbix=10050,10051	# MT:1005{0,1}	Zabbix
+
+# * DNS
+#port_dnsnamed=53		# A:53		DNS
+#port_bindrndc=953		# T:953		RNDC
+
+# * File, Log, Messaging
+#   If ftp is enabled, do not forget the following 
+#   setting in /etc/sysconfig/iptables-config file:
+#   IPTABLES_MODULES="ip_conntrack_ftp ip_nat_ftp"
+#port_ftpdata=20		# T:20		FTP(Data)
+#port_ftpctrl=21		# T:21		FTP(Control)
+#port_syslogd=514		# T:514		syslog(UDP)
+
+# * Email
+#port_sendmail=25		# A:25		SMTP
+#port_pop3mail=110		# AT:110	POP3
+#port_imapmail=143		# AT:143	IMAP4
+#port_smtpossl=465		# A:465		SMTP Over TLS/SSL
+#port_smsubmit=587		# AT:587	Submission
+#port_imapossl=993		# AT:993	IMAP4 Over TLS/SSL
+#port_pop3ossl=995		# AT:995	POP3 Over TLS/SSL
+
+# * Web
+#port_httpdwww=80		# A:80		HTTP
+#port_httpdssl=443		# A:443		HTTP Over TLS/SSL
+
+# * Database
+#port_oracledb=1521		# T:1521	Oracle Database
+#port_oramysql=3306		# T:3306	MySQL
+#port_postgres=5432		# T:5432	PostgreSQL
+#port_memcache=11211		# T:11211	Memcached
+
+# * Port numbers by group(trusted,monitors,anywhere)
+#
+#    clamav-milter	7357
+#    sid-milter		8891
+#    dk-milter		8892
+#    anavisd-milter	10026
+#    webmin		10000
+#    usermin		20000
+#    dellomsa		1311
+#    X11(tcp)		6000
+#    X11(udp)		6001
+#    ldap		389
+#    ldaps		636
+#    swat		901
+#    isakmp(udp)	500
+#    tripwire		1169
+#    openvpn		1194
+#    cvspserver		2401
+#    clamd		3310
+#    ntp(udp)		123
+#    squid		3192
+#    spamassassin	783
+#    irc		6660:6669
+#
+#port_trustedh=901,1194,2401
+#port_monitors=123,6660:6669
+#port_extroots=3192
+#port_anywhere=123,2401
+

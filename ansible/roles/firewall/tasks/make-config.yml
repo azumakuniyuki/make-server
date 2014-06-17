@@ -1,0 +1,41 @@
+#   __ _                        _ _    ___            _        
+#  / _(_)_ __ _____      ____ _| | |  / / |_ __ _ ___| | _____ 
+# | |_| | '__/ _ \ \ /\ / / _` | | | / /| __/ _` / __| |/ / __|
+# |  _| | | |  __/\ V  V / (_| | | |/ / | || (_| \__ \   <\__ \
+# |_| |_|_|  \___| \_/\_/ \__,_|_|_/_/   \__\__,_|___/_|\_\___/
+#                                                              
+# make-config
+- name: make-config | Deploy each file in /etc/firewall
+  register: firewall_scripts
+  template: >
+    src=etc/firewall/{{ item }}.j2
+    dest=/etc/firewall/{{ item }}
+  with_items:
+    - my-ipv4-address
+    - internal-hosts
+    - firewall-rules
+    - trusted-hosts
+    - extroot-hosts
+
+- name: make-config | Be sure the wall should be deployed
+  when: ansible_system == "Linux" and firewall.started
+  register: wall_has_been_deployed
+  shell: >
+    chdir=/etc/firewall
+    ./make-linux-iptables wall
+  changed_when: "'OK' in wall_has_been_deployed"
+
+- name: make-config | Be sure /etc/sysconfig/iptables should be created
+  when: ansible_system == "Linux" and firewall.started
+  shell: >
+    chdir=/etc/firewall
+    ./make-linux-iptables dump > /etc/sysconfig/iptables
+    creates=/etc/sysconfig/iptables
+
+- name: make-config | Be sure /etc/sysconfig/iptables should be updated
+  when: ansible_system == "Linux" and firewall.started
+  when: firewall_scripts.changed
+  shell: >
+    chdir=/etc/firewall
+    ./make-linux-iptables dump > /etc/sysconfig/iptables
+

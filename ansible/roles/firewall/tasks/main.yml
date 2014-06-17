@@ -1,0 +1,18 @@
+#   __ _                        _ _    ___            _        
+#  / _(_)_ __ _____      ____ _| | |  / / |_ __ _ ___| | _____ 
+# | |_| | '__/ _ \ \ /\ / / _` | | | / /| __/ _` / __| |/ / __|
+# |  _| | | |  __/\ V  V / (_| | | |/ / | || (_| \__ \   <\__ \
+# |_| |_|_|  \___| \_/\_/ \__,_|_|_/_/   \__\__,_|___/_|\_\___/
+#                                                              
+- include: get-archive.yml
+- include: compile-src.yml
+- include: make-config.yml
+
+- name: 'Start firewall'
+  when: firewall.started == True and ansible_system == "Linux"
+  service: name=iptables state=started
+
+- name: 'Stop firewall'
+  when: firewall.started == False and ansible_system == "Linux"
+  service: name=iptables state=stopped
+
