@@ -5,3 +5,8 @@
 #  \__, |_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
 #     |_|                                               
 # install-pkg
+- name: install-pkg | install packages for qmail
+  yum: name={{ item }} state=present
+  with_items: 
+    - tcsh
+
