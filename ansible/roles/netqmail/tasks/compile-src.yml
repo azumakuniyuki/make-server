@@ -1,0 +1,71 @@
+#                        _ _    ___            _        
+#   __ _ _ __ ___   __ _(_) |  / / |_ __ _ ___| | _____ 
+#  / _` | '_ ` _ \ / _` | | | / /| __/ _` / __| |/ / __|
+# | (_| | | | | | | (_| | | |/ / | || (_| \__ \   <\__ \
+#  \__, |_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
+#     |_|                                               
+# compile-src
+- name: compile-src | (REBUILD) make clean
+  command: >
+    make clean
+    chdir={{ qmail.workingdir }}/netqmail-{{ qmail.version }}/
+    removes=Makefile
+  when: qmail.rebuild == 1
+
+- name: compile-src | make directory {{ qmail.serverroot }}
+  file: >
+    path={{ qmail.serverroot }}
+    mode=0755
+    state=directory
+    owner=root
+    group=qmail
+
+- name: compile-src | make qmail {{ qmail.version }}
+  notify: Restart qmail
+  shell: >
+    make
+    chdir={{ qmail.workingdir }}/netqmail-{{ qmail.version }}/
+    creates=qmail.o
+  register: make_qmail_binary
+
+- name: compile-src | make setup qmail {{ qmail.version }}
+  notify: Restart qmail
+  shell: >
+    make setup check
+    chdir={{ qmail.workingdir }}/netqmail-{{ qmail.version }}/
+    creates=qmail.0
+
+- name: compile-src | config fast
+  notify: Restart qmail
+  shell: >
+    ./config-fast {{ ansible_fqdn }}
+    chdir={{ qmail.workingdir }}/netqmail-{{ qmail.version }}/
+    creates={{ qmail.serverroot }}/control/me
+
+# tcpserver
+- name: compile-src | Upload patch for tcpserver
+  copy: >
+    src=usr/local/src/error.h-include.patch
+    dest={{ qmail.workingdir }}/ucspi-tcp-0.88/
+
+- name: compile-src | Patch for error.h
+  shell: >
+    chdir={{ qmail.workingdir }}/ucspi-tcp-0.88/
+    patch -b -p1 < error.h-include.patch
+    creates=error.h.orig
+
+- name: compile-src | make tcpserver
+  notify: Restart qmail
+  shell: >
+    make
+    chdir={{ qmail.workingdir }}/ucspi-tcp-0.88/
+    creates=tcpserver.o
+  register: make_tcpserver_binary
+
+- name: compile-src | make install tcpserver
+  when: make_tcpserver_binary.changed
+  notify: Restart qmail
+  command: >
+    make setup check
+    chdir={{ qmail.workingdir }}/ucspi-tcp-0.88/
+

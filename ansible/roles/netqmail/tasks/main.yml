@@ -1,0 +1,20 @@
+#                        _ _    ___            _        
+#   __ _ _ __ ___   __ _(_) |  / / |_ __ _ ___| | _____ 
+#  / _` | '_ ` _ \ / _` | | | / /| __/ _` / __| |/ / __|
+# | (_| | | | | | | (_| | | |/ / | || (_| \__ \   <\__ \
+#  \__, |_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
+#     |_|                                               
+- include: install-pkg.yml
+- include: create-user.yml
+- include: get-archive.yml
+- include: compile-src.yml
+- include: make-config.yml
+- include: boot-script.yml
+
+- name: 'Start qmail smtpd'
+  when: qmail.started == 1
+  service: name=qmail state=started
+
+- name: 'Stop qmail smtpd'
+  when: qmail.started == 0
+  service: name=qmail state=stopped

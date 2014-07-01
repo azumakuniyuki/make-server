@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# qmail This shell script takes care
+# of starting and stopping qmail.
+#
+# chkconfig: 2345 90 40
+# description: Starts and stops qmail.
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+[ -f {{ qmail.serverroot }}/bin/rc ] || exit 0
+
+start() {
+    echo -n "Starting qmail: "
+    csh -cf '{{ qmail.serverroot }}/bin/rc &'
+    /usr/local/bin/tcpserver -v -x \
+    {{ qmail.serverroot }}/etc/tcp.smtp.cdb -RH -u qmaild -g nofiles 0 25 \
+    {{ qmail.serverroot }}/bin/qmail-smtpd 2>&1 | {{ qmail.serverroot }}/bin/splogger smtpd 3 &
+    echo
+    touch /var/lock/subsys/qmail
+    RETVAL=$?
+
+    return $RETVAL
+}
+
+stop() {
+    echo -n "Stopping qmail: "
+    killproc qmail-send
+    killproc tcpserver
+    RETVAL=$?
+
+    [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/qmail
+    echo
+    return $RETVAL
+}
+
+case "$1" in
+    start)
+        start
+        RETVAL=$?
+        ;;
+
+    stop)
+        stop
+        RETVAL=$?
+        ;;
+
+    restart)
+        stop
+        start
+        RETVAL=$?
+        ;;
+
+    *)
+        echo "Usage: $0 { start | stop | restart }"
+        exit 1
+        ;;
+esac
+
+exit $RETVAL

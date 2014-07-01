@@ -1,0 +1,25 @@
+#                        _ _    ___            _        
+#   __ _ _ __ ___   __ _(_) |  / / |_ __ _ ___| | _____ 
+#  / _` | '_ ` _ \ / _` | | | / /| __/ _` / __| |/ / __|
+# | (_| | | | | | | (_| | | |/ / | || (_| \__ \   <\__ \
+#  \__, |_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
+#     |_|                                               
+# boot-script
+- name: boot-script | (RedHat) Install /etc/init.d/qmail
+  when: ansible_os_family == "RedHat"
+  template: >
+    src=etc/init.d/qmail.RedHat.j2
+    dest=/etc/init.d/qmail
+    mode=0755
+    owner=root
+    group=root
+
+- name: boot-script | (RedHat) Setting up /etc/rc.d/init.d/qmail
+  when: ansible_os_family == "RedHat"
+  shell: >
+    /sbin/chkconfig --add qmail
+    creates=/etc/rc.d/rc0.d/K40qmail
+
+- name: boot-script | Turn on /etc/rc.d/init.d/qmail
+  service: name=qmail enabled=yes
+

@@ -1,0 +1,72 @@
+#                        _ _    ___            _        
+#   __ _ _ __ ___   __ _(_) |  / / |_ __ _ ___| | _____ 
+#  / _` | '_ ` _ \ / _` | | | / /| __/ _` / __| |/ / __|
+# | (_| | | | | | | (_| | | |/ / | || (_| \__ \   <\__ \
+#  \__, |_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
+#     |_|                                               
+# make-config
+- name: make-config | Create control/defaultdomain
+  shell: >
+    chdir={{ qmail.serverroot }}/control
+    touch defaultdomain
+    creates=defaultdomain
+
+- name: make-config | Create control/plusdomain
+  shell: >
+    chdir={{ qmail.serverroot }}/control
+    echo 'localhost.localdomain' > plusdomain
+    creates=plusdomain
+
+- name: make-config | Create control/locals
+  shell: >
+    chdir={{ qmail.serverroot }}/control
+    echo 'localhost.localdomain' > locals
+    creates=locals
+
+- name: make-config | Create control/queuelifetime
+  shell: >
+    chdir={{ qmail.serverroot }}/control
+    echo 86400 > queuelifetime
+    creates=queuelifetime
+
+- name: make-config | Create control/doublebounceto
+  shell: >
+    chdir={{ qmail.serverroot }}/control
+    touch doublebounceto
+    creates=doublebounceto
+
+- name: make-config | Create control/databytes
+  shell: >
+    chdir={{ qmail.serverroot }}/control
+    echo  8192 > databytes
+    creates=databytes
+
+- name: make-config | Create {{ qmail.serverroot }}/bin/rc
+  shell: >
+    chdir={{ qmail.serverroot }}
+    /bin/cp ./boot/home bin/rc
+    creates=bin/rc
+
+- name: compile-src | make directory {{ qmail.serverroot }}/etc
+  file: >
+    path={{ qmail.serverroot }}/etc
+    mode=0755
+    state=directory
+    owner=root
+    group=qmail
+
+- name: make-config | tcp.smtp for relaying
+  template: >
+    src=var/qmail/etc/tcp.smtp.j2
+    dest={{ qmail.serverroot }}/etc/tcp.smtp
+
+- name: make-config | Create tcp.smtp.cdb
+  notify: Restart qmail
+  shell: >
+    chdir={{ qmail.serverroot }}/etc
+    /usr/local/bin/tcprules tcp.smtp.cdb tcp.smtp.tmp < tcp.smtp
+    creates=tcp.smtp.cdb
+
+- name: make-config | Stop Postfix
+  service: name=postfix state=stopped enabled=no
+

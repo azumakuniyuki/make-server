@@ -1,0 +1,24 @@
+#                        _ _    __                    
+#   __ _ _ __ ___   __ _(_) |  / /_   ____ _ _ __ ___ 
+#  / _` | '_ ` _ \ / _` | | | / /\ \ / / _` | '__/ __|
+# | (_| | | | | | | (_| | | |/ /  \ V / (_| | |  \__ \
+#  \__, |_| |_| |_|\__,_|_|_/_/    \_/ \__,_|_|  |___/
+#     |_|                                             
+qmail:
+  started: 1
+  rebuild: 0
+  version: 1.06
+  serverroot: '/var/qmail'
+  workingdir: '/usr/local/src'
+  groups:
+    - { groupname: 'nofiles', gid: 10000 }
+    - { groupname: 'qmail',   gid: 10001 }
+  users:
+    - { username: 'alias',  group: 'nofiles', home: '/var/qmail/alias', uid: 10000 }
+    - { username: 'qmaild', group: 'nofiles', home: '/var/qmail', uid: 10002 }
+    - { username: 'qmaill', group: 'nofiles', home: '/var/qmail', uid: 10003 }
+    - { username: 'qmailp', group: 'nofiles', home: '/var/qmail', uid: 10004 }
+    - { username: 'qmailq', group: 'qmail',   home: '/var/qmail', uid: 10005 }
+    - { username: 'qmailr', group: 'qmail',   home: '/var/qmail', uid: 10006 }
+    - { username: 'qmails', group: 'qmail',   home: '/var/qmail', uid: 10007 }
+

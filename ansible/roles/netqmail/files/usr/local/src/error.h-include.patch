@@ -1,0 +1,10 @@
+--- ucspi-tcp-0.88/error.h.orig	2000-03-18 15:18:42.000000000 +0000
++++ ucspi-tcp-0.88/error.h	2014-07-01 04:34:24.085028370 +0000
+@@ -2,6 +2,7 @@
+ #define ERROR_H
+ 
+ extern int errno;
++#include <errno.h>;
+ 
+ extern int error_intr;
+ extern int error_nomem;
