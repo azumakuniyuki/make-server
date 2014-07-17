@@ -1,0 +1,39 @@
+#   ___                   ____  __  __ _____ ____  ____    ___            _        
+#  / _ \ _ __   ___ _ __ / ___||  \/  |_   _|  _ \|  _ \  / / |_ __ _ ___| | _____ 
+# | | | | '_ \ / _ \ '_ \\___ \| |\/| | | | | |_) | | | |/ /| __/ _` / __| |/ / __|
+# | |_| | |_) |  __/ | | |___) | |  | | | | |  __/| |_| / / | || (_| \__ \   <\__ \
+#  \___/| .__/ \___|_| |_|____/|_|  |_| |_| |_|   |____/_/   \__\__,_|___/_|\_\___/
+#       |_|                                                                        
+# get-archive
+#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+# ||O |||p |||e |||n |||S |||M |||T |||P |||D ||
+# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+# 
+- name: get-archive | Download OpenSMTPD {{ opensmtpd.version }}
+  get_url: >
+    url=https://www.opensmtpd.org/archives/opensmtpd-{{ opensmtpd.version }}.tar.gz
+    validate_certs=no
+    dest={{ local.src }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
+
+- name: get-archive | Extract {{ local.src }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
+  unarchive: >
+    src={{ local.src }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
+    dest={{ local.src }}
+    copy=no
+
+#  ____ ____ ____ ____ ____ ____ ____ ____ 
+# ||m |||a |||i |||l |||d |||r |||o |||p ||
+# ||__|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#
+- name: get-archive | Download maildrop {{ maildrop.version }} at {{ local.src }}
+  get_url: >
+    url=http://cznic.dl.sourceforge.net/project/courier/maildrop/{{ maildrop.version }}/maildrop-{{ maildrop.version }}.tar.bz2
+    dest={{ local.src }}/maildrop-{{ maildrop.version }}.tar.bz2
+
+- name: get-archive | Extract {{ local.src }}/maildrop-{{ maildrop.version }}.tar.bz2
+  unarchive: >
+    src={{ local.src }}/maildrop-{{ maildrop.version }}.tar.bz2
+    dest={{ local.src }}
+    copy=no

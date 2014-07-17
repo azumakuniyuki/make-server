@@ -1,0 +1,46 @@
+# This is the smtpd server system-wide configuration file.
+# See smtpd.conf(5) for more information.
+
+myname = "{{ ansible_fqdn }}"
+
+# To accept external mail, replace with: listen on all
+# listen on interface [port port] [tls | smtps] [certificate name] [enable auth]
+listen on 127.0.0.1 hostname "localhost"
+listen on {{ ansible_eth0.ipv4.address }} hostname $myname
+
+table aliases db:{{ opensmtpd.serverroot }}/etc/aliases.db
+table authinfo db:{{ opensmtpd.serverroot }}/etc/authinfo.db
+table virtusers db:{{ opensmtpd.serverroot }}/etc/virtusers.db
+table relayhosts db:{{ opensmtpd.serverroot }}/etc/relayhosts.db
+table virtdomains db:{{ opensmtpd.serverroot }}/etc/virtdomains.db
+
+# Specify how long a message can stay in the queue. The default value is 4 days.
+expire 4d
+
+# Specify the delays for which temporary failure reports must be generated 
+# when messages are stuck in the queue.
+bounce-warn 1h, 6h, 2d
+
+# Specify a maximum message size of n bytes.
+# The argument may contain a multiplier, as documented in scan_scaled(3).
+# The default maximum message size is 35MB if none is specified.
+max-message-size 10000000
+
+# smtpd(8) accepts and rejects messages based on information gathered during
+# the SMTP session.
+# For each message processed by the daemon, the filter rules are evaluated
+# in sequential order, from first to last. The first matching rule decides
+# what action is taken. If no rule matches the message, the default action
+# is to reject the message.
+#
+
+accept from any for local alias <aliases> deliver to mbox
+accept from any for domain <virtdomains> virtual <virtusers> deliver to mda "{{ maildrop.install }}/bin/maildrop -d {{ opensmtpd.user.mda.username }} %{rcpt}"
+
+accept for domain "sabatora.example.co.jp" relay via "smtp://cat.example.co.jp" as "@example.jp"
+accept for domain "munchkin.example.net" relay via "tls+auth://sendgrid@smtp.sendgrid.net:587" auth <authinfo>
+accept for domain "calicocat.example.org" relay via "tls+auth://oursmtpd@smtp.example.jp:587" auth <authinfo>
+accept for domain "straycat.example.com" relay via "tls+auth://gmail@smtp.gmail.com:587" auth <authinfo>
+accept from source <relayhosts> for any relay
+accept for any relay
+

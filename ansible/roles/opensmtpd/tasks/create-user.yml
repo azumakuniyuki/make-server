@@ -1,0 +1,37 @@
+#   ___                   ____  __  __ _____ ____  ____    ___            _        
+#  / _ \ _ __   ___ _ __ / ___||  \/  |_   _|  _ \|  _ \  / / |_ __ _ ___| | _____ 
+# | | | | '_ \ / _ \ '_ \\___ \| |\/| | | | | |_) | | | |/ /| __/ _` / __| |/ / __|
+# | |_| | |_) |  __/ | | |___) | |  | | | | |  __/| |_| / / | || (_| \__ \   <\__ \
+#  \___/| .__/ \___|_| |_|____/|_|  |_| |_| |_|   |____/_/   \__\__,_|___/_|\_\___/
+#       |_|                                                                        
+# create-user.yml
+- name: create-user | /var/empty should be created
+  file: >
+    path=/var/empty
+    mode=0755
+    owner=root
+    state=directory
+
+- name: create-user | Each group should be created
+  group: >
+    name={{ item.group }}
+    gid={{ item.gid }}
+    state=present
+  with_items:
+    - "{{ opensmtpd.user.daemon }}"
+    - "{{ opensmtpd.user.queue }}"
+
+- name: create-user | Each user should be created
+  user: >
+    name={{ item.username }} 
+    uid={{ item.uid }}
+    group={{ item.group }} 
+    shell=/sbin/nologin
+    home=/var/empty
+    comment={{ item.comment }}
+    createhome=no
+    state=present
+  with_items:
+    - "{{ opensmtpd.user.daemon }}"
+    - "{{ opensmtpd.user.queue }}"
+

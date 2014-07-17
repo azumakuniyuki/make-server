@@ -1,0 +1,22 @@
+#   ___                   ____  __  __ _____ ____  ____    ___            _        
+#  / _ \ _ __   ___ _ __ / ___||  \/  |_   _|  _ \|  _ \  / / |_ __ _ ___| | _____ 
+# | | | | '_ \ / _ \ '_ \\___ \| |\/| | | | | |_) | | | |/ /| __/ _` / __| |/ / __|
+# | |_| | |_) |  __/ | | |___) | |  | | | | |  __/| |_| / / | || (_| \__ \   <\__ \
+#  \___/| .__/ \___|_| |_|____/|_|  |_| |_| |_|   |____/_/   \__\__,_|___/_|\_\___/
+#       |_|                                                                        
+#
+- include: install-pkg.yml
+- include: create-user.yml
+- include: get-archive.yml
+- include: compile-src.yml
+- include: make-config.yml
+- include: boot-script.yml
+
+- name: 'Start OpenSMTPD'
+  when: opensmtpd.started == 1
+  service: name=opensmtpd state=started
+
+- name: 'Stop OpenSMTPD'
+  when: opensmtpd.started == 0
+  service: name=opensmtpd state=stopped
+

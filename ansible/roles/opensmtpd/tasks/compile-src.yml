@@ -1,0 +1,95 @@
+#   ___                   ____  __  __ _____ ____  ____    ___            _        
+#  / _ \ _ __   ___ _ __ / ___||  \/  |_   _|  _ \|  _ \  / / |_ __ _ ___| | _____ 
+# | | | | '_ \ / _ \ '_ \\___ \| |\/| | | | | |_) | | | |/ /| __/ _` / __| |/ / __|
+# | |_| | |_) |  __/ | | |___) | |  | | | | |  __/| |_| / / | || (_| \__ \   <\__ \
+#  \___/| .__/ \___|_| |_|____/|_|  |_| |_| |_|   |____/_/   \__\__,_|___/_|\_\___/
+#       |_|                                                                        
+# compile-src
+#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+# ||O |||p |||e |||n |||S |||M |||T |||P |||D ||
+# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#
+- name: compile-src | bootstrap script should have been executed
+  shell: >
+    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
+    ./bootstrap
+    creates=configure
+
+- name: compile-src | OpenSMTPD should have been configured
+  shell: >
+    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
+    /bin/sh configure
+    --prefix={{ opensmtpd.serverroot }}
+    creates=Makefile
+
+- name: compile-src | REBUILD | make clean
+  when: opensmtpd.rebuild == 1
+  shell: >
+    make clean
+    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}/
+
+- name: compile-src | OpenSMTPD should have been made
+  register: make_opensmtpd_binary
+  shell: >
+    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
+    make
+    creates=./mk/smtpd/smtpd
+
+- name: compile-src | OpenSMTPD files should have been installed
+  when: make_opensmtpd_binary.changed
+  shell: >
+    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
+    make install
+
+#  ____ ____ ____ ____ ____ ____ ____ ____ 
+# ||m |||a |||i |||l |||d |||r |||o |||p ||
+# ||__|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#
+- name: compile-src | maildrop | REBUILD | make clean
+  when: maildrop.rebuild == 1
+  shell: >
+    make clean
+    chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}/
+    removes=maildrop/maildrop
+
+- name: compile-src | maildrop | maildrop should have been configured
+  shell: >
+    chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}
+    /bin/sh ./configure
+    --prefix={{ maildrop.install }}
+    --bindir={{ maildrop.install }}/bin
+    --sysconfdir={{ maildrop.install }}/etc
+    --localstatedir={{ maildrop.install }}/var
+    --enable-maildrop-gid={{ opensmtpd.user.daemon.username }}
+    --enable-keep-fromline=1
+    --enable-unicode
+    --with-etcdir={{ maildrop.install }}/etc
+    creates=Makefile
+
+- name: compile-src | maildrop | Build maildrop {{ maildrop.version }}
+  register: make_maildrop_binary
+  shell: >
+    make
+    chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}
+    creates=maildrop/maildrop
+
+- name: compile-src | maildrop | Install maildrop {{ maildrop.version }}
+  when: make_maildrop_binary.changed
+  shell: >
+    make install-strip
+    chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}
+
+- name: compile-src | maildrop | Change owner each binary
+  when: make_maildrop_binary.changed
+  file: >
+    path={{ maildrop.install }}/bin/{{ item }}
+    mode=0755
+    owner=root
+    group={{ opensmtpd.user.daemon.group }}
+    state=file
+  with_items: 
+    - maildrop
+    - lockmail
+
