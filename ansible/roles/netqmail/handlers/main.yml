@@ -6,4 +6,5 @@
 #     |_|                                                                 
 #
 - name: 'Restart qmail'
+  when: qmail.started == 1
   service: name=qmail state=restarted pattern=bin/tcpserver

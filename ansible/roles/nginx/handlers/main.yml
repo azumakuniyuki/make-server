@@ -6,4 +6,5 @@
 #        |___/     
 #
 - name: 'Restart nginx'
+  when: nginx.started == 1
   service: name=nginx state=restarted
