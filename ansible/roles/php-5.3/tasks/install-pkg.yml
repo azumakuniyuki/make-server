@@ -123,7 +123,7 @@
     make install 
 
 - name: 'install-pkg | Symbolic links in {{ php.depends.gd.install }}/lib64 should be created'
-  when: ansible_userspace_bits == 64
+  when: ansible_userspace_bits == "64"
   file: >
     src={{ php.depends.gd.install }}/lib/{{ item }} 
     dest={{ php.depends.gd.install }}/lib64/{{ item }}
