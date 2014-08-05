@@ -29,3 +29,8 @@
     src=opt/nginx/conf/virthost/example.jp.conf.j2
     dest={{ nginx.serverroot }}/conf/virthost/example.jp.conf
 
+- name: 'make-config | Deploy log rotation script'
+  template: >
+    src=etc/logrotate.d/nginx.j2
+    dest=/etc/logrotate.d/nginx
+
