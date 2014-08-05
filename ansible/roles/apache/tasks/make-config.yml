@@ -18,3 +18,8 @@
     src=opt/apache/conf/extra/httpd-info.conf.j2
     dest={{ apache.serverroot }}/conf/extra/
 
+- name: 'make-config | Deploy log rotation script'
+  template: >
+    src=etc/logrotate.d/apache.j2
+    dest=/etc/logrotate.d/apache
+
