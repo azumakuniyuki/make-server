@@ -1,0 +1,45 @@
+# deploy-user.yml
+- hosts: vm
+  user: root
+  vars:
+    user:
+      username: deploy
+      group: deploy
+      uid:  1000
+      gid:  1000
+  tasks:
+    - name: 'deploy-user | Group for deployment should be created'
+      group: >
+        name={{ user.username }}
+        gid={{ user.gid }}
+        state=present
+
+    - name: 'deploy-user | User for deployment should be created'
+      user: >
+        name={{ user.username }}
+        uid={{ user.uid }}
+        group={{ user.group }}
+        groups=wheel
+        shell=/bin/bash
+        home=/home/{{ user.username }}
+        createhome=yes
+        state=present
+
+    - name: 'deploy-user | Check /etc/sudoers'
+      shell: grep %{{ user.group }} /etc/sudoers
+      register: sudoers
+      ignore_errors: True
+      changed_when: sudoers.rc == 1
+
+    - name: 'deploy user | {{ user.group }} should be registered in /etc/sudoers'
+      when: sudoers.changed
+      ignore_errors: True
+      shell: >
+        printf "%%%s ALL=NOPASSWD%s ALL\n" {{ user.group }} : >> /etc/sudoers
+
+    - name: 'deploy-user | Authorized key should be deployed'
+      authorized_key: >
+        user={{ user.username }}
+        key="{{ lookup('file', '../.ssh/id2-deploy-rsa.pub') }}"
+
+
