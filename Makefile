@@ -18,10 +18,15 @@ SERVERSPEC = ./spec
 VAGRANTNET = 172.25
 VAGRANTSSH = ~/.vagrant.d/insecure_private_key
 VAGRANTFILE= Vagrantfile
+DEPLOYKEY  = ./.ssh/id2-deploy-rsa
 
 .PHONY: clean
 login:
 	ssh -l vagrant -i $(VAGRANTSSH) `make addr`
+
+ssh:
+	make key
+	ssh -l deploy -i $(DEPLOYKEY) `make addr`
 
 here:
 	@echo $(PWDNAME)
@@ -118,11 +123,8 @@ addr:
 	fi
 
 key:
-	@test -d ./ssh || mkdir ./ssh
-	@test -f ./ssh/id2-deploy-rsa || ssh-keygen -vf ./ssh/id2-deploy-rsa -N '' 
-
-ssh:
-	vagrant ssh
+	@test -d ./.ssh || mkdir ./.ssh
+	@test -f $(DEPLOYKEY) || ssh-keygen -vf $(DEPLOYKEY) -N '' -C "deploy@`make addr`"
 
 list:
 	vagrant box list
