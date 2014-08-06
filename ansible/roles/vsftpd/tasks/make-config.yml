@@ -31,3 +31,11 @@
     owner=root
     group=root
 
+- name: 'make-config | Deploy /etc/logrotate.d/vsftpd'
+  template: >
+    src=etc/logrotate.d/vsftpd.j2
+    dest=/etc/logrotate.d/vsftpd
+    mode=0644
+    owner=root
+    group=root
+

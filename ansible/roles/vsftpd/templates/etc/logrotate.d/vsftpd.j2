@@ -1,0 +1,17 @@
+{{ vsftpd.serverroot }}/var/log/vsftpd.log {
+    # ftpd doesn't handle SIGHUP properly
+    daily
+    rotate 64
+    notifempty
+    nocompress
+    missingok
+}
+
+{{ vsftpd.serverroot }}/var/log/xfer.log {
+    # ftpd doesn't handle SIGHUP properly
+    daily
+    rotate 64
+    notifempty
+    nocompress
+    missingok
+}
