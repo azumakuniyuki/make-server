@@ -12,4 +12,5 @@
 # [staging:vars]
 # ansible_ssh_port=2022
 # ansible_ssh_user=neko
-
+# ansible_ssh_pass=''
+# ansible_ssh_private_key_file=./.ssh/rsa-key
