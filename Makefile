@@ -117,14 +117,26 @@ addr:
 		grep 'private_network' ./$(VAGRANTFILE) | sed -e 's/^.*ip://g' | tr -d ' "' ;\
 	fi
 
+key:
+	@test -d ./ssh || mkdir ./ssh
+	@test -f ./ssh/id2-deploy-rsa || ssh-keygen -vf ./ssh/id2-deploy-rsa -N '' 
+
 ssh:
 	vagrant ssh
 
 list:
 	vagrant box list
 
+up:
+	ssh-keygen -R `make addr`
+	vagrant up
+
+destroy:
+	vagrant destroy
+	ssh-keygen -R `make addr`
+
 init-vm:
-	vagrant destroy && vagrant up
+	make destroy && make up
 
 help:
 	vagrant --help
