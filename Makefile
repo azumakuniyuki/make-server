@@ -28,6 +28,10 @@ ssh:
 	make key
 	ssh -l deploy -i $(DEPLOYKEY) `make addr`
 
+os:
+	@test -f ./$(VAGRANTFILE) && grep 'config.vm.box = ' $(VAGRANTFILE) \
+		| awk '{ print $$3 }' | tr -d '"'
+
 here:
 	@echo $(PWDNAME)
 
