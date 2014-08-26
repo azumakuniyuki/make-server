@@ -5,5 +5,5 @@
 # |_.__/|_|_| |_|\__,_|  /_/_/  |_| |_|\__,_|_| |_|\__,_|_|\___|_|  |___/
 #                                                                        
 - name: Restart bind
-  when: bind.started == 1
+  when: bind.started == True
   service: name=named state=restarted

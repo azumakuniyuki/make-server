@@ -12,10 +12,10 @@
 - include: boot-script.yml
 
 - name: 'Start bind9'
-  when: bind.started == 1
+  when: bind.started == True
   service: name=bind state=started
 
 - name: 'Stop bind9'
-  when: bind.started == 0
+  when: bind.started == False
   service: name=bind state=stopped
 
