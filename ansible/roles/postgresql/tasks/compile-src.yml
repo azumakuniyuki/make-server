@@ -11,7 +11,7 @@
     make clean
     chdir={{ local.src }}/postgresql-{{ postgresql.version }}/
     removes=GNUmakefile
-  when: postgresql.rebuild == 1
+  when: postgresql.rebuild == True
 
 - name: 'compile-src | PostgreSQL {{ postgresql.version }} should be configured'
   notify: Restart PostgreSQL

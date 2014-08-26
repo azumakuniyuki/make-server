@@ -22,7 +22,7 @@
     make clean
     chdir={{ local.src }}/openssl-{{ openssl.version }}/
     removes=./crypto/opensslconf.h.bak
-  when: openssl.rebuild == 1
+  when: openssl.rebuild == True
 
 - name: compile-src | OpenSSL {{ openssl.version }} should be configured
   shell: >

@@ -10,7 +10,7 @@
     make clean
     chdir={{ local.src }}/vsftpd-{{ vsftpd.version }}/
     removes=vsftpd
-  when: vsftpd.rebuild == 1
+  when: vsftpd.rebuild == True
 
 - name: 'compile-src | Patches should be copied'
   template: >

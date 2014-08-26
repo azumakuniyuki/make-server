@@ -5,8 +5,8 @@
 # |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/    \_/ \__,_|_|  |___/
 #                    |___/                                                     
 postgresql:
-  started: 1
-  rebuild: 0
+  started: True
+  rebuild: False
   version: 9.3.4
   serverroot: '/opt/postgresql'
   datadirectory: '/opt/postgresql/data'

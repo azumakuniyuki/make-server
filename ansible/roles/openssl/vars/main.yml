@@ -6,7 +6,7 @@
 #       |_|                                                         
 #
 openssl:
-  rebuild: 0
+  rebuild: False
   version: 1.0.1h
   install: /usr/local
 

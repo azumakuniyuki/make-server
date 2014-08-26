@@ -11,7 +11,7 @@
     make clean distclean
     chdir={{ local.src }}/perl-{{ perl.version }}/
     removes=Makefile
-  when: perl.rebuild == 1
+  when: perl.rebuild == True
 
 - name: 'compile-src | Perl {{ perl.version }} should be configured'
   shell: >

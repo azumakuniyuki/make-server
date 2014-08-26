@@ -6,8 +6,8 @@
 #       |_|                                                                      
 #
 opensmtpd:
-  started: 1
-  rebuild: 0
+  started: True
+  rebuild: False
   version: 5.4.2p1
   serverroot: /opt/opensmtpd
   workingdir: /usr/local/src
@@ -35,6 +35,6 @@ opensmtpd:
       shell: /bin/sh
       comment: "'Virtual Mailbox'"
 maildrop:
-  rebuild: 0
+  rebuild: False
   version: 2.7.1
   install: /opt/opensmtpd

@@ -24,7 +24,7 @@
     creates=Makefile
 
 - name: compile-src | REBUILD | make clean
-  when: opensmtpd.rebuild == 1
+  when: opensmtpd.rebuild == True
   shell: >
     make clean
     chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}/
@@ -48,7 +48,7 @@
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 - name: compile-src | maildrop | REBUILD | make clean
-  when: maildrop.rebuild == 1
+  when: maildrop.rebuild == True
   shell: >
     make clean
     chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}/

@@ -13,10 +13,10 @@
 - include: load-module.yml
 
 - name: 'Start vsftpd Server'
-  when: vsftpd.started == 1
+  when: vsftpd.started == True
   service: name=vsftpd state=started
 
 - name: 'Stop vsftpd Server'
-  when: vsftpd.started == 0
+  when: vsftpd.started == False
   service: name=vsftpd state=stopped
 

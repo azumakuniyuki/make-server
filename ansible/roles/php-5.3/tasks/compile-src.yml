@@ -9,7 +9,7 @@
     make clean
     chdir={{ local.src }}/php-{{ php.version }}/
     removes=Makefile
-  when: php.rebuild == 1
+  when: php.rebuild == True
 
 - name: 'compile-src | PHP-{{ php.version }} should be configured'
   command: >

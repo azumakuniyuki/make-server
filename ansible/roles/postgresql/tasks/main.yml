@@ -12,11 +12,11 @@
 - include: boot-script.yml
 
 - name: 'Start PostgreSQL Server'
-  when: postgresql.started == 1
+  when: postgresql.started == True
   service: name=postgresql state=started
 
 - name: 'Stop PostgreSQL Server'
-  when: postgresql.started == 0
+  when: postgresql.started == False
   service: name=postgresql state=stopped
 
 

@@ -5,7 +5,7 @@
 # |_|   |_| |_|_|       |____(_)____/_/    \_/ \__,_|_|  |___/
 #                                                             
 php:
-  rebuild: 0
+  rebuild: False
   version: 5.3.27
   install: '/usr/local'
   depends:

@@ -5,8 +5,8 @@
 #   \_/ |___/_|  \__| .__/ \__,_/_/    \_/ \__,_|_|  |___/
 #                   |_|                                   
 vsftpd:
-  started: 0
-  rebuild: 0
+  started: True
+  rebuild: False
   version: 3.0.2
   serverroot: '/opt/vsftpd'
   patches:

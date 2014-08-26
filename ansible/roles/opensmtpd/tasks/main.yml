@@ -13,10 +13,10 @@
 - include: boot-script.yml
 
 - name: 'Start OpenSMTPD'
-  when: opensmtpd.started == 1
+  when: opensmtpd.started == True
   service: name=opensmtpd state=started
 
 - name: 'Stop OpenSMTPD'
-  when: opensmtpd.started == 0
+  when: opensmtpd.started == False
   service: name=opensmtpd state=stopped
 
