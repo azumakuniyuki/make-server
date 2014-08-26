@@ -13,10 +13,10 @@
 - include: boot-script.yml
 
 - name: 'Start nginx httpd'
-  when: nginx.started == 1
+  when: nginx.started == True
   service: name=nginx state=started
 
 - name: 'Stop nginx httpd'
-  when: nginx.started == 0
+  when: nginx.started == False
   service: name=nginx state=stopped
 

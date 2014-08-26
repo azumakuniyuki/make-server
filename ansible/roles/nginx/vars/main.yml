@@ -5,8 +5,8 @@
 # |_| |_|\__, |_|_| |_/_/\_\/_/    \_/ \__,_|_|  |___/
 #        |___/                                        
 nginx:
-  started: 0
-  rebuild: 0
+  started: True
+  rebuild: False
   version: 1.5.12
   serverroot: '/opt/nginx'
   user:
