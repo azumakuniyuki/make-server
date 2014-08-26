@@ -10,7 +10,7 @@
     make clean
     chdir={{ bind.workingdir }}/bind-{{ bind.version }}/
     removes=Makefile
-  when: bind.rebuild == 1
+  when: bind.rebuild == True
 
 - name: compile-src | bind {{ bind.version }} should be configured
   notify: Restart bind

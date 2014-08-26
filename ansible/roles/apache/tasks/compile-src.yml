@@ -11,7 +11,7 @@
     make clean
     chdir={{ local.src }}/httpd-{{ apache.version }}/
     removes=Makefile
-  when: apache.rebuild == 1
+  when: apache.rebuild == True
 
 - name: 'compile-src | {{ apache.serverroot }} directory should be created'
   file: >

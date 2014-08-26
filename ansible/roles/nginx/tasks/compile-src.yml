@@ -10,7 +10,7 @@
     make clean
     chdir={{ local.src }}/nginx-{{ nginx.version }}/
     removes=Makefile
-  when: nginx.rebuild == 1
+  when: nginx.rebuild == True
 
 - name: 'compile-src | nginx {{ nginx.version }} should be configured'
   notify: Restart nginx

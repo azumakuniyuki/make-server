@@ -11,14 +11,14 @@
     chdir={{ local.src }}/mysql-{{ mysql.version }}/
     removes=CMakeCache.txt
     rm CMakeCache.txt
-  when: mysql.rebuild == 1
+  when: mysql.rebuild == True
 
 - name: 'compile-src | REBUILD | make clean'
   command: >
     chdir={{ local.src }}/mysql-{{ mysql.version }}/
     make clean
     removes=CMakeCache.txt
-  when: mysql.rebuild == 1
+  when: mysql.rebuild == True
 
 - name: 'compile-src | cmake MySQL {{ mysql.version }}'
   notify: Restart MySQL
