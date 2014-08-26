@@ -12,10 +12,10 @@
 - include: boot-script.yml
 
 - name: 'Start MySQL Server'
-  when: mysql.started == 1
+  when: mysql.started == True
   service: name=mysql state=started
 
 - name: 'Stop MySQL Server'
-  when: mysql.started == 0
+  when: mysql.started == False
   service: name=mysql state=stopped
 

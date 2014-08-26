@@ -5,5 +5,5 @@
 # |_|  |_|\__, |____/ \__\_\_____|   |____(_)____/_/  |_| |_|\__,_|_| |_|\__,_|_|\___|_|  |___/
 #         |___/                                                                                
 - name: 'Restart MySQL'
-  when: mysql.started == 1
+  when: mysql.started == True
   service: name=mysql state=restarted

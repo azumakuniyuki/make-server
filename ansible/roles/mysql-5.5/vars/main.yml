@@ -5,8 +5,8 @@
 # |_|  |_|\__, |____/ \__\_\_____|   |____(_)____/_/    \_/ \__,_|_|  |___/
 #         |___/                                                            
 mysql:
-  started: 1
-  rebuild: 0
+  started: True
+  rebuild: False
   version: 5.5.37
   serverroot: '/opt/mysql'
   datadirectory: '/opt/mysql/data'
