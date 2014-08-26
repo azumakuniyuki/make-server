@@ -5,7 +5,7 @@
 #  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/    \_/ \__,_|_|  |___/
 #
 config:
-  selinux: 0
+  selinux: False
 local:
   dir: /usr/local
   src: /usr/local/src

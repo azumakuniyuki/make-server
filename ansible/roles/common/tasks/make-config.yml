@@ -6,7 +6,7 @@
 #
 # make-config
 - name: make-config | Disable seLinux
-  when: config.selinux == 0 and ansible_os_family in [ 'RedHat', 'Debian' ]
+  when: config.selinux == False and ansible_os_family in [ 'RedHat', 'Debian' ]
   selinux: state=disabled
 
 - name: make-config | {{ local.src }} directory should be created
