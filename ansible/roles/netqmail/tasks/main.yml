@@ -12,9 +12,9 @@
 - include: boot-script.yml
 
 - name: 'Start qmail smtpd'
-  when: qmail.started == 1
+  when: qmail.started == True
   service: name=qmail state=started
 
 - name: 'Stop qmail smtpd'
-  when: qmail.started == 0
+  when: qmail.started == False
   service: name=qmail state=stopped
