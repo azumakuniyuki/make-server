@@ -13,10 +13,10 @@
 - include: boot-script.yml
 
 - name: 'Start Apache httpd'
-  when: apache.started == 1
+  when: apache.started == True
   service: name=httpd state=started
 
 - name: 'Stop apache httpd'
-  when: apache.started == 0
+  when: apache.started == False
   service: name=httpd state=stopped
 
