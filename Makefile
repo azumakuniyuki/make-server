@@ -84,7 +84,6 @@ ansible:
 	if [ ! -d $(EXAMPLE)/$(ANSIBLEDIR)/roles/$* -o "`basename $(HEREIAM)`" = "`basename $(EXAMPLE)`" ]; then \
 		for V in files handlers tasks templates vars defaults meta; do \
 			mkdir -p ./$(ANSIBLEDIR)/roles/$*/$$V ;\
-			touch /tmp/neko ;\
 		done ;\
 	else \
 		mkdir -p ./$(ANSIBLEDIR)/roles ;\
