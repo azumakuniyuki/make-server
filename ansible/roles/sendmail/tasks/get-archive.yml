@@ -1,0 +1,54 @@
+#  ____                 _                 _ _    ___            _        
+# / ___|  ___ _ __   __| |_ __ ___   __ _(_) |  / / |_ __ _ ___| | _____ 
+# \___ \ / _ \ '_ \ / _` | '_ ` _ \ / _` | | | / /| __/ _` / __| |/ / __|
+#  ___) |  __/ | | | (_| | | | | | | (_| | | |/ / | || (_| \__ \   <\__ \
+# |____/ \___|_| |_|\__,_|_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
+#                                                                        
+# get-archive
+- name: get-archive | Download procmail {{ procmail.version }} at {{ sendmail.workingdir }}
+  ignore_errors: True
+  register: get_procmail
+  get_url: >
+    url=ftp://ftp.ring.gr.jp/pub/net/mail/procmail/procmail-{{ procmail.version }}.tar.gz
+    dest={{ sendmail.workingdir }}/procmail-{{ procmail.version }}.tar.gz
+
+- name: get-archive | Deploy procmail-{{ procmail.verison }}.tar.gz
+  copy: >
+    src=usr/local/src/procmail-{{ procmail.version }}.tar.gz
+    dest={{ sendmail.workingdir }}
+
+- name: get-archive | Extract {{ sendmail.workingdir }}/procmail-{{ procmail.version }}.tar.gz
+  unarchive: >
+    src={{ sendmail.workingdir }}/procmail-{{ procmail.version }}.tar.gz
+    dest={{ sendmail.workingdir }}
+    copy=no
+
+- name: get-archive | Download maildrop {{ maildrop.version }} at {{ sendmail.workingdir }}
+  ignore_errors: True
+  register: get_maildrop
+  get_url: >
+    url=ftp://ftp.jaist.ac.jp/pub/sourceforge/c/co/courier/maildrop/{{ maildrop.version }}/maildrop-{{ maildrop.version }}.tar.bz2
+    dest={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
+
+- name: get-archive | Deploy maildrop-{{ maildrop.verison }}.tar.bz2
+  copy: >
+    src=usr/local/src/maildrop-{{ maildrop.version }}.tar.bz2
+    dest={{ sendmail.workingdir }}
+
+- name: get-archive | Extract {{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
+  unarchive: >
+    src={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
+    dest={{ sendmail.workingdir }}
+    copy=no
+
+- name: get-archive | Download sendmail {{ sendmail.version }} at {{ sendmail.workingdir }}
+  get_url: >
+    url=ftp://ftp.sendmail.org/pub/sendmail/sendmail.{{ sendmail.version }}.tar.gz
+    dest={{ sendmail.workingdir }}/sendmail.{{ sendmail.version }}.tar.gz
+
+- name: get-archive | Extract {{ sendmail.workingdir }}/sendmail.{{ sendmail.version }}
+  unarchive: >
+    src={{ sendmail.workingdir }}/sendmail.{{ sendmail.version }}.tar.gz
+    dest={{ sendmail.workingdir }}
+    copy=no
+

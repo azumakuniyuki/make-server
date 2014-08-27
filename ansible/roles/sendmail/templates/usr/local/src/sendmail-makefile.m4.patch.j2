@@ -1,0 +1,57 @@
+--- sendmail/Makefile.m4	2014-05-17 05:40:15.000000000 +0900
++++ sendmail/Makefile.m4	2014-08-27 16:23:12.000000000 +0900
+@@ -14,13 +14,13 @@
+ 
+ dnl hack: /etc/mail is not defined as "location of .cf" in the build system
+ define(`bldTARGET_INST_DEP', ifdef(`confINST_DEP', `confINST_DEP',
+-`${DESTDIR}/etc/mail/submit.cf ${DESTDIR}${MSPQ}'))dnl
++`${DESTDIR}/etc/submit.cf ${DESTDIR}${MSPQ}'))dnl
+ define(`bldTARGET_LINKS', ifdef(`confLINKS', `confLINKS',
+ `${DESTDIR}${UBINDIR}/newaliases ${DESTDIR}${UBINDIR}/mailq ${DESTDIR}${UBINDIR}/hoststat ${DESTDIR}${UBINDIR}/purgestat')
+ )dnl
+ 
+ # location of sendmail statistics file (usually /etc/mail/ or /var/log)
+-STDIR= ifdef(`confSTDIR', `confSTDIR', `/etc/mail')
++STDIR= ifdef(`confSTDIR', `confSTDIR', `{{ sendmail.serverroot }}/var/tmp')
+ 
+ # statistics file name
+ STFILE=	ifdef(`confSTFILE', `confSTFILE', `statistics')
+@@ -30,7 +30,7 @@
+ STPATH= ${STDIR}/${STFILE}
+ 
+ # location of sendmail helpfile file (usually /etc/mail)
+-HFDIR= ifdef(`confHFDIR', `confHFDIR', `/etc/mail')
++HFDIR= ifdef(`confHFDIR', `confHFDIR', `{{ sendmail.serverroot }}/share/data')
+ 
+ # full path to installed help file (usually ${HFDIR}/helpfile)
+ HFFILE= ${HFDIR}/ifdef(`confHFFILE', `confHFFILE', `helpfile')
+@@ -43,12 +43,12 @@
+ statistics:
+ 	${CP} /dev/null statistics
+ 
+-${DESTDIR}/etc/mail/submit.cf:
++${DESTDIR}/etc/submit.cf:
+ 	@echo "Please read INSTALL if anything fails while installing the binary."
+-	@echo "${DESTDIR}/etc/mail/submit.cf will be installed now."
++	@echo "${DESTDIR}/etc/submit.cf will be installed now."
+ 	cd ${SRCDIR}/cf/cf && make install-submit-cf
+ 
+-MSPQ=ifdef(`confMSP_QUEUE_DIR', `confMSP_QUEUE_DIR', `/var/spool/clientmqueue')
++MSPQ=ifdef(`confMSP_QUEUE_DIR', `confMSP_QUEUE_DIR', `{{ sendmail.serverroot }}{{ sendmail.msaqueue }}')
+ 
+ ${DESTDIR}${MSPQ}:
+ 	@echo "Please read INSTALL if anything fails while installing the binary."
+@@ -79,7 +79,7 @@
+ 	${INSTALL} -c -o ${M`'BINOWN} -g ${M`'BINGRP} -m ${M`'BINMODE} bldCURRENT_PRODUCT ${DESTDIR}${M`'BINDIR}/sm-mta
+ 	for i in confMTA_LINKS; do \
+ 		rm -f $$i; \
+-		${LN} ${LNOPTS} ${M`'BINDIR}/sm-mta $$i; \
++		${LN} ${LNOPTS} {{ sendmail.serverroot }}/sbin/sm-mta $$i; \
+ 	done
+ 
+ install-hf:
+
+--- /dev/null	2010-04-29 00:00:00.000000000 +0900
++++ sendmail-makefile.m4.patch.ok	2010-04-29 00:00:00.000000000 +0900
+@@ -0,0 +1 @@
++ok

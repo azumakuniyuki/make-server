@@ -1,0 +1,181 @@
+#  ____                 _                 _ _    ___            _        
+# / ___|  ___ _ __   __| |_ __ ___   __ _(_) |  / / |_ __ _ ___| | _____ 
+# \___ \ / _ \ '_ \ / _` | '_ ` _ \ / _` | | | / /| __/ _` / __| |/ / __|
+#  ___) |  __/ | | | (_| | | | | | | (_| | | |/ / | || (_| \__ \   <\__ \
+# |____/ \___|_| |_|\__,_|_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
+#                                                                        
+# make-config
+#  ____ ____ ____ ____ ____ ____ ____ ____ 
+# ||v |||i |||r |||t |||m |||a |||i |||l ||
+# ||__|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#
+- name: make-config | virtmail | Each directory should be created
+  file: >
+    path={{ procmail.install }}/{{ item }}
+    mode=0755
+    owner=root
+    state=directory
+  with_items:
+    - etc
+    - etc/rcs
+
+#  ____ ____ ____ ____ ____ ____ ____ ____ 
+# ||p |||r |||o |||c |||m |||a |||i |||l ||
+# ||__|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#
+- name: make-config | procmail | Log file should be created
+  file: >
+    path={{ sendmail.serverroot }}/var/log/procmail-local.log
+    mode=0600
+    owner=root
+    state=touch
+
+- name: make-config | procmail spool directory should have been created
+  file: >
+    path={{ procmail.spool }}
+    mode=0770
+    owner=root
+    group={{ sendmail.user.mta.group }}
+    state=directory
+
+#  ____ ____ ____ ____ ____ ____ ____ ____ 
+# ||m |||a |||i |||l |||d |||r |||o |||p ||
+# ||__|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#
+- name: make-config | maildrop | Log file should be created
+  file: >
+    path={{ sendmail.serverroot }}/var/log/maildrop-virtual.log
+    mode=0600
+    owner={{ sendmail.user.mda.username }}
+    state=touch
+
+- name: make-config | /root/Maildir directories should have been created
+  file: >
+    path=/root/Maildir/{{ item }}
+    mode=0700
+    state=directory
+  with_items: [ "cur", "new", "tmp" ]
+
+- name: make-config | /etc/skel/Maildir directories should have been created
+  file: >
+    path=/etc/skel/Maildir/{{ item }}
+    mode=0700
+    state=directory
+  with_items: [ "cur", "new", "tmp" ]
+
+#  ____ ____ ____ ____ ____ ____ ____ ____ 
+# ||s |||e |||n |||d |||m |||a |||i |||l ||
+# ||__|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#
+- name: make-config | MTA Queue directories should have been created
+  file: >
+    path={{ sendmail.serverroot }}{{ sendmail.mtaqueue }}/q.{{ item }}
+    mode=0700
+    owner=root
+    group={{ sendmail.user.mta.group }}
+    state=directory
+  with_items: [ 0, 1, 2, 3 ]
+
+- name: make-config | MSP Queue directories should have been created
+  file: >
+    path={{ sendmail.serverroot }}{{ sendmail.msaqueue }}
+    mode=0770
+    owner={{ sendmail.user.msa.username }}
+    group={{ sendmail.user.msa.group }}
+    state=directory
+
+- name: make-config | {{ sendmail.serverroot }}/var/spool/hoststat should be created
+  file: >
+    path={{ sendmail.serverroot }}/var/spool/hoststat
+    state=directory
+
+- name: make-config | {{ sendmail.serverroot }}/sbin/smtpd should be created
+  file: >
+    src={{ sendmail.serverroot }}/sbin/sendmail
+    path={{ sendmail.serverroot }}/sbin/smtpd
+    state=link
+
+- name: make-config | {{ sendmail.serverroot }}/adm/sm.bin should be created
+  file: >
+    path={{ sendmail.serverroot }}/adm/sm.bin
+    mode=0751
+    owner=root
+    state=directory
+
+- name: make-config | alias file should be created
+  template: >
+    src=opt/sendmail/etc/aliases.j2
+    dest={{ sendmail.serverroot }}/etc/aliases
+
+- name: make-config | Deploy sendmail.mc file
+  when: ansible_system == "Linux"
+  template: >
+    src=usr/local/src/sendmail.mc.{{ ansible_system }}.j2
+    dest={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf/sendmail.mc
+
+- name: make-config | Deploy submit.mc file
+  template: >
+    src=usr/local/src/submit.mc.j2
+    dest={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf/submit.mc
+
+- name: make-config | Deploy virtmail.m4 file
+  template: >
+    src=usr/local/src/virtmail.m4.j2
+    dest={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/mailer/virtmail.m4
+
+- name: make-config | Build sendmail.cf and submit.cf
+  shell: >
+    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf
+    make {{ item }}.cf
+  with_items:
+    - sendmail
+    - submit
+
+- name: make-config | Install sendmail.cf
+  shell: >
+    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf
+    {{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/devtools/bin/install.sh 
+    -c -o root -g bin -m 0444 sendmail.cf {{ sendmail.serverroot }}/etc/sendmail.cf
+
+- name: make-config | Install sendmail.cf
+  shell: >
+    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf
+    {{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/devtools/bin/install.sh 
+    -c -o root -g bin -m 0444 submit.cf {{ sendmail.serverroot }}/etc/submit.cf
+
+- name: make-config | Copy cf directory
+  shell: >
+    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/
+    /bin/cp -Rp ./cf {{ sendmail.serverroot }}/etc/
+    creates={{ sendmail.serverroot }}/etc/cf
+
+- name: make-config | Deploy files into {{ sendmail.serverroot }}/etc
+  template: >
+    src=opt/sendmail/etc/{{ item }}.j2
+    dest={{ sendmail.serverroot }}/etc/{{ item }}
+  with_items:
+      - Makefile
+      - access
+      - aliases
+      - authinfo
+      - daemon-options
+      - generics-domains
+      - genericstable
+      - local-host-names
+      - maildroprc
+      - mailertable
+      - masquerade-domains
+      - procmailrc
+      - queue-interval
+      - relay-domains
+      - sid-options
+      - sid-pass-domains
+      - sid-peer-hosts
+      - trusted-users
+      - virtuser-domains
+      - virtusertable
+
