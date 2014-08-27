@@ -1,5 +1,5 @@
 --- sendmail/Makefile.m4	2014-05-17 05:40:15.000000000 +0900
-+++ sendmail/Makefile.m4	2014-08-27 16:23:12.000000000 +0900
++++ sendmail/Makefile.m4	2014-08-28 05:02:08.000000000 +0900
 @@ -14,13 +14,13 @@
  
  dnl hack: /etc/mail is not defined as "location of .cf" in the build system
@@ -12,7 +12,7 @@
  
  # location of sendmail statistics file (usually /etc/mail/ or /var/log)
 -STDIR= ifdef(`confSTDIR', `confSTDIR', `/etc/mail')
-+STDIR= ifdef(`confSTDIR', `confSTDIR', `{{ sendmail.serverroot }}/var/tmp')
++STDIR= ifdef(`confSTDIR', `confSTDIR', `{{ sendmail.serverroot }}/var/log')
  
  # statistics file name
  STFILE=	ifdef(`confSTFILE', `confSTFILE', `statistics')
@@ -41,6 +41,15 @@
  
  ${DESTDIR}${MSPQ}:
  	@echo "Please read INSTALL if anything fails while installing the binary."
+@@ -71,7 +71,7 @@
+ 	${INSTALL} -c -o ${S`'BINOWN} -g ${S`'BINGRP} -m ${S`'BINMODE} bldCURRENT_PRODUCT ${DESTDIR}${M`'BINDIR}
+ 	for i in ${sendmailTARGET_LINKS}; do \
+ 		rm -f $$i; \
+-		${LN} ${LNOPTS} ${M`'BINDIR}/sendmail $$i; \
++		${LN} -f ${LNOPTS} {{ sendmail.serverroot }}/sbin/sendmail $$i; \
+ 	done
+ 
+ define(`confMTA_LINKS', `${DESTDIR}${UBINDIR}/newaliases ${DESTDIR}${UBINDIR}/mailq ${DESTDIR}${UBINDIR}/hoststat ${DESTDIR}${UBINDIR}/purgestat')
 @@ -79,7 +79,7 @@
  	${INSTALL} -c -o ${M`'BINOWN} -g ${M`'BINGRP} -m ${M`'BINMODE} bldCURRENT_PRODUCT ${DESTDIR}${M`'BINDIR}/sm-mta
  	for i in confMTA_LINKS; do \
