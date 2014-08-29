@@ -111,16 +111,22 @@
     src=opt/sendmail/etc/aliases.j2
     dest={{ sendmail.serverroot }}/etc/aliases
 
+- name: make-config | Deploy submit.mc file
+  template: >
+    src=usr/local/src/submit.mc.j2
+    dest={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf/submit.mc
+
+- name: make-config | Install submit.cf
+  shell: >
+    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf
+    {{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/devtools/bin/install.sh 
+    -c -o root -g bin -m 0444 submit.cf {{ sendmail.serverroot }}/etc/submit.cf
+
 - name: make-config | Deploy sendmail.mc file
   when: ansible_system == "Linux"
   template: >
     src=usr/local/src/sendmail.mc.{{ ansible_system }}.j2
     dest={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf/sendmail.mc
-
-- name: make-config | Deploy submit.mc file
-  template: >
-    src=usr/local/src/submit.mc.j2
-    dest={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf/submit.mc
 
 - name: make-config | Deploy virtmail.m4 file
   template: >
@@ -140,12 +146,6 @@
     chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf
     {{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/devtools/bin/install.sh 
     -c -o root -g bin -m 0444 sendmail.cf {{ sendmail.serverroot }}/etc/sendmail.cf
-
-- name: make-config | Install sendmail.cf
-  shell: >
-    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf
-    {{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/devtools/bin/install.sh 
-    -c -o root -g bin -m 0444 submit.cf {{ sendmail.serverroot }}/etc/submit.cf
 
 - name: make-config | Copy cf directory
   shell: >
