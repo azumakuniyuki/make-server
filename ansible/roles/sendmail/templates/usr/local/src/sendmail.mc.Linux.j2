@@ -141,7 +141,7 @@ dnl #  define(`QUEUE_DIR',`SPOOL/mqueue')		QueueDirectory(Q)
 dnl #  define(`QUEUE_DIR',`SPOOL/queues/q.*')		QueueDirectory
 dnl #  define(`STATUS_FILE',`-o CF/sendmail.st')	StatusFile(S)
 dnl #  define(`confUSERDB_SPEC',`CF/userdb.db')		UserDatabaseSpec
-define(`HELP_FILE',`CF/helpfile')
+define(`HELP_FILE',`{{ sendmail.serverroot }}/share/data/helpfile')
 define(`confCT_FILE',`-o CF/trusted-users')
 define(`confDEAD_LETTER_DROP',`/var/tmp/dead.letter')dnl
 define(`confHOST_STATUS_DIRECTORY',`SPOOL/hoststat')dnl
