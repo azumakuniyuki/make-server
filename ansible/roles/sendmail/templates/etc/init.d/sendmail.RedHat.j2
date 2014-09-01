@@ -1,0 +1,82 @@
+#!/bin/sh
+#
+# sendmail      This shell script takes care of starting and stopping
+#               sendmail.
+#
+# chkconfig: 2345 80 30
+# description: Sendmail is a Mail Transport Agent, which is the program \
+#              that moves mail from one machine to another.
+# processname: sendmail
+# config: {{ sendmail.configroot }}/sendmail.cf
+# pidfile: /var/run/sendmail.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Source sendmail configuration.
+if [ -f /etc/sysconfig/sendmail ] ; then
+    . /etc/sysconfig/sendmail
+else
+    DAEMON=yes
+    if [ -f "{{ sendmail.configroot }}/queue-interval" ]; then
+        QUEUE="`cat {{ sendmail.configroot }}/queue-interval`"
+    else
+        QUEUE=5m
+    fi
+fi
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+
+[ -f /usr/sbin/sendmail ] || exit 0
+
+RETVAL=0
+
+# See how we were called.
+case "$1" in
+    start)
+        # Start daemons.
+        echo -n "Starting sendmail: "
+        /usr/bin/newaliases > /dev/null 2>&1
+        for i in virtusertable access mailertable genericstable authinfo; do
+            if [ -f {{ sendmail.configroot }}/$i ] ; then
+                /usr/sbin/makemap hash {{ sendmail.configroot }}/$i < {{ sendmail.configroot }}/$i
+            fi
+        done
+        daemon /usr/sbin/sendmail $([ "$DAEMON" = yes ] && echo -bd) \
+        $([ -n "$QUEUE" ] && echo -q$QUEUE) \
+        $([ -f "{{ sendmail.configroot }}/daemon-options" ] && cat {{ sendmail.configroot }}/daemon-options )
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ] && touch /var/lock/subsys/sendmail
+        ;;
+
+    stop)
+        # Stop daemons.
+        echo -n "Shutting down sendmail: "
+        killproc sendmail
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/sendmail
+        ;;
+
+    restart|reload)
+        $0 stop
+        $0 start
+        RETVAL=$?
+        ;;
+
+    status)
+        status sendmail
+        RETVAL=$?
+        ;;
+
+    *)
+        echo "Usage: sendmail {start|stop|restart|status}"
+        exit 1
+esac
+
+exit $RETVAL

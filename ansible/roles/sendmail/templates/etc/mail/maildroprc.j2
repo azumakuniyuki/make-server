@@ -1,0 +1,16 @@
+# $Id: maildroprc.in,v 1.1 2010/02/02 03:41:35 ak Exp $
+#
+# maildroprc for virtual mailbox
+#
+PATH='/usr/local/bin:/usr/bin:/bin:.'
+SHELL='/bin/sh'
+UMASK='077'
+logfile '/var/log/maildrop-virtual.log'
+
+RECIPIENT=tolower("$1")
+VIRTUALROOT="$HOME"
+VIRTUALUSER=`echo $RECIPIENT | cut -d@ -f1`
+VIRTUALHOST=`echo $RECIPIENT | cut -d@ -f2`
+
+MAILDIR="$VIRTUALROOT/$VIRTUALHOST/$VIRTUALUSER/Maildir/"
+DEFAULT="$MAILDIR"

@@ -1,0 +1,81 @@
+PUSHDIVERT(-1)
+# $Id: virtmail.m4,v 1.2 2010/02/02 11:37:09 ak Exp $
+# sendmail + dovecot + procmail + maildrop = Virtual Mailbox with Maildir
+# Copyright (c) 2010-2014, azumakuniyuki All rights reserved.
+dnl        _      _                   _ _             _  _   
+dnl __   _(_)_ __| |_ _ __ ___   __ _(_) |  _ __ ___ | || |  
+dnl \ \ / / | '__| __| '_ ` _ \ / _` | | | | '_ ` _ \| || |_ 
+dnl  \ V /| | |  | |_| | | | | | (_| | | |_| | | | | |__   _|
+dnl   \_/ |_|_|   \__|_| |_| |_|\__,_|_|_(_)_| |_| |_|  |_|  
+dnl                                                          
+dnl  Redistribution and use in source and binary forms, with or without modifi-
+dnl  cation, are permitted provided that the following conditions are met:
+dnl
+dnl  Redistributions of  source code  must retain  the above  copyright notice,
+dnl  this list of conditions and the following disclaimer.
+dnl
+dnl  Redistributions in binary form  must reproduce the above copyright notice,
+dnl  this list of conditions and  the following disclaimer in the documentation
+dnl  and/or other materials provided with the distribution.
+dnl
+dnl  Neither  the name of the  ``azumakuniyuki''  nor the names of its contrib-
+dnl  utors  may be used to endorse  or promote products derived from this soft-
+dnl  ware without specific prior written permission.
+dnl
+dnl THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+dnl AND ANY EXPRESS  OR IMPLIED WARRANTIES,  INCLUDING, BUT NOT LIMITED TO, THE
+dnl IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS  FOR A PARTICULAR PURPOSE
+dnl ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDER  OR CONTRIBUTORS BE
+dnl LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,  OR CONSE-
+dnl QUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,  PROCUREMENT OF SUBSTITUTE
+dnl GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+dnl HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,  WHETHER IN CONTRACT, STRICT
+dnl LIABILITY, OR TORT ( INCLUDING NEGLIGENCE OR OTHERWISE ) ARISING IN ANY WAY
+dnl OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+dnl DAMAGE.
+dnl
+_DEFIFNOT(`VIRTMAIL_MAILER_PSEUDOTLD',`VIRTMAIL')dnl
+_DEFIFNOT(`VIRTMAIL_MAILER_CONFIGDIR',`{{ procmail.install }}/etc/rcs')dnl
+_DEFIFNOT(`VIRTMAIL_MAILER_PATH',`{{ maildrop.install }}/bin/maildrop')dnl
+_DEFIFNOT(`VIRTMAIL_MAILER_USER',`{{ sendmail.user.mda.username }}')dnl
+
+define(`_VIRTMAIL_BASENAME',esyscmd(basename VIRTMAIL_MAILER_PATH))dnl
+define(`_VIRTMAIL_PROG',substr(_VIRTMAIL_BASENAME,0,decr(len(_VIRTMAIL_BASENAME))))dnl
+undefine(`_VIRTMAIL_BASENAME')dnl
+define(`VIRTMAIL_MAILER_TYPE',
+	ifdef(`VIRTMAIL_MAILER_TYPE',defn(`VIRTMAIL_MAILER_TYPE'),
+		ifelse(
+			defn(`_VIRTMAIL_PROG'),`maildrop',`maildrop',
+			defn(`_VIRTMAIL_PROG'),`procmail',`procmail',
+			`maildrop'
+		)))dnl
+ifdef(`VIRTMAIL_MAILER_FLAGS',`',`dnl
+	define(`VIRTMAIL_MAILER_FLAGS',`91AlnoPSsW')')dnl
+define(`_VIRTMAIL_ARGS_',
+	ifdef(`VIRTMAIL_MAILER_ARGS',defn(`VIRTMAIL_MAILER_ARGS'),
+		ifelse(
+			defn(`VIRTMAIL_MAILER_TYPE'),`maildrop',_VIRTMAIL_PROG` -f $f -d 'VIRTMAIL_MAILER_USER` $u',
+			defn(`VIRTMAIL_MAILER_TYPE'),`procmail',_VIRTMAIL_PROG` -tY -m $h $f $u',
+			`errprint(`*** ERROR: Unknown mailer type of virtmail ')`'m4exit(1)'
+		)))dnl
+define(`_VIRTMAIL_QGRP',`ifelse(defn(`VIRTMAIL_MAILER_QGRP'),`',`',`Q=VIRTMAIL_MAILER_QGRP,')')
+
+LOCAL_RULE_0
+R$+ < @ $={VirtHost} .VIRTMAIL_MAILER_PSEUDOTLD.> $*	$: <VIRT> $1 < @ $2 . > $3 $| <@>
+ifelse(defn(`VIRTMAIL_MAILER_TYPE'),`procmail',`dnl
+R<VIRT> $+ <@$+.> $* $| <@>		$#virtmail $@ VIRTMAIL_MAILER_CONFIGDIR/$2.cf $: $1 <@$2.> $3
+',defn(`VIRTMAIL_MAILER_TYPE'),`maildrop',`dnl
+R<VIRT> $+ <@$+.> $* $| <@>		$#virtmail $@ localhost $: $1 <@$2.> $3
+')dnl
+
+
+divert(7)
+VERSIONID(`$Id: virtmail.m4,v 1.2 2010/02/02 11:37:09 ak Exp $')
+#############################################################################
+### virtmail Mailer Specification                                         ###
+#############################################################################
+Mvirtmail,	P=VIRTMAIL_MAILER_PATH, F=_MODMF_(CONCAT(`0DFM',VIRTMAIL_MAILER_FLAGS),`VIRTMAIL'),
+		S=EnvFromSMTP/HdrFromSMTP, R=EnvToSMTP/HdrFromSMTP,
+                ifdef(`VIRTMAIL_MAILER_MAX',`M=VIRTMAIL_MAILER_MAX, ')T=DNS/RFC822/X-Unix, _VIRTMAIL_QGRP
+                A=_VIRTMAIL_ARGS_
+

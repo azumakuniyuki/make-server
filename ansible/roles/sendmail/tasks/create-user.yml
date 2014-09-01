@@ -1,0 +1,38 @@
+#  ____                 _                 _ _    ___            _        
+# / ___|  ___ _ __   __| |_ __ ___   __ _(_) |  / / |_ __ _ ___| | _____ 
+# \___ \ / _ \ '_ \ / _` | '_ ` _ \ / _` | | | / /| __/ _` / __| |/ / __|
+#  ___) |  __/ | | | (_| | | | | | | (_| | | |/ / | || (_| \__ \   <\__ \
+# |____/ \___|_| |_|\__,_|_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
+#                                                                        
+# create-user
+- name: create-user | Each group should be created
+  group: >
+    name={{ item.group }}
+    gid={{ item.gid }}
+    state=present
+  with_items:
+    - "{{ sendmail.user.mta }}"
+    - "{{ sendmail.user.msa }}"
+    - "{{ sendmail.user.mda }}"
+
+- name: create-user | Each user should be created
+  user: >
+    name={{ item.username }} 
+    uid={{ item.uid }}
+    group={{ item.group }} 
+    shell={{ item.shell }}
+    home={{ item.home }}
+    comment={{ item.comment }}
+    createhome=yes
+    state=present
+  with_items:
+    - "{{ sendmail.user.mta }}"
+    - "{{ sendmail.user.msa }}"
+    - "{{ sendmail.user.mda }}"
+
+- name: create-user | User {{ sendmail.user.msa.username }} should be belong to group {{ sendmail.user.mta.group }}
+  user: >
+    name={{ sendmail.user.msa.username }} 
+    groups={{ sendmail.user.mta.group }} 
+    state=present
+

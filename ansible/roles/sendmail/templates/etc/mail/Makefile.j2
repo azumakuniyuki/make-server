@@ -1,0 +1,61 @@
+# $Id: Makefile,v 1.2 2010/02/11 10:49:59 ak Exp $
+# Makefile for sendmail-virtualmailbox
+#  __  __       _         __ _ _      
+# |  \/  | __ _| | _____ / _(_) | ___ 
+# | |\/| |/ _` | |/ / _ \ |_| | |/ _ \
+# | |  | | (_| |   <  __/  _| | |  __/
+# |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
+# ---------------------------------------------------------------------------
+SENDMAIL = /usr/sbin/sendmail
+MAKEMAP  = /usr/sbin/makemap
+DBFILES  = virtusertable.db access.db genericstable.db mailertable.db authinfo
+PIDFILE  = /var/run/sendmail.pid
+SMCTL    = /usr/local/sbin/sendmailctl
+CFDIR    = /etc/mail/cf
+OPTIONS  = /etc/mail/daemon-options
+QINTERVAL= $(shell test -s queue-interval && head -1 queue-interval || echo 4m)
+
+all: $(DBFILES) aliases.db
+
+userdb.db: userdb
+	@ $(MAKEMAP) btree $@ < $<
+
+aliases.db:
+	@test -s $@ || \
+		( touch $@ && chown root.{{ sendmail.user.mta.group }} $@ && chmod 0640 $@ )
+	$(SENDMAIL) -bi
+
+authinfo.db: authinfo
+	@test -f $< && $(MAKEMAP) hash $@ < $<
+	@chown root.{{ sendmail.user.mta.group }} $@ && chmod 600 $@ $<
+
+%.db: %
+	@test -f $< && $(MAKEMAP) hash $@ < $<
+	@chown root.{{ sendmail.user.mta.group }} $@ && chmod 640 $@
+
+%.cf: %.mc
+	@if test -f $(CFDIR)/m4/cf.m4; then \
+		umask 022; \
+		test -e $@ && mv -f $@ $@.`date '+%F'`.bak; \
+		m4 $(CFDIR)/m4/cf.m4 $< > $@; \
+		echo "### $< ###" >> $@; \
+		sed -e 's|^|# |' $< >> $@; \
+	fi
+
+clean:
+	rm -f *.db *~ *.bak
+
+start:
+	@/bin/sh $(SMCTL) start
+
+stop:
+	@/bin/sh $(SMCTL) stop
+
+restart:
+	@/bin/sh $(SMCTL) stop
+	@/bin/sh $(SMCTL) start
+
+status:
+	@test -f $(PIDFILE) && tail -1 $(PIDFILE)
+	@ps axuww | grep sendmail | grep -v grep
+

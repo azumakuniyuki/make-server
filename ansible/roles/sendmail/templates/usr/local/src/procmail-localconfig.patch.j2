@@ -1,0 +1,49 @@
+--- Makefile	2010-02-01 20:05:07.000000000 -0600
++++ Makefile	2010-02-01 20:06:12.000000000 -0600
+@@ -2,7 +2,7 @@
+ 
+ # BASENAME should point to where the whole lot will be installed
+ # change BASENAME to your home directory if need be
+-BASENAME	= /usr
++BASENAME	= {{ procmail.install }}
+ # For display in the man pages
+ VISIBLE_BASENAME= $(BASENAME)
+ 
+@@ -11,7 +11,7 @@
+ #ARCHITECTURE	=.sun4
+ 
+ BINDIR_TAIL	= bin$(ARCHITECTURE)
+-MANDIR		= $(BASENAME)/man
++MANDIR		= $(BASENAME)/share/man
+ BINDIR		= $(BASENAME)/$(BINDIR_TAIL)
+ VISIBLE_BINDIR	= $(VISIBLE_BASENAME)/$(BINDIR_TAIL)
+ # MAN1SUFFIX for regular utility manuals
+--- config.h	2010-02-01 20:06:23.000000000 -0600
++++ config.h	2010-02-01 20:10:32.000000000 -0600
+@@ -52,7 +52,7 @@
+ 	is group writable or contained in a group writable home directory
+ 	if the group involved is the user's default group. */
+ 
+-/*#define LMTP					/* uncomment this if you
++#define LMTP					/* uncomment this if you
+ 						   want to use procmail
+ 	as an LMTP (rfc2033) server, presumably for invocation by an MTA.
+ 	The file examples/local_procmail_lmtp.m4 contains info on how to
+@@ -116,11 +116,11 @@
+ 	is not found, maildelivery will proceed as normal to the default
+ 	system mailbox.	 This also must be an absolute path */
+ 
+-#define ETCRC	"/etc/procmailrc"	/* optional global procmailrc startup
++#define ETCRC	"{{ procmail.install }}/etc/procmailrc"	/* optional global procmailrc startup
+ 					   file (will only be read if procmail
+ 	is started with no rcfile on the command line). */
+ 
+-#define ETCRCS	"/etc/procmailrcs/"	/* optional trusted path prefix for
++#define ETCRCS	"{{ procmail.install }}/etc/rcs/"	/* optional trusted path prefix for
+ 					   rcfiles which will be executed with
+ 	the uid of the owner of the rcfile (this only happens if procmail is
+ 	called with the -m option, without variable assignments on the command
+--- /dev/null	2010-04-29 00:00:00.000000000 +0900
++++ procmail-localconfig.patch.ok	2010-04-29 00:00:00.000000000 +0900
+@@ -0,0 +1 @@
++ok

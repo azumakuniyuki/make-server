@@ -1,0 +1,32 @@
+# $Id: virtusertable,v 1.1 2010/02/02 03:41:35 ak Exp $
+# virtusertable for sendmail-virtualmailbox
+#        _      _                       _        _     _      
+# __   _(_)_ __| |_ _   _ ___  ___ _ __| |_ __ _| |__ | | ___ 
+# \ \ / / | '__| __| | | / __|/ _ \ '__| __/ _` | '_ \| |/ _ \
+#  \ V /| | |  | |_| |_| \__ \  __/ |  | || (_| | |_) | |  __/
+#   \_/ |_|_|   \__|\__,_|___/\___|_|   \__\__,_|_.__/|_|\___|
+# 
+# ---------------------------------------------------------------------------
+# * Local unix user mailboxes: -> aliases -> /home/$USER/Maildir
+#abuse@example.jp        postmaster
+#abuse@example.org       postmaster
+#hostmaster@example.jp   %1
+#postmaster@example.jp   %1
+#postmaster@example.org  %1
+#webmaster@example.jp    admin
+
+# * Virtual mailboxes(a): -> {{ sendmail.user.mda.home }}/$DOMAIN/$USER/Maildir
+#kijitora@example.jp     %0.VIRTMAIL
+#shironeko@example.jp    %0.VIRTMAIL
+#mikeneko@example.org    %0.VIRTMAIL
+#sabatora@example.org    %0.VIRTMAIL
+
+# * Virtual mailboxes(b): -> aliases -> {{ sendmail.user.mda.home }}/$DOMAIN/$USER/Maildir
+#staff@example.jp        %1.example.jp
+#list@example.jp         %1.example.jp
+#members@example.org     %1.example.org
+
+# * Default
+#@example.jp             "ERROR:5.5.0:550 User Unknown"
+#@example.org            "ERROR:5.5.0:550 User Unknown"
+

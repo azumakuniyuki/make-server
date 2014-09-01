@@ -1,0 +1,13 @@
+# $Id: genericstable,v 1.1 2010/02/02 03:41:35 ak Exp $
+# genericstable for sendmail-virtualmailbox
+#                             _          _        _     _      
+#   __ _  ___ _ __   ___ _ __(_) ___ ___| |_ __ _| |__ | | ___ 
+#  / _` |/ _ \ '_ \ / _ \ '__| |/ __/ __| __/ _` | '_ \| |/ _ \
+# | (_| |  __/ | | |  __/ |  | | (__\__ \ || (_| | |_) | |  __/
+#  \__, |\___|_| |_|\___|_|  |_|\___|___/\__\__,_|_.__/|_|\___|
+#  |___/                                                       
+#
+#root		postmaster@{{ ansible_domain }}
+#{{ sendmail.user.mta.username }}   postmaster@{{ ansible_domain }}
+#httpd		webmaster@{{ ansible_domain }}
+#named      hostmaster@{{ ansible_domain }}
