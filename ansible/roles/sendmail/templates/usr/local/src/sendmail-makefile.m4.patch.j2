@@ -41,25 +41,6 @@
  
  ${DESTDIR}${MSPQ}:
  	@echo "Please read INSTALL if anything fails while installing the binary."
-@@ -71,7 +71,7 @@
- 	${INSTALL} -c -o ${S`'BINOWN} -g ${S`'BINGRP} -m ${S`'BINMODE} bldCURRENT_PRODUCT ${DESTDIR}${M`'BINDIR}
- 	for i in ${sendmailTARGET_LINKS}; do \
- 		rm -f $$i; \
--		${LN} ${LNOPTS} ${M`'BINDIR}/sendmail $$i; \
-+		${LN} -f ${LNOPTS} {{ sendmail.serverroot }}/sbin/sendmail $$i; \
- 	done
- 
- define(`confMTA_LINKS', `${DESTDIR}${UBINDIR}/newaliases ${DESTDIR}${UBINDIR}/mailq ${DESTDIR}${UBINDIR}/hoststat ${DESTDIR}${UBINDIR}/purgestat')
-@@ -79,7 +79,7 @@
- 	${INSTALL} -c -o ${M`'BINOWN} -g ${M`'BINGRP} -m ${M`'BINMODE} bldCURRENT_PRODUCT ${DESTDIR}${M`'BINDIR}/sm-mta
- 	for i in confMTA_LINKS; do \
- 		rm -f $$i; \
--		${LN} ${LNOPTS} ${M`'BINDIR}/sm-mta $$i; \
-+		${LN} ${LNOPTS} {{ sendmail.serverroot }}/sbin/sm-mta $$i; \
- 	done
- 
- install-hf:
-
 --- /dev/null	2010-04-29 00:00:00.000000000 +0900
 +++ sendmail-makefile.m4.patch.ok	2010-04-29 00:00:00.000000000 +0900
 @@ -0,0 +1 @@

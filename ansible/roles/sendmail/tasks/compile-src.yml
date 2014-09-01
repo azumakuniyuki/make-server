@@ -181,8 +181,45 @@
     chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}
     MAILDIR=/etc DESTDIR={{ sendmail.serverroot }} /bin/sh ./Build install
 
+- name: compile-src | Fix symbolic links
+  shell: >
+    chdir={{ sendmail.serverroot }}
+    rm -f bin/{{ item }}
+    removes={{ sendmail.serverroot }}/bin/{{ item }}
+  with_items:
+    - hoststat
+    - mailq
+    - newaliases
+    - purgestat
 
+- name: compile-src | Fix symbolic links
+  shell: >
+    chdir={{ sendmail.serverroot }}
+    ln -sf {{ sendmail.serverroot }}/sbin/sendmail {{ sendmail.serverroot }}/bin/{{ item }}
+    creates={{ sendmail.serverroot }}/bin/{{ item }}
+  with_items:
+    - hoststat
+    - mailq
+    - newaliases
+    - purgestat
 
+- name: compile-src | Make symbolic links in bin/ directory
+  shell: >
+    chdir={{ sendmail.serverroot }}
+    ln -sf {{ sendmail.serverroot }}/sbin/sendmail /usr/local/bin/{{ item }}
+  with_items:
+    - hoststat
+    - mailq
+    - newaliases
+    - purgestat
+
+- name: compile-src | Make symbolic links in sbin/ directory
+  shell: >
+    chdir={{ sendmail.serverroot }}
+    ln -sf {{ sendmail.serverroot }}/sbin/{{ item }} /usr/local/sbin/{{ item }}
+  with_items:
+    - sendmail
+    - makemap
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||l |||i |||b |||m |||i |||l |||t |||e |||r ||
