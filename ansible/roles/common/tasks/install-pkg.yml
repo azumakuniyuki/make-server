@@ -6,7 +6,7 @@
 #
 # install-pkg
 #
-- name: 'install-pkg | RedHat | Each package for development should be installed'
+- name: install-pkg | RedHat | Each package for development should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   with_items: 
@@ -26,7 +26,7 @@
     - readline
     - readline-devel
 
-- name: 'install-pkg | RedHat | Each package for archive should be installed'
+- name: install-pkg | RedHat | Each package for archive should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   with_items: 
@@ -35,14 +35,14 @@
     - zlib
     - zlib-devel
 
-- name: 'install-pkg | RedHat | Each package for Python should be installed'
+- name: install-pkg | RedHat | Each package for Python should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   with_items:
     - python-pip
     - libselinux-python
 
-- name: 'install-pkg | RedHat | Each tool should be installed'
+- name: install-pkg | RedHat | Each tool should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   with_items:
@@ -50,7 +50,7 @@
     - telnet
     - finger
 
-- name: 'install-pkg | Debian | Each package for development should be installed'
+- name: install-pkg | Debian | Each package for development should be installed
   when: ansible_os_family == "Debian"
   apt: pkg={{ item }} state=present
   with_items:
@@ -69,7 +69,7 @@
     - openssl
     - patch
 
-- name: 'install-pkg | Debian | Each package for archive should be installed'
+- name: install-pkg | Debian | Each package for archive should be installed
   when: ansible_os_family == "Debian"
   yum:  name={{ item }} state=present
   with_items: 
@@ -78,14 +78,14 @@
     - zlib1g
     - zlib1g-dev
 
-- name: 'install-pkg | Debian | Each package for Python should be installed'
+- name: install-pkg | Debian | Each package for Python should be installed
   when: ansible_os_family == "Debian"
   apt:  name={{ item }} state=present
   with_items:
     - python-pip
     - python-selinux
 
-- name: 'install-pkg | Debian | Each tool should be installed'
+- name: install-pkg | Debian | Each tool should be installed
   when: ansible_os_family == "Debian"
   yum:  name={{ item }} state=present
   with_items:
