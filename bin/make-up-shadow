@@ -155,7 +155,7 @@ use Getopt::Long qw/:config posix_default no_ignore_case bundling auto_help/;
 use File::Basename qw/basename/;
 use Crypt::Passwd::XS;
 
-my $Version = '0.0.1';
+my $Version = '0.0.2';
 my $Setting = {};
 my $Default = {};
 my $Options = {
@@ -218,7 +218,7 @@ sub parseoptions {
             $Setting->{'algorithm'} = uc $p->{'algorithm'};
         } 
     }
-    $Setting->{'algorithm'} ||= 'SHA256';
+    $Setting->{'algorithm'} ||= 'SHA512';
 
     $Setting = $Default unless keys %$Setting;
     $r |= $Options->{'exec'};
