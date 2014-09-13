@@ -17,7 +17,7 @@
   shell: >
     /bin/sh configure
     --prefix={{ bind.serverroot }}
-    --with-openssl=/usr/local
+    --with-openssl=/usr
     --enable-largefile
     --disable-ipv6
     creates=Makefile
