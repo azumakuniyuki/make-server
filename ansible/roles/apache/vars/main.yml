@@ -7,7 +7,7 @@
 apache:
   started: True
   rebuild: False
-  version: 2.2.27
+  version: 2.2.29
   serverroot: '/opt/httpd'
   user:
     username: 'apache'
