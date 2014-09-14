@@ -7,7 +7,7 @@
 nginx:
   started: True
   rebuild: False
-  version: 1.5.12
+  version: 1.6.1
   serverroot: '/opt/nginx'
   user:
     username: 'nginx'
