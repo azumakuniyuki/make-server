@@ -9,6 +9,17 @@
   when: config.selinux == False and ansible_os_family in [ 'RedHat', 'Debian' ]
   selinux: state=disabled
 
+- name: make-config | Prepare swapfile
+  when: config.useswap == True and ansible_memtotal_mb < 512
+  register: swapfile
+  shell: >
+    dd if=/dev/zero of=/swapfile bs=1024 count=262144
+    creates=/swapfile
+
+- name: make-config | make swapfile
+  when: swapfile.changed
+  shell: mkswap /swapfile && swapon /swapfile
+
 - name: make-config | {{ local.src }} directory should be created
   file: >
     path={{ local.src }}
@@ -21,4 +32,5 @@
   template: >
     src=etc/motd.j2
     dest=/etc/motd
+
 
