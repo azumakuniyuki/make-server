@@ -8,6 +8,7 @@ bind:
   started: True
   rebuild: False
   version: 9.10.0-P2
+  changeroot: /opt/named
   serverroot: /opt/named
   workingdir: /usr/local/src
   user:

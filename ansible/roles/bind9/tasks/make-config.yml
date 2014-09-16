@@ -5,15 +5,23 @@
 # |_.__/|_|_| |_|\__,_|  /_/_/   \__\__,_|___/_|\_\___/
 #                                                      
 # make-config
-#
+- name: make-config | chroot directory for bind9 should be created
+  file: >
+    path={{ bind.changeroot }}
+    mode=0755
+    state=directory
+    owner={{ bind.user.username }}
+    group={{ bind.user.group }}
+
 - name: make-config | Each directory for bind9 should be created
   file: >
-    path={{ bind.serverroot }}/{{ item }}
+    path={{ bind.changeroot }}/{{ item }}
     mode=0755
     state=directory
     owner={{ bind.user.username }}
     group={{ bind.user.group }}
   with_items:
+    - dev
     - etc
     - var/run
     - var/log
@@ -22,9 +30,20 @@
     - var/data/slaves
     - tmp
 
+- name: mame-config | /dev/random
+  shell: >
+    chdir={{ bind.changeroot }}/dev
+    mknod -m 666 {{ item.name }} c 1 {{ item.minor }}
+    creates={{ item.name }}
+  with_items:
+    - { name: 'random', minor: 8 }
+    - { name: 'urandom', minor: 9 }
+    - { name: 'zero', minor: 5 }
+    - { name: 'null', minor: 3 }
+
 - name: make-config | Sub directories for master zone should be created
   file: >
-    path={{ bind.serverroot }}/var/data/masters/{{ item }}
+    path={{ bind.changeroot }}/var/data/masters/{{ item }}
     mode=0755
     owner={{ bind.user.username }}
     group={{ bind.user.group }}
@@ -33,64 +52,64 @@
 
 - name: make-config | Sub directories for slave zone should be created
   file: >
-    path={{ bind.serverroot }}/var/data/slaves/{{ item }}
+    path={{ bind.changeroot }}/var/data/slaves/{{ item }}
     mode=0755
     owner={{ bind.user.username }}
     group={{ bind.user.group }}
     state=directory
   with_items: bind.zone.slaves
 
-- name: make-config | Deploy {{ bind.serverroot }}/etc/named.conf
+- name: make-config | Deploy {{ bind.changeroot }}/etc/named.conf
   notify: Restart bind
   template: >
     src=opt/named/etc/named.conf.j2
-    dest={{ bind.serverroot }}/etc/named.conf
+    dest={{ bind.changeroot }}/etc/named.conf
 
 - name: make-config | localtime file must exist
   shell: >
-    /bin/cp /etc/localtime {{ bind.serverroot }}/etc/localtime
-    chdir={{ bind.serverroot }}
-    creates={{ bind.serverroot }}/etc/localtime
+    /bin/cp /etc/localtime {{ bind.changeroot }}/etc/localtime
+    chdir={{ bind.changeroot }}
+    creates={{ bind.changeroot }}/etc/localtime
 
-- name: make-config | {{ bind.serverroot }}/etc/rndc.key should be created
+- name: make-config | {{ bind.changeroot }}/etc/rndc.key should be created
   shell: >
-    chdir={{ bind.serverroot }}
-    ./sbin/rndc-confgen -a -p 953
+    chdir={{ bind.changeroot }}
+    {{ bind.serverroot }}/sbin/rndc-confgen -a -p 953
     -c /etc/{{ ansible_hostname }}-rndc-key 
     -k {{ ansible_hostname }}-rndc-key
     -r /dev/urandom
     -u {{ bind.user.username }}
-    -t {{ bind.serverroot }}
-    creates={{ bind.serverroot }}/etc/{{ ansible_hostname }}-rndc-key
+    -t {{ bind.changeroot }}
+    creates={{ bind.changeroot }}/etc/{{ ansible_hostname }}-rndc-key
 
-- name: make-config | {{ bind.serverroot }}/etc/rndc.key should be linked
+- name: make-config | {{ bind.changeroot }}/etc/rndc.key should be linked
   file: >
-    src={{ bind.serverroot }}/etc/{{ ansible_hostname }}-rndc-key
-    path={{ bind.serverroot }}/etc/rndc.key
+    src={{ bind.changeroot }}/etc/{{ ansible_hostname }}-rndc-key
+    path={{ bind.changeroot }}/etc/rndc.key
     state=link
 
-- name: make-config | {{ bind.serverroot }}/etc/rootzone-dnssec-keys should be deployed
+- name: make-config | {{ bind.changeroot }}/etc/rootzone-dnssec-keys should be deployed
   shell: >
     chdir={{ bind.workingdir }}/bind-{{ bind.version }}
-    /bin/cp bind.keys {{ bind.serverroot }}/etc/rootzone-dnssec-keys
-    creates={{ bind.serverroot }}/etc/rootzone-dnssec-keys
+    /bin/cp bind.keys {{ bind.changeroot }}/etc/rootzone-dnssec-keys
+    creates={{ bind.changeroot }}/etc/rootzone-dnssec-keys
 
-- name: make-config | {{ bind.serverroot }}/var/data/named.root should be deployed
+- name: make-config | {{ bind.changeroot }}/var/data/named.root should be deployed
   get_url: >
     url=ftp://rs.internic.net/domain/named.root
-    dest={{ bind.serverroot }}/var/data/named.root
+    dest={{ bind.changeroot }}/var/data/named.root
 
 - name: make-config | localhost.zone and 127.in-addr.arpa.rev should be deployed
   copy: >
     src=opt/named/var/data/masters/{{ item }}
-    dest={{ bind.serverroot }}/var/data/masters/{{ item }}
+    dest={{ bind.changeroot }}/var/data/masters/{{ item }}
   with_items:
     - l/localhost.zone
     - 1/127.in-addr.arpa.rev
 
 - name: make-config | localhost.zone and 127.in-addr.arpa.rev should be owned by {{ bind.user.username }}
   file: >
-    path={{ bind.serverroot }}/var/data/masters/{{ item }}
+    path={{ bind.changeroot }}/var/data/masters/{{ item }}
     owner={{ bind.user.username }}
     group={{ bind.user.group }}
     mode=0644

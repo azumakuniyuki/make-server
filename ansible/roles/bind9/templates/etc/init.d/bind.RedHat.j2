@@ -25,7 +25,7 @@
 
 RETVAL=0
 export KRB5_KTNAME=${KEYTAB_FILE:-/etc/named.keytab}
-export ROOTDIR=${ROOTDIR:-{{ bind.serverroot }}}
+export ROOTDIR=${ROOTDIR:-{{ bind.changeroot }}}
 export OPTIONS="-4 -c /etc/named.conf"
 
 named='named'
@@ -44,9 +44,8 @@ if [ -n "$ROOTDIR" ]; then
    fi;
 fi
 
-ROOTDIR_MOUNT='/etc/named /etc/pki/dnssec-keys /var/named /etc/named.conf
-/etc/rootzone-dnssec-keys /etc/named.rfc1912.zones /etc/rndc.conf /etc/rndc.key
-/usr/lib64/bind /usr/lib/bind /etc/named.iscdlv.key'
+ROOTDIR_MOUNT='/etc/named /var/data /etc/named.conf /etc/rootzone-dnssec-keys 
+/etc/rndc.key /etc/bind.keys'
 
 mount_chroot_conf()
 {
