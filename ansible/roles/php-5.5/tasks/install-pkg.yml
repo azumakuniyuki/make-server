@@ -1,0 +1,134 @@
+#  ____  _   _ ____      ____   ____    ___            _        
+# |  _ \| | | |  _ \    | ___| | ___|  / / |_ __ _ ___| | _____ 
+# | |_) | |_| | |_) |___|___ \ |___ \ / /| __/ _` / __| |/ / __|
+# |  __/|  _  |  __/_____|__) | ___) / / | || (_| \__ \   <\__ \
+# |_|   |_| |_|_|       |____(_)____/_/   \__\__,_|___/_|\_\___/
+#                                                               
+# install-pkg
+- name: 'install-pkg | Install dependencies for PHP {{ php.version }}'
+  when: ansible_os_family == "RedHat"
+  yum:  name={{ item }} state=present
+  ignore_errors: False
+  with_items:
+    - aspell
+    - aspell-devel
+    - bison
+    - bzip2 
+    - bzip2-devel
+    - bzip2-libs
+    - cairo
+    - curl
+    - curl-devel
+    - db4
+    - db4-devel
+    - enchant
+    - enchant-devel
+    - fontconfig
+    - fontconfig-devel
+    - freetds
+    - freetds-devel
+    - freetype 
+    - freetype-devel
+    - gd 
+    - gd-devel
+    - gdbm 
+    - gdbm-devel
+    - glib2 
+    - glib2-devel 
+    - gmp
+    - gmp-devel
+    - krb5-devel
+    - krb5-libs
+    - libICE
+    - libSM
+    - libXau 
+    - libXau-devel
+    - libXpm 
+    - libXpm-devel
+    - libacl 
+    - libaio 
+    - libattr
+    - libgcrypt
+    - libgcrypt-devel
+    - libicu
+    - libicu-devel
+    - libidn
+    - libidn-devel
+    - libjpeg
+    - libjpeg-devel
+    - libmcrypt
+    - libmcrypt-devel
+    - libpng
+    - libpng-devel
+    - libsepol
+    - libsepol-devel
+    - libtidy
+    - libtidy-devel
+    - libtiff 
+    - libXpm
+    - libXpm-devel
+    - libxml2 
+    - libxml2-devel 
+    - libxslt
+    - libxslt-devel 
+    - openjpeg 
+    - openjpeg-devel 
+    - openjpeg-libs 
+    - pango 
+    - pixman 
+    - pixman-devel
+    - pkgconfig 
+    - sqlite
+    - sqlite-devel
+    - t1lib 
+    - t1lib-devel 
+    - xmlrpc-c
+    - xmlrpc-c-client 
+    - zip 
+    - zlib 
+    - zlib-devel
+
+- name: 'install-pkg | Download libgd {{ php.depends.libgd.version }}'
+  get_url: >
+      url=https://bitbucket.org/libgd/gd-libgd/downloads/libgd-{{ php.depends.libgd.version }}.tar.gz
+      dest={{ local.src }}
+
+- name: 'install-pkg | Extract libgd {{ php.depends.libgd.version }}'
+  unarchive: >
+    src={{ local.src }}/libgd-{{ php.depends.libgd.version }}.tar.gz
+    dest={{ local.src }}
+    copy=no
+
+- name: 'install-pkg | configure libgd {{ php.depends.libgd.version }}'
+  command: >
+    chdir={{ local.src }}/libgd-{{ php.depends.libgd.version }}
+    /bin/sh configure 
+      --prefix={{ php.depends.libgd.install }} 
+      --with-png=/usr
+      --with-freetype=/usr
+      --with-fontconfig=/usr
+      --with-jpeg=/usr
+      --with-xpm=/usr
+    creates=Makefile
+
+- name: 'install-pkg | make libgd {{ php.depends.libgd.version }}'
+  command: >
+    chdir={{ local.src }}/libgd-{{ php.depends.libgd.version }} 
+    make 
+    creates=src/gd.o
+  register: make_gd_binary
+
+- name: 'install-pkg | make install libgd {{ php.depends.libgd.version }}'
+  when: make_gd_binary.changed
+  command: >
+    chdir={{ local.src }}/libgd-{{ php.depends.libgd.version }}
+    make install 
+
+- name: 'install-pkg | Symbolic links in {{ php.depends.libgd.install }}/lib64 should be created'
+  when: ansible_userspace_bits == "64"
+  file: >
+    src={{ php.depends.libgd.install }}/lib/{{ item }} 
+    dest={{ php.depends.libgd.install }}/lib64/{{ item }}
+    state=link
+  with_items: [ libgd.a, libgd.la, libgd.so, libgd.so.3, libgd.so.3.0.0 ]
+

@@ -1,0 +1,19 @@
+#  ____  _   _ ____      ____   ____    ___            _        
+# |  _ \| | | |  _ \    | ___| | ___|  / / |_ __ _ ___| | _____ 
+# | |_) | |_| | |_) |___|___ \ |___ \ / /| __/ _` / __| |/ / __|
+# |  __/|  _  |  __/_____|__) | ___) / / | || (_| \__ \   <\__ \
+# |_|   |_| |_|_|       |____(_)____/_/   \__\__,_|___/_|\_\___/
+#                                                               
+# get-archive
+- name: 'get-archive | Download PHP {{ php.version }} at {{ local.src }}'
+  get_url: >
+    url=http://jp1.php.net/distributions/php-{{ php.version }}.tar.bz2
+    dest={{ local.src }}/php-{{ php.version }}.tar.bz2
+
+- name: 'get-archive | Extract {{ local.src }}/php-{{ php.version }}.tar.bz2'
+  unarchive: >
+    src={{ local.src }}/php-{{ php.version }}.tar.bz2
+    dest={{ local.src }}
+    creates={{ local.src }}/php-{{ php.version }}
+    copy=no
+
