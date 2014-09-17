@@ -51,6 +51,5 @@
   notify: Restart Apache
   command: >
     chdir={{ apache.workingdir }}/httpd-{{ apache.version }}/
-    creates={{ apache.serverroot }}/sbin/httpd
     make install
 

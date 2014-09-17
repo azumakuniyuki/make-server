@@ -11,11 +11,19 @@
     gid={{ apache.user.gid }}
     state=present
 
+- name: create-user | Other groups should exist
+  group: >
+    name={{ item.name }}
+    gid={{ item.gid }}
+    state=present
+  with_items: apache.user.groups
+
 - name: create-user | User {{ apache.user.username }}({{ apache.user.uid }}) should be created
   user: >
     name={{ apache.user.username }} 
     uid={{ apache.user.uid }}
     group={{ apache.user.group }} 
+    groups={{ apache.user.groups[0].name }} 
     shell={{ apache.user.shell }}
     home={{ apache.serverroot }}
     comment={{ apache.user.comment }}

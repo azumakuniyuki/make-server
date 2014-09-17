@@ -8,16 +8,18 @@ apache:
   started: True
   rebuild: False
   version: 2.2.29
-  serverroot: '/opt/httpd'
+  serverroot: /opt/httpd
   initscript: apache
   workingdir: /usr/local/src
   user:
-    username: 'apache'
+    username: apache
     password: ''
-    group: 'apache'
+    group: apache
+    groups: 
+      - { name: httpd, gid: 8001 }
     uid: 8000
     gid: 8000
-    shell: '/sbin/nolgin'
+    shell: /sbin/nolgin
     comment: "'Apache httpd server'"
   conf:
     listen: 80
