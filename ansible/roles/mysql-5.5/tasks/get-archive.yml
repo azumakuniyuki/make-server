@@ -15,5 +15,6 @@
   unarchive: >
     src={{ local.src }}/mysql-{{ mysql.version }}.tar.gz
     dest={{ local.src }}
+    creates={{ local.src }}/mysql-{{ mysql.version }}
     copy=no
 

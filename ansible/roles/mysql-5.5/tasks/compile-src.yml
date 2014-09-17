@@ -24,13 +24,13 @@
   notify: Restart MySQL
   command: >
     chdir={{ local.src }}/mysql-{{ mysql.version }}
+    creates={{ local.src }}/mysql-{{ mysql.version }}/CMakeCache.txt
     cmake . 
       -DCMAKE_INSTALL_PREFIX={{ mysql.serverroot }} 
       -DSYSCONFDIR={{ mysql.serverroot }}/etc 
       -DMYSQL_UNIX_ADDR={{ mysql.conf.socket }}
       -DDEFAULT_CHARSET=utf8 
       -DDEFAULT_COLLATION=utf8_general_ci
-    creates=CMakeCache.txt
 
 - name: 'compile-src | make MySQL {{ mysql.version }}'
   notify: Restart MySQL
