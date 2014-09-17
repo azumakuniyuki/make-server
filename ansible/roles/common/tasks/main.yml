@@ -14,6 +14,7 @@
   with_items:
     - profile
     - bash_profile
+    - exrc
 
 - include: install-pkg.yml
 - include: python-pkgs.yml
