@@ -4,6 +4,6 @@
 # | |_) | | | | | (_| |\__, / / | | | | (_| | | | | (_| | |  __/ |  \__ \
 # |_.__/|_|_| |_|\__,_|  /_/_/  |_| |_|\__,_|_| |_|\__,_|_|\___|_|  |___/
 #                                                                        
-- name: Restart bind
+- name: Restart BIND
   when: bind.started == True
-  service: name=named state=restarted
+  service: name={{ bind.initscript }} state=restarted

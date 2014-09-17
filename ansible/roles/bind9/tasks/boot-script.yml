@@ -3,24 +3,22 @@
 # | '_ \| | '_ \ / _` | (_) |/ /| __/ _` / __| |/ / __|
 # | |_) | | | | | (_| |\__, / / | || (_| \__ \   <\__ \
 # |_.__/|_|_| |_|\__,_|  /_/_/   \__\__,_|___/_|\_\___/
-#                                                      
 # boot-script
 - name: boot-script | RedHat | Deploy /etc/init.d/bind
   when: ansible_os_family == "RedHat"
   template: >
     src=etc/init.d/bind.RedHat.j2
-    dest=/etc/init.d/bind
+    dest=/etc/init.d/{{ bind.initscript }}
     mode=0755
     owner=root
     group=root
 
-- name: boot-script | RedHat | Install /etc/rc.d/init.d/bind
+- name: boot-script | RedHat | Install /etc/rc.d/init.d/{{ bind.initscript }}
   when: ansible_os_family == "RedHat"
   shell: >
-    /sbin/chkconfig --add bind
-    creates=/etc/rc.d/rc0.d/K87bind
+    /sbin/chkconfig --add {{ bind.initscript }}
+    creates=/etc/rc.d/rc0.d/K87{{ bind.initscript }}
 
 - name: boot-script | Turn on init script
-  service: name=bind enabled=yes
+  service: name={{ bind.initscript }} enabled=yes
 
-# 

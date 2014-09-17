@@ -33,8 +33,8 @@
 - name: mame-config | /dev/random
   shell: >
     chdir={{ bind.changeroot }}/dev
-    mknod -m 666 {{ item.name }} c 1 {{ item.minor }}
     creates={{ item.name }}
+    mknod -m 666 {{ item.name }} c 1 {{ item.minor }}
   with_items:
     - { name: 'random', minor: 8 }
     - { name: 'urandom', minor: 9 }
@@ -48,7 +48,7 @@
     owner={{ bind.user.username }}
     group={{ bind.user.group }}
     state=directory
-  with_items: bind.zone.masters
+  with_items: bind.zone.subdirs
 
 - name: make-config | Sub directories for slave zone should be created
   file: >
@@ -57,30 +57,30 @@
     owner={{ bind.user.username }}
     group={{ bind.user.group }}
     state=directory
-  with_items: bind.zone.slaves
+  with_items: bind.zone.subdirs
 
 - name: make-config | Deploy {{ bind.changeroot }}/etc/named.conf
-  notify: Restart bind
+  notify: Restart BIND
   template: >
     src=opt/named/etc/named.conf.j2
     dest={{ bind.changeroot }}/etc/named.conf
 
 - name: make-config | localtime file must exist
   shell: >
-    /bin/cp /etc/localtime {{ bind.changeroot }}/etc/localtime
     chdir={{ bind.changeroot }}
     creates={{ bind.changeroot }}/etc/localtime
+    /bin/cp /etc/localtime {{ bind.changeroot }}/etc/localtime
 
 - name: make-config | {{ bind.changeroot }}/etc/rndc.key should be created
   shell: >
     chdir={{ bind.changeroot }}
+    creates={{ bind.changeroot }}/etc/{{ ansible_hostname }}-rndc-key
     {{ bind.serverroot }}/sbin/rndc-confgen -a -p 953
     -c /etc/{{ ansible_hostname }}-rndc-key 
     -k {{ ansible_hostname }}-rndc-key
     -r /dev/urandom
     -u {{ bind.user.username }}
     -t {{ bind.changeroot }}
-    creates={{ bind.changeroot }}/etc/{{ ansible_hostname }}-rndc-key
 
 - name: make-config | {{ bind.changeroot }}/etc/rndc.key should be linked
   file: >
@@ -91,8 +91,8 @@
 - name: make-config | {{ bind.changeroot }}/etc/rootzone-dnssec-keys should be deployed
   shell: >
     chdir={{ bind.workingdir }}/bind-{{ bind.version }}
-    /bin/cp bind.keys {{ bind.changeroot }}/etc/rootzone-dnssec-keys
     creates={{ bind.changeroot }}/etc/rootzone-dnssec-keys
+    /bin/cp bind.keys {{ bind.changeroot }}/etc/rootzone-dnssec-keys
 
 - name: make-config | {{ bind.changeroot }}/var/data/named.root should be deployed
   get_url: >

@@ -6,35 +6,35 @@
 #                                                      
 # compile-src
 - name: compile-src | REBUILD | make clean
+  when: bind.rebuild == True
   command: >
-    make clean
     chdir={{ bind.workingdir }}/bind-{{ bind.version }}/
     removes=Makefile
-  when: bind.rebuild == True
+    make clean
 
 - name: compile-src | bind {{ bind.version }} should be configured
-  notify: Restart bind
+  notify: Restart BIND
   shell: >
+    chdir={{ bind.workingdir }}/bind-{{ bind.version }}/
+    creates=Makefile
     /bin/sh configure
     --prefix={{ bind.serverroot }}
-    --with-openssl=/usr
+    --with-openssl={{ bind.openssldir }}
     --enable-largefile
     --disable-ipv6
-    creates=Makefile
-    chdir={{ bind.workingdir }}/bind-{{ bind.version }}/
 
 - name: compile-src | make bind {{ bind.version }}
-  notify: Restart bind
+  notify: Restart BIND
+  register: make_bind_binary
   command: >
-    make
     chdir={{ bind.workingdir }}/bind-{{ bind.version }}/
     creates=bin/named/named
-  register: make_bind_binary
+    make
 
 - name: compile-src | bind {{ bind.version }} should be installed
   when: make_bind_binary.changed
-  notify: Restart bind
+  notify: Restart BIND
   command: >
-    make install
     chdir={{ bind.workingdir }}/bind-{{ bind.version }}/
+    make install
 

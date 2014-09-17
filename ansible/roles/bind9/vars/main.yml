@@ -11,6 +11,8 @@ bind:
   changeroot: /opt/named
   serverroot: /opt/named
   workingdir: /usr/local/src
+  openssldir: /usr
+  initscript: bind
   user:
     username: named
     uid: 953
@@ -19,5 +21,4 @@ bind:
     shell: /sbin/nolgin
     comment: "'DNS BIND9'"
   zone:
-   masters: []
-   slaves:  []
+   subdirs: [ a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z ]

@@ -11,11 +11,11 @@
 - include: make-config.yml
 - include: boot-script.yml
 
-- name: 'Start bind9'
+- name: Start bind9
   when: bind.started == True
-  service: name=bind state=started
+  service: name={{ bind.initscript }} state=started
 
-- name: 'Stop bind9'
+- name: Stop bind9
   when: bind.started == False
-  service: name=bind state=stopped
+  service: name={{ bind.initscript }} state=stopped
 
