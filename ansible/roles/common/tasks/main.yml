@@ -17,7 +17,6 @@
     - exrc
 
 - include: install-pkg.yml
-- include: python-pkgs.yml
 - include: create-user.yml
 - include: make-config.yml
 
