@@ -9,6 +9,7 @@ apache:
   rebuild: False
   version: 2.2.29
   serverroot: '/opt/httpd'
+  initscript: apache
   user:
     username: 'apache'
     password: ''

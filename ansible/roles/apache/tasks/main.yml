@@ -14,9 +14,9 @@
 
 - name: 'Start Apache httpd'
   when: apache.started == True
-  service: name=httpd state=started
+  service: name={{ apache.initscript }} state=started
 
 - name: 'Stop apache httpd'
   when: apache.started == False
-  service: name=httpd state=stopped
+  service: name={{ apache.initscript }} state=stopped
 

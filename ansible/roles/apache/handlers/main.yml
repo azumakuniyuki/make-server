@@ -6,5 +6,5 @@
 #         |_|                                                                       
 - name: 'Restart Apache'
   when: apache.started == True
-  service: name=httpd state=restarted
+  service: name={{ apache.initscript }} state=restarted
 

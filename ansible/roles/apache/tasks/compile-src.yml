@@ -8,9 +8,9 @@
 #
 - name: 'compile-src | REBUILD | make clean'
   command: >
-    make clean
     chdir={{ local.src }}/httpd-{{ apache.version }}/
     removes=Makefile
+    make clean
   when: apache.rebuild == True
 
 - name: 'compile-src | {{ apache.serverroot }} directory should be created'
@@ -23,6 +23,7 @@
   notify: Restart Apache
   command: >
     chdir={{ local.src }}/httpd-{{ apache.version }}/
+    creates=Makefile
     /bin/sh configure
     --prefix={{ apache.serverroot }}
     --enable-vhost-alias
@@ -36,7 +37,6 @@
     --disable-cgi
     --disable-cgid
     --disable-userdir
-    creates=Makefile
 
 - name: 'compile-src | make apache {{ apache.version }}'
   notify: Restart Apache

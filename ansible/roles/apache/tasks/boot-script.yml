@@ -6,21 +6,21 @@
 #         |_|                                                     
 # boot-script
 #
-- name: 'boot-script | RedHat | Deploy /etc/init.d/httpd'
+- name: boot-script | RedHat | Deploy /etc/init.d/{{ apache.initscript }}
   when: ansible_os_family == "RedHat"
   template: >
     src=etc/init.d/httpd.RedHat.j2
-    dest=/etc/init.d/httpd
+    dest=/etc/init.d/{{ apache.initscript }}
     mode=0755
     owner=root
     group=root
 
-- name: 'boot-script | RedHat | Install init script /etc/rc.d/init.d/httpd'
+- name: boot-script | RedHat | Install init script /etc/rc.d/init.d/{{ apache.initscript }}
   when: ansible_os_family == "RedHat"
   shell: >
-    /sbin/chkconfig --add httpd
-    creates=/etc/rc.d/rc0.d/K15httpd
+    /sbin/chkconfig --add {{ apache.initscript }}
+    creates=/etc/rc.d/rc0.d/K15{{ apache.initscript }}
 
-- name: 'boot-script | Turn on init script /etc/rc.d/init.d/httpd'
-  service: name=httpd enabled=yes
+- name: boot-script | Turn on init script /etc/rc.d/init.d/{{ apache.initscript }}
+  service: name={{ apache.initscript }} enabled=yes
 
