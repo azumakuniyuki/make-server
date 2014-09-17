@@ -41,6 +41,7 @@
   with_items:
     - python-pip
     - libselinux-python
+    - python-virtualenv
 
 - name: install-pkg | RedHat | Each tool should be installed
   when: ansible_os_family == "RedHat"
@@ -84,6 +85,7 @@
   with_items:
     - python-pip
     - python-selinux
+    - python-virtualenv
 
 - name: install-pkg | Debian | Each tool should be installed
   when: ansible_os_family == "Debian"
