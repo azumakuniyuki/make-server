@@ -4,19 +4,10 @@
 # | (_| (_) | | | | | | | | | | | (_) | | | |/ / | || (_| \__ \   <\__ \
 #  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/   \__\__,_|___/_|\_\___/
 #                                                                       
-- name: main | wheel group should be created
-  group: name=wheel system=yes state=present
-
-- name: main | Deploy .profile and .bash_profile into /root
-  template: >
-    src=root/dot.{{ item }}.j2
-    dest=/root/.{{ item }}
+# python-pkgs
+#
+- name: python-pkgs | Install packages
+  pip: name={{ item }} state=present
   with_items:
-    - profile
-    - bash_profile
-
-- include: install-pkg.yml
-- include: python-pkgs.yml
-- include: create-user.yml
-- include: make-config.yml
-
+    - urllib2
+    - urlparse
