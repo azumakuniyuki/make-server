@@ -18,7 +18,7 @@
   when: ansible_os_family == "RedHat"
   shell: >
     /sbin/chkconfig --add bind
-    creates=/etc/rc.d/rc0.d/K13bind
+    creates=/etc/rc.d/rc0.d/K87bind
 
 - name: boot-script | Turn on init script
   service: name=bind enabled=yes
