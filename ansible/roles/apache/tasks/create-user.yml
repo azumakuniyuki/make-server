@@ -5,13 +5,13 @@
 # /_/   \_\ .__/ \__,_|\___|_| |_|\___/_/   \__\__,_|___/_|\_\___/
 #         |_|                                                     
 # create-user                                                        
-- name: 'create-user | Group {{ apache.user.group }}({{ apache.user.gid }}) should be created'
+- name: create-user | Group {{ apache.user.group }}({{ apache.user.gid }}) should be created
   group: >
     name={{ apache.user.group }}
     gid={{ apache.user.gid }}
     state=present
 
-- name: 'create-user | User {{ apache.user.username }}({{ apache.user.uid }}) should be created'
+- name: create-user | User {{ apache.user.username }}({{ apache.user.uid }}) should be created
   user: >
     name={{ apache.user.username }} 
     uid={{ apache.user.uid }}

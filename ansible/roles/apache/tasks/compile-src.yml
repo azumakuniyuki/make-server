@@ -5,24 +5,24 @@
 # /_/   \_\ .__/ \__,_|\___|_| |_|\___/_/   \__\__,_|___/_|\_\___/
 #         |_|                                                     
 # compile-src
-#
-- name: 'compile-src | REBUILD | make clean'
+- name: compile-src | REBUILD | make clean
   command: >
-    chdir={{ local.src }}/httpd-{{ apache.version }}/
+    chdir={{ apache.workingdir }}/httpd-{{ apache.version }}/
     removes=Makefile
     make clean
   when: apache.rebuild == True
 
-- name: 'compile-src | {{ apache.serverroot }} directory should be created'
+- name: compile-src | {{ apache.serverroot }} directory should be created
   file: >
     path={{ apache.serverroot }}
+    owner=root
     mode=0755
     state=directory
 
-- name: 'compile-src | configure apache {{ apache.version }}'
+- name: compile-src | configure apache {{ apache.version }}
   notify: Restart Apache
   command: >
-    chdir={{ local.src }}/httpd-{{ apache.version }}/
+    chdir={{ apache.workingdir }}/httpd-{{ apache.version }}/
     creates=Makefile
     /bin/sh configure
     --prefix={{ apache.serverroot }}
@@ -38,18 +38,19 @@
     --disable-cgid
     --disable-userdir
 
-- name: 'compile-src | make apache {{ apache.version }}'
+- name: compile-src | make apache {{ apache.version }}
   notify: Restart Apache
-  command: >
-    make
-    chdir={{ local.src }}/httpd-{{ apache.version }}/
-    creates=httpd
   register: make_apache_binary
+  command: >
+    chdir={{ apache.workingdir }}/httpd-{{ apache.version }}/
+    creates=httpd
+    make
 
-- name: 'compile-src | make install apache {{ apache.version }}'
+- name: compile-src | make install apache {{ apache.version }}
   when: make_apache_binary.changed
   notify: Restart Apache
   command: >
+    chdir={{ apache.workingdir }}/httpd-{{ apache.version }}/
+    creates={{ apache.serverroot }}/sbin/httpd
     make install
-    chdir={{ local.src }}/httpd-{{ apache.version }}/
 

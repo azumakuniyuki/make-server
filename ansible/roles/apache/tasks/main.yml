@@ -12,11 +12,11 @@
 - include: make-config.yml
 - include: boot-script.yml
 
-- name: 'Start Apache httpd'
+- name: Start Apache httpd
   when: apache.started == True
   service: name={{ apache.initscript }} state=started
 
-- name: 'Stop apache httpd'
+- name: Stop apache httpd
   when: apache.started == False
   service: name={{ apache.initscript }} state=stopped
 

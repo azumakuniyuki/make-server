@@ -10,6 +10,7 @@ apache:
   version: 2.2.29
   serverroot: '/opt/httpd'
   initscript: apache
+  workingdir: /usr/local/src
   user:
     username: 'apache'
     password: ''

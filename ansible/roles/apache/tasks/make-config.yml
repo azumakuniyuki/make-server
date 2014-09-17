@@ -5,20 +5,20 @@
 # /_/   \_\ .__/ \__,_|\___|_| |_|\___/_/   \__\__,_|___/_|\_\___/
 #         |_|                                                     
 # make-config
-#
-- name: 'make-config | Deploy {{ apache.serverroot }}/conf/httpd.conf'
+- name: make-config | Deploy {{ apache.serverroot }}/conf/httpd.conf
   notify: Restart Apache
   template: >
     src=opt/apache/conf/httpd.conf.j2
     dest={{ apache.serverroot }}/conf/httpd.conf
 
-- name: 'make-config | Deploy {{ apache.serverroot }}/conf/extra/httpd-info.conf'
+- name: make-config | Deploy {{ apache.serverroot }}/conf/extra/httpd-info.conf
   notify: Restart Apache
   template: >
     src=opt/apache/conf/extra/httpd-info.conf.j2
-    dest={{ apache.serverroot }}/conf/extra/
+    dest={{ apache.serverroot }}/conf/extra/httpd-info.conf
 
-- name: 'make-config | Deploy log rotation script'
+- name: make-config | Deploy log rotation script
+  when: ansible_system == "Linux"
   template: >
     src=etc/logrotate.d/apache.j2
     dest=/etc/logrotate.d/apache

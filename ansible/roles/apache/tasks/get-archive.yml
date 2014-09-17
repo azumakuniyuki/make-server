@@ -6,17 +6,15 @@
 #         |_|                                                     
 # get-archive
 #
-- name: 'get-archive | Download Apache {{ apache.version }} at {{ local.src }}'
+- name: get-archive | Download Apache {{ apache.version }} at {{ apache.workingdir }}
   get_url: >
     url=http://ftp.kddilabs.jp/infosystems/apache/httpd/httpd-{{ apache.version }}.tar.gz
-    dest={{ local.src }}/httpd-{{ apache.version }}.tar.gz
+    dest={{ apache.workingdir }}/httpd-{{ apache.version }}.tar.gz
 
-- name: 'get-archive | Extract {{ local.src }}/httpd-{{ apache.version }}.tar.gz'
-# parameter ``creates'' is available from 1.6
-#   creates={{ local.src }}/httpd-{{ apache.version }}
+- name: get-archive | Extract {{ local.src }}/httpd-{{ apache.version }}.tar.gz
   unarchive: >
-    src={{ local.src }}/httpd-{{ apache.version }}.tar.gz
-    dest={{ local.src }}
-    creates={{ local.src }}/httpd-{{ apache.version }}
+    src={{ apache.workingdir }}/httpd-{{ apache.version }}.tar.gz
+    dest={{ apache.workingdir }}
+    creates={{ apache.workingdir }}/httpd-{{ apache.version }}
     copy=no
 
