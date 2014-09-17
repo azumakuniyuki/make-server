@@ -7,10 +7,10 @@
 # compile-src
 - name: compile-src | (REBUILD) make clean
   command: >
-    make clean
     chdir={{ qmail.workingdir }}/netqmail-{{ qmail.version }}/
     removes=Makefile
-  when: qmail.rebuild == 1
+    make clean
+  when: qmail.rebuild == True
 
 - name: compile-src | make directory {{ qmail.serverroot }}
   file: >
@@ -22,25 +22,25 @@
 
 - name: compile-src | make qmail {{ qmail.version }}
   notify: Restart qmail
+  register: make_qmail_binary
   shell: >
-    make
     chdir={{ qmail.workingdir }}/netqmail-{{ qmail.version }}/
     creates=qmail.o
-  register: make_qmail_binary
+    make
 
 - name: compile-src | make setup qmail {{ qmail.version }}
   notify: Restart qmail
   shell: >
-    make setup check
     chdir={{ qmail.workingdir }}/netqmail-{{ qmail.version }}/
     creates=qmail.0
+    make setup check
 
 - name: compile-src | config fast
   notify: Restart qmail
   shell: >
-    ./config-fast {{ ansible_fqdn }}
     chdir={{ qmail.workingdir }}/netqmail-{{ qmail.version }}/
     creates={{ qmail.serverroot }}/control/me
+    ./config-fast {{ ansible_fqdn }}
 
 # tcpserver
 - name: compile-src | Upload patch for tcpserver
@@ -51,21 +51,21 @@
 - name: compile-src | Patch for error.h
   shell: >
     chdir={{ qmail.workingdir }}/ucspi-tcp-0.88/
-    patch -b -p1 < error.h-include.patch
     creates=error.h.orig
+    patch -b -p1 < error.h-include.patch
 
 - name: compile-src | make tcpserver
   notify: Restart qmail
+  register: make_tcpserver_binary
   shell: >
-    make
     chdir={{ qmail.workingdir }}/ucspi-tcp-0.88/
     creates=tcpserver.o
-  register: make_tcpserver_binary
+    make
 
 - name: compile-src | make install tcpserver
   when: make_tcpserver_binary.changed
   notify: Restart qmail
   command: >
-    make setup check
     chdir={{ qmail.workingdir }}/ucspi-tcp-0.88/
+    make setup check
 

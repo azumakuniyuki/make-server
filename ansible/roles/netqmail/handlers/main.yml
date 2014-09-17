@@ -5,6 +5,6 @@
 #  \__, |_| |_| |_|\__,_|_|_/_/  |_| |_|\__,_|_| |_|\__,_|_|\___|_|  |___/
 #     |_|                                                                 
 #
-- name: 'Restart qmail'
+- name: Restart qmail
   when: qmail.started == True
-  service: name=qmail state=restarted pattern=bin/tcpserver
+  service: name={{ qmail.initscript }} state=restarted pattern=bin/tcpserver

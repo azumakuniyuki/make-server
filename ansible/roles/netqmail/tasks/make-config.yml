@@ -8,44 +8,44 @@
 - name: make-config | Create control/defaultdomain
   shell: >
     chdir={{ qmail.serverroot }}/control
-    touch defaultdomain
     creates=defaultdomain
+    touch defaultdomain
 
 - name: make-config | Create control/plusdomain
   shell: >
     chdir={{ qmail.serverroot }}/control
-    echo 'localhost.localdomain' > plusdomain
     creates=plusdomain
+    echo 'localhost.localdomain' > plusdomain
 
 - name: make-config | Create control/locals
   shell: >
     chdir={{ qmail.serverroot }}/control
-    echo 'localhost.localdomain' > locals
     creates=locals
+    echo 'localhost.localdomain' > locals
 
 - name: make-config | Create control/queuelifetime
   shell: >
     chdir={{ qmail.serverroot }}/control
-    echo 86400 > queuelifetime
+    echo {{ qmail.config.queuelife }} > queuelifetime
     creates=queuelifetime
 
 - name: make-config | Create control/doublebounceto
   shell: >
     chdir={{ qmail.serverroot }}/control
-    touch doublebounceto
     creates=doublebounceto
+    touch doublebounceto
 
 - name: make-config | Create control/databytes
   shell: >
     chdir={{ qmail.serverroot }}/control
-    echo  8192 > databytes
+    echo {{ qmail.config.databytes }} > databytes
     creates=databytes
 
 - name: make-config | Create {{ qmail.serverroot }}/bin/rc
   shell: >
     chdir={{ qmail.serverroot }}
-    /bin/cp ./boot/home bin/rc
     creates=bin/rc
+    /bin/cp ./boot/home bin/rc
 
 - name: compile-src | make directory {{ qmail.serverroot }}/etc
   file: >
@@ -64,9 +64,10 @@
   notify: Restart qmail
   shell: >
     chdir={{ qmail.serverroot }}/etc
-    /usr/local/bin/tcprules tcp.smtp.cdb tcp.smtp.tmp < tcp.smtp
     creates=tcp.smtp.cdb
+    /usr/local/bin/tcprules tcp.smtp.cdb tcp.smtp.tmp < tcp.smtp
 
 - name: make-config | Stop Postfix
+  ignore_errors: True
   service: name=postfix state=stopped enabled=no
 

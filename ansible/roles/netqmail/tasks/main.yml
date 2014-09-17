@@ -11,10 +11,10 @@
 - include: make-config.yml
 - include: boot-script.yml
 
-- name: 'Start qmail smtpd'
+- name: Start qmail smtpd
   when: qmail.started == True
-  service: name=qmail state=started
+  service: name={{ qmail.initscript }} state=started pattern=bin/tcpserver
 
-- name: 'Stop qmail smtpd'
+- name: Stop qmail smtpd
   when: qmail.started == False
-  service: name=qmail state=stopped
+  service: name={{ qmail.initscript }} state=stopped pattern=bin/tcpserver
