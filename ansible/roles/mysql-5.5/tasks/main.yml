@@ -11,11 +11,11 @@
 - include: make-config.yml
 - include: boot-script.yml
 
-- name: 'Start MySQL Server'
+- name: Start MySQL Server
   when: mysql.started == True
-  service: name=mysql state=started
+  service: name={{ mysql.initscript }} state=started
 
-- name: 'Stop MySQL Server'
+- name: Stop MySQL Server
   when: mysql.started == False
-  service: name=mysql state=stopped
+  service: name={{ mysql.initscript }} state=stopped
 

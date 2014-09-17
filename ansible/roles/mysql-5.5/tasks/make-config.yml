@@ -5,7 +5,7 @@
 # |_|  |_|\__, |____/ \__\_\_____|   |____(_)____/_/   \__\__,_|___/_|\_\___/
 #         |___/                                                              
 # make-config
-- name: 'make-config | Each directory should be created in {{ mysql.serverroot }}'
+- name: make-config | Each directory should be created in {{ mysql.serverroot }}
   file: >
     path={{ mysql.serverroot }}/{{ item }} 
     mode=0755
@@ -19,31 +19,31 @@
     - var/run
     - var/log
 
-- name: 'make-config | {{ mysql.serverroot }} should be owned by {{ mysql.user.username }}'
+- name: make-config | {{ mysql.serverroot }} should be owned by {{ mysql.user.username }}
   file: >
     path={{ mysql.serverroot }}
     owner={{ mysql.user.username }}
     group={{ mysql.user.group }}
     state=directory
 
-- name: 'make-config | Deploy {{ mysql.conf.file }} into {{ mysql.serverroot }}/etc/my.cnf'
+- name: make-config | Deploy {{ mysql.conf.file }} into {{ mysql.serverroot }}/etc/my.cnf
   template: >
     src=opt/mysql/etc/{{ mysql.conf.file }}.j2
     dest={{ mysql.serverroot }}/etc/my.cnf
 
-- name: 'make-config | Deploy /etc/logrotate.d/mysql'
+- name: make-config | Deploy /etc/logrotate.d/mysql
   when: ansible_os_family in [ 'RedHat', 'Debian' ]
   template: >
     src=etc/logrotate.d/mysql-log-rotate.j2
     dest=/etc/logrotate.d/mysql
 
-- name: 'make-config | MySQL database should be installed'
+- name: make-config | MySQL database should be installed
+  register: install_mysql_database
   command: >
     chdir={{ mysql.serverroot }}
+    creates=data/mysql/db.MYI
     {{ mysql.serverroot }}/scripts/mysql_install_db 
     --user={{ mysql.user.username }}
     --basedir={{ mysql.serverroot }} 
     --datadir={{ mysql.serverroot }}/data
-    creates=data/mysql/db.MYI
-  register: install_mysql_database
 

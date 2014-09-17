@@ -8,18 +8,20 @@ mysql:
   started: True
   rebuild: False
   version: 5.5.39
-  serverroot: '/opt/mysql'
-  datadirectory: '/opt/mysql/data'
+  serverroot: /opt/mysql
+  initscript: mysql
+  workingdir: /usr/local/src
+  datadirectory: /opt/mysql/data
   user:
-    username: 'mysql'
+    username: mysql
     uid: 3306
     gid: 3306
-    group: 'mysql'
-    shell: '/bin/sh'
+    group: mysql
+    shell: /bin/sh
     comment: '"MySQL Server"'
   conf:
     file: my-small.cnf
     port: 3306
-    socket: '/tmp/mysql.sock'
+    socket: /tmp/mysql.sock
     rootpasswd: ''
 

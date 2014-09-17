@@ -5,13 +5,13 @@
 # |_|  |_|\__, |____/ \__\_\_____|   |____(_)____/_/   \__\__,_|___/_|\_\___/
 #         |___/                                                              
 # create-user
-- name: 'create-user | Group {{ mysql.user.group }}({{ mysql.user.gid }}) should be created'
+- name: create-user | Group {{ mysql.user.group }}({{ mysql.user.gid }}) should be created
   group: >
     gid={{ mysql.user.gid }}
     name={{ mysql.user.group }}
     state=present
 
-- name: 'create-user | User {{ mysql.user.username }}({{ mysql.user.uid }}) should be created'
+- name: create-user | User {{ mysql.user.username }}({{ mysql.user.uid }}) should be created
   user: >
     name={{ mysql.user.username }} 
     uid={{ mysql.user.uid }}

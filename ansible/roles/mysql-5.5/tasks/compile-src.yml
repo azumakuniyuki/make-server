@@ -5,26 +5,25 @@
 # |_|  |_|\__, |____/ \__\_\_____|   |____(_)____/_/   \__\__,_|___/_|\_\___/
 #         |___/                                                              
 # compile-src
-#
-- name: 'compile-src | REBUILD | Remove CMakeCache.txt'
+- name: compile-src | REBUILD | Remove CMakeCache.txt
+  when: mysql.rebuild == True
   command: >
-    chdir={{ local.src }}/mysql-{{ mysql.version }}/
+    chdir={{ mysql.workingdir }}/mysql-{{ mysql.version }}/
     removes=CMakeCache.txt
     rm CMakeCache.txt
-  when: mysql.rebuild == True
 
-- name: 'compile-src | REBUILD | make clean'
+- name: compile-src | REBUILD | make clean
+  when: mysql.rebuild == True
   command: >
-    chdir={{ local.src }}/mysql-{{ mysql.version }}/
-    make clean
+    chdir={{ mysql.workingdir }}/mysql-{{ mysql.version }}/
     removes=CMakeCache.txt
-  when: mysql.rebuild == True
+    make clean
 
-- name: 'compile-src | cmake MySQL {{ mysql.version }}'
+- name: compile-src | cmake MySQL {{ mysql.version }}
   notify: Restart MySQL
   command: >
-    chdir={{ local.src }}/mysql-{{ mysql.version }}
-    creates={{ local.src }}/mysql-{{ mysql.version }}/CMakeCache.txt
+    chdir={{ mysql.workingdir }}/mysql-{{ mysql.version }}
+    creates={{ mysql.workingdir }}/mysql-{{ mysql.version }}/CMakeCache.txt
     cmake . 
       -DCMAKE_INSTALL_PREFIX={{ mysql.serverroot }} 
       -DSYSCONFDIR={{ mysql.serverroot }}/etc 
@@ -32,18 +31,18 @@
       -DDEFAULT_CHARSET=utf8 
       -DDEFAULT_COLLATION=utf8_general_ci
 
-- name: 'compile-src | make MySQL {{ mysql.version }}'
+- name: compile-src | make MySQL {{ mysql.version }}
   notify: Restart MySQL
-  command: >
-    chdir={{ local.src }}/mysql-{{ mysql.version }}
-    make
-    creates=client/mysql
   register: make_mysql_binary
+  command: >
+    chdir={{ mysql.workingdir }}/mysql-{{ mysql.version }}
+    creates=client/mysql
+    make
 
-- name: 'compile-src | make insall MySQL-{{ mysql.version }}'
+- name: compile-src | make insall MySQL-{{ mysql.version }}
   when: make_mysql_binary.changed
   notify: Restart MySQL
   command: >
+    chdir={{ mysql.workingdir }}/mysql-{{ mysql.version }}
     make install
-    chdir={{ local.src }}/mysql-{{ mysql.version }}
 

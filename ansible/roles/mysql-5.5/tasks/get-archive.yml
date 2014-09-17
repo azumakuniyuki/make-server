@@ -6,15 +6,15 @@
 #         |___/                                                              
 # get-archive
 #
-- name: 'get-archive | Download MySQL {{ mysql.version }} at {{ local.src }}'
+- name: get-archive | Download MySQL {{ mysql.version }} at {{ mysql.workingdir }}
   get_url: >
     url=http://dev.mysql.com/get/Downloads/MySQL-5.5/mysql-{{ mysql.version }}.tar.gz
-    dest={{ local.src }}/mysql-{{ mysql.version }}.tar.gz
+    dest={{ mysql.workingdir }}/mysql-{{ mysql.version }}.tar.gz
 
-- name: 'get-archive | Extract {{ local.src }}/mysql-{{ mysql.version }}.tar.gz'
+- name: get-archive | Extract {{ mysql.workingdir }}/mysql-{{ mysql.version }}.tar.gz
   unarchive: >
-    src={{ local.src }}/mysql-{{ mysql.version }}.tar.gz
-    dest={{ local.src }}
-    creates={{ local.src }}/mysql-{{ mysql.version }}
+    src={{ mysql.workingdir }}/mysql-{{ mysql.version }}.tar.gz
+    dest={{ mysql.workingdir }}
+    creates={{ mysql.workingdir }}/mysql-{{ mysql.version }}
     copy=no
 
