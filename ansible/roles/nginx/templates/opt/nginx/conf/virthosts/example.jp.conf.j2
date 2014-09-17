@@ -4,7 +4,7 @@
 # | | | | (_| | | | | |>  <  / /  \ V /| | |  | |_| | | | (_) \__ \ |_ 
 # |_| |_|\__, |_|_| |_/_/\_\/_/    \_/ |_|_|   \__|_| |_|\___/|___/\__|
 #        |___/                                                         
-# {{ nginx.serverroot }}/conf/virthost/*.conf
+# {{ nginx.serverroot }}/conf/virthosts/*.conf
 
 # http://nginx.org/en/docs/http/ngx_http_upstream_module.html
 upstream example.jp.app {
@@ -17,7 +17,7 @@ server {
     port_in_redirect on;
 
     if ( $http_host = www.example.jp ) {
-        rewrite  (.*)  http://example.jp$1;
+        rewrite (.*) http://example.jp$1;
     }
 
     location / {

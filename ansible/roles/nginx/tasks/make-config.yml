@@ -5,8 +5,7 @@
 # |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
 #        |___/                                          
 # make-config
-#
-- name: 'make-config | Each directory for nginx should be created'
+- name: make-config | Each directory for nginx should be created
   file: >
     path={{ nginx.serverroot }}/{{ item }}
     mode=0755
@@ -14,22 +13,23 @@
     owner=root
     group=root
   with_items:
-    - conf/virthost
+    - conf/virthosts
     - keys
 
-- name: 'make-config | Deploy {{ nginx.serverroot }}/conf/nginx.conf'
+- name: make-config | Deploy {{ nginx.serverroot }}/conf/nginx.conf
   notify: Restart nginx
   template: >
     src=opt/nginx/conf/nginx.conf.j2
     dest={{ nginx.serverroot }}/conf/nginx.conf
 
-- name: 'make-config | Deploy {{ nginx.serverroot }}/conf/virthost/example.jp.conf'
+- name: make-config | Deploy {{ nginx.serverroot }}/conf/virthosts/example.jp.conf
   notify: Restart nginx
   template: >
-    src=opt/nginx/conf/virthost/example.jp.conf.j2
-    dest={{ nginx.serverroot }}/conf/virthost/example.jp.conf
+    src=opt/nginx/conf/virthosts/example.jp.conf.j2
+    dest={{ nginx.serverroot }}/conf/virthosts/example.jp.conf
 
-- name: 'make-config | Deploy log rotation script'
+- name: make-config | Deploy log rotation script
+  when: ansible_system == "Linux"
   template: >
     src=etc/logrotate.d/nginx.j2
     dest=/etc/logrotate.d/nginx

@@ -6,21 +6,21 @@
 #        |___/                                          
 # boot-script
 #
-- name: 'boot-script | RedHat | Deploy /etc/init.d/nginx'
+- name: boot-script | RedHat | Deploy /etc/init.d/{{ nginx.initscript }}
   when: ansible_os_family == "RedHat"
   template: >
     src=etc/init.d/nginx.RedHat.j2
-    dest=/etc/init.d/nginx
+    dest=/etc/init.d/{{ nginx.initscript }}
     mode=0755
     owner=root
     group=root
 
-- name: 'boot-script | RedHat | Install /etc/rc.d/init.d/nginx'
+- name: boot-script | RedHat | Install /etc/rc.d/init.d/{{ nginx.initscript }}
   when: ansible_os_family == "RedHat"
   shell: >
-    /sbin/chkconfig --add nginx
-    creates=/etc/rc.d/rc0.d/K15nginx
+    creates=/etc/rc.d/rc0.d/K15{{ nginx.initscript }}
+    /sbin/chkconfig --add {{ nginx.initscript }}
 
-- name: 'boot-script | Turn on init script'
-  service: name=nginx enabled=yes
+- name: boot-script | Turn on init script
+  service: name={{ nginx.initscript }} enabled=yes
 

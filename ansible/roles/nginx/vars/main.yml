@@ -8,14 +8,18 @@ nginx:
   started: True
   rebuild: False
   version: 1.6.1
-  serverroot: '/opt/nginx'
+  serverroot: /opt/nginx
+  initscript: nginx
+  workingdir: /usr/local/src
   user:
-    username: 'nginx'
+    username: nginx
     password: ''
     uid: 8192
     gid: 8192
-    group: 'nginx'
-    shell: '/sbin/nolgin'
+    group: nginx
+    groups: 
+      - { name: httpd, gid: 8001 }
+    shell: /sbin/nolgin
     comment: "'nginx httpd server'"
   conf:
     servername: '127.0.0.1'

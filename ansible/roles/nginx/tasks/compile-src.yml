@@ -5,16 +5,18 @@
 # |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
 #        |___/                                          
 # compile-src
-- name: 'compile-src | REBUILD | make clean'
+- name: compile-src | REBUILD | make clean
   command: >
-    make clean
-    chdir={{ local.src }}/nginx-{{ nginx.version }}/
+    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
     removes=Makefile
+    make clean
   when: nginx.rebuild == True
 
-- name: 'compile-src | nginx {{ nginx.version }} should be configured'
+- name: compile-src | nginx {{ nginx.version }} should be configured
   notify: Restart nginx
   command: >
+    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
+    creates=Makefile
     /bin/sh configure
     --prefix={{ nginx.serverroot }}
     --with-ld-opt=-L/usr/local/lib
@@ -30,21 +32,19 @@
     --without-mail_imap_module
     --without-mail_smtp_module
     --with-http_stub_status_module
-    creates=Makefile
-    chdir={{ local.src }}/nginx-{{ nginx.version }}/
 
-- name: 'compile-src | make nginx {{ nginx.version }}'
+- name: compile-src | make nginx {{ nginx.version }}
   notify: Restart nginx
   command: >
-    make
-    chdir={{ local.src }}/nginx-{{ nginx.version }}/
+    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
     creates=objs/nginx
+    make
   register: make_nginx_binary
 
-- name: 'compile-src | nginx {{ nginx.version }} should be installed'
+- name: compile-src | nginx {{ nginx.version }} should be installed
   when: make_nginx_binary.changed
   notify: Restart nginx
   command: >
+    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
     make install
-    chdir={{ local.src }}/nginx-{{ nginx.version }}/
 
