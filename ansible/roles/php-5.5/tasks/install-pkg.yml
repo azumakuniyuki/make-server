@@ -102,6 +102,7 @@
 - name: 'install-pkg | configure libgd {{ php.depends.libgd.version }}'
   command: >
     chdir={{ local.src }}/libgd-{{ php.depends.libgd.version }}
+    creates=Makefile
     /bin/sh configure 
       --prefix={{ php.depends.libgd.install }} 
       --with-png=/usr
@@ -109,13 +110,12 @@
       --with-fontconfig=/usr
       --with-jpeg=/usr
       --with-xpm=/usr
-    creates=Makefile
 
 - name: 'install-pkg | make libgd {{ php.depends.libgd.version }}'
   command: >
     chdir={{ local.src }}/libgd-{{ php.depends.libgd.version }} 
-    make 
     creates=src/gd.o
+    make 
   register: make_gd_binary
 
 - name: 'install-pkg | make install libgd {{ php.depends.libgd.version }}'
