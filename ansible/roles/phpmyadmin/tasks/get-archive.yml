@@ -1,0 +1,20 @@
+#        _           __  __          _       _           _          ___            _        
+#  _ __ | |__  _ __ |  \/  |_   _   / \   __| |_ __ ___ (_)_ __    / / |_ __ _ ___| | _____ 
+# | '_ \| '_ \| '_ \| |\/| | | | | / _ \ / _` | '_ ` _ \| | '_ \  / /| __/ _` / __| |/ / __|
+# | |_) | | | | |_) | |  | | |_| |/ ___ \ (_| | | | | | | | | | |/ / | || (_| \__ \   <\__ \
+# | .__/|_| |_| .__/|_|  |_|\__, /_/   \_\__,_|_| |_| |_|_|_| |_/_/   \__\__,_|___/_|\_\___/
+# |_|         |_|           |___/                                                           
+#
+# get-archive
+- name: get-archive | Download phpMyAdmin {{ phpmyadmin.version }}
+  get_url: >
+    url=http://jaist.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/{{ phpmyadmin.version }}/phpMyAdmin-{{ phpmyadmin.version }}-all-languages.zip
+    dest={{ phpmyadmin.workingdir }}/phpMyAdmin-{{ phpmyadmin.version }}-all-languages.zip
+
+- name: get-archive | Extract phpMyAdmin {{ phpmyadmin.version }}
+  unarchive: >
+    src={{ phpmyadmin.workingdir }}/phpMyAdmin-{{ phpmyadmin.version }}-all-languages.zip
+    dest={{ phpmyadmin.workingdir }}/
+    creates={{ phpmyadmin.workingdir }}/phpMyAdmin-{{ phpmyadmin.version }}-all-languages
+    copy=no
+  

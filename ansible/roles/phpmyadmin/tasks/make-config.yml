@@ -1,0 +1,26 @@
+#        _           __  __          _       _           _          ___            _        
+#  _ __ | |__  _ __ |  \/  |_   _   / \   __| |_ __ ___ (_)_ __    / / |_ __ _ ___| | _____ 
+# | '_ \| '_ \| '_ \| |\/| | | | | / _ \ / _` | '_ ` _ \| | '_ \  / /| __/ _` / __| |/ / __|
+# | |_) | | | | |_) | |  | | |_| |/ ___ \ (_| | | | | | | | | | |/ / | || (_| \__ \   <\__ \
+# | .__/|_| |_| .__/|_|  |_|\__, /_/   \_\__,_|_| |_| |_|_|_| |_/_/   \__\__,_|___/_|\_\___/
+# |_|         |_|           |___/                                                           
+#
+# make-config
+- name: make-config | Create document root directory
+  file: >
+    path={{ phpmyadmin.install }}
+    mode=0755
+    owner=root
+    state=directory
+
+- name: make-config | Install phpMyAdmin {{ phpmyadmin.version }}
+  shell: >
+    chdir={{ phpmyadmin.workingdir }}
+    creates={{ phpmyadmin.install }}/phpMyAdmin
+    cp -r phpMyAdmin-{{ phpmyadmin.version }}-all-languages {{ phpmyadmin.install }}/phpMyAdmin
+
+- name: make-config | Deploy config.inc
+  template: >
+    src=config.inc.j2
+    dest={{ phpmyadmin.install }}/phpMyAdmin/config.inc.php
+
