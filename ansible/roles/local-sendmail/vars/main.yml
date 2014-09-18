@@ -5,11 +5,12 @@
 # |____/ \___|_| |_|\__,_|_| |_| |_|\__,_|_|_/_/    \_/ \__,_|_|  |___/
 #                                                                      
 sendmail:
-  started: True
+  started: False
   rebuild: False
   version: 8.14.9
   serverroot: /opt/sendmail
   workingdir: /usr/local/src
+  initscript: sendmail
   mtaqueue: /var/spool/queues
   msaqueue: /var/spool/cqueue
   user:

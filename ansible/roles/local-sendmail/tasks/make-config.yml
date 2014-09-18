@@ -150,8 +150,8 @@
 - name: make-config | Copy cf directory
   shell: >
     chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/
-    /bin/cp -Rp ./cf {{ sendmail.serverroot }}/etc/
     creates={{ sendmail.serverroot }}/etc/cf
+    /bin/cp -Rp ./cf {{ sendmail.serverroot }}/etc/
 
 - name: make-config | Deploy files into {{ sendmail.serverroot }}/etc
   template: >
