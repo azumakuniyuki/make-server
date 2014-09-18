@@ -7,9 +7,10 @@
 php:
   rebuild: False
   version: 5.3.27
-  install: '/usr/local'
+  install: /usr/local
+  buildat: /usr/local/src
   depends:
     apache: { serverroot: '/opt/httpd' }
     mysql:  { serverroot: '/opt/mysql', socket: '/tmp/mysql.sock' }
-    gd:     { version: 2.0.33, install: '/usr/local' }
+    libgd:  { version: 2.0.33, install: '/usr/local' }
 

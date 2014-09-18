@@ -4,16 +4,17 @@
 # |  __/|  _  |  __/_____|__) | ___) / / | || (_| \__ \   <\__ \
 # |_|   |_| |_|_|       |____(_)____/_/   \__\__,_|___/_|\_\___/
 # compile-src
-- name: 'compile-src | REBUILD | make clean'
+- name: compile-src | REBUILD | make clean
   command: >
-    make clean
-    chdir={{ local.src }}/php-{{ php.version }}/
+    chdir={{ php.buildat }}/php-{{ php.version }}/
     removes=Makefile
+    make clean
   when: php.rebuild == True
 
-- name: 'compile-src | PHP-{{ php.version }} should be configured'
+- name: compile-src | PHP-{{ php.version }} should be configured
   command: >
-    chdir={{ local.src }}/php-{{ php.version }}
+    chdir={{ php.buildat }}/php-{{ php.version }}
+    creates=Makefile
     /bin/sh configure 
     --prefix={{ php.install }} 
     --with-apxs2filter={{ php.depends.apache.serverroot }}/bin/apxs
@@ -52,7 +53,7 @@
     --enable-pcntl
     --enable-mbstring
     --enable-mbregex
-    --with-gd={{ php.depends.gd.install }}
+    --with-gd={{ php.depends.libgd.install }}
     --enable-bcmath=shared
     --with-xmlrpc=shared
     --enable-dom=shared
@@ -75,18 +76,17 @@
     --enable-sysvsem=shared
     --enable-posix=shared
     --enable-fileinfo=shared
-    creates=Makefile
 
-- name: 'compile-src | make PHP {{ php.version }}'
-  command: >
-    chdir={{ local.src }}/php-{{ php.version }}
-    make
-    creates=libs/libphp5.so
+- name: compile-src | make PHP {{ php.version }}
   register: make_php_binary
+  command: >
+    chdir={{ php.buildat }}/php-{{ php.version }}
+    creates=libs/libphp5.so
+    make
 
-- name: 'compile-src | make install PHP {{ php.version }}'
+- name: compile-src | make install PHP {{ php.version }}
   when: make_php_binary.changed
   command: >
-    chdir={{ local.src }}/php-{{ php.version }}
     make install 
+    chdir={{ php.buildat }}/php-{{ php.version }}
 
