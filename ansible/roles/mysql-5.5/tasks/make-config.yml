@@ -26,6 +26,21 @@
     group={{ mysql.user.group }}
     state=directory
 
+- name: make-config | Calculation(innodb_buffer_pool_size)
+  register: innodb_buffer_pool_size
+  command: >
+    perl -le 'print int {{ ansible_memtotal_mb }} * 0.60'
+
+- name: make-config | Calculation(innodb_log_file_size)
+  register: innodb_log_file_size
+  command: >
+    perl -le 'print int {{ innodb_buffer_pool_size.stdout }} * 0.20'
+
+- name: make-config | Calculation(thread_concurrency)
+  register: thread_concurrency
+  command: >
+    perl -le 'print int {{ ansible_processor_vcpus }} * 2'
+
 - name: make-config | Deploy {{ mysql.conf.file }} into {{ mysql.serverroot }}/etc/my.cnf
   template: >
     src=opt/mysql/etc/{{ mysql.conf.file }}.j2

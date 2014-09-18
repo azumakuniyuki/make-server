@@ -141,7 +141,7 @@ no-auto-rehash
 #safe-updates
 
 [mysqld_safe]
-log-error   = {{ mysql.serverroot }}/var/log/mysqld.log
+log-error   = {{ mysql.serverroot }}/var/log/mysql-daemon.log
 pid-file    = {{ mysql.serverroot }}/var/run/mysqld.pid
 
 [myisamchk]

@@ -466,10 +466,10 @@ no-auto-rehash
 #safe-updates
 
 [myisamchk]
-key_buffer_size = 512M
+key_buffer_size  = 512M
 sort_buffer_size = 512M
-read_buffer = 8M
-write_buffer = 8M
+read_buffer      = 8M
+write_buffer     = 8M
 
 [mysqlhotcopy]
 interactive-timeout
@@ -478,7 +478,7 @@ interactive-timeout
 # Increase the amount of open files allowed per process. Warning: Make
 # sure you have set the global system limit high enough! The high value
 # is required for a large number of opened tables
-open-files-limit    = 8192
-log-error           = {{ mysql.serverroot }}/var/log/mysqld.log
-pid-file            = {{ mysql.serverroot }}/var/run/mysqld.pid
+open-files-limit = 8192
+log-error        = {{ mysql.serverroot }}/var/log/mysql-daemon.log
+pid-file         = {{ mysql.serverroot }}/var/run/mysqld.pid
 

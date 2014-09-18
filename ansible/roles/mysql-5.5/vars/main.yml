@@ -20,8 +20,9 @@ mysql:
     shell: /bin/sh
     comment: '"MySQL Server"'
   conf:
-    file: my-small.cnf
+    file: my.cnf
     port: 3306
     socket: /tmp/mysql.sock
     rootpasswd: ''
+    maxconns: 100
 

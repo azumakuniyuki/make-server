@@ -86,11 +86,11 @@ no-auto-rehash
 #safe-updates
 
 [mysqld_safe]
-log-error   = {{ mysql.serverroot }}/var/log/mysqld.log
-pid-file    = {{ mysql.serverroot }}/var/run/mysqld.pid
+log-error = {{ mysql.serverroot }}/var/log/mysql-daemon.log
+pid-file  = {{ mysql.serverroot }}/var/run/mysqld.pid
 
 [myisamchk]
-key_buffer_size = 8M
+key_buffer_size  = 8M
 sort_buffer_size = 8M
 
 [mysqlhotcopy]

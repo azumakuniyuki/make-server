@@ -17,11 +17,11 @@
 #
 # ATTENTION: This /root/.my.cnf should be readable ONLY
 # for root !
-{{ mysql.serverroot }}/var/log/mysqld.log {
+{{ mysql.serverroot }}/var/log/mysql*.log {
     # create 600 mysql mysql
     notifempty
     daily
-    rotate 8
+    rotate 64
     missingok
     compress
     postrotate
