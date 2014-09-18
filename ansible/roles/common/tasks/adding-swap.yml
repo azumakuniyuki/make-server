@@ -1,0 +1,36 @@
+#                                               ___            _        
+#   ___ ___  _ __ ___  _ __ ___   ___  _ __    / / |_ __ _ ___| | _____ 
+#  / __/ _ \| '_ ` _ \| '_ ` _ \ / _ \| '_ \  / /| __/ _` / __| |/ / __|
+# | (_| (_) | | | | | | | | | | | (_) | | | |/ / | || (_| \__ \   <\__ \
+#  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/   \__\__,_|___/_|\_\___/
+#                                                                       
+# adding-swap
+- name: adding-swap | Calculate swap space size
+  when: config.useswap == True and ansible_memtotal_mb < 512
+  register: swap0
+  command: perl -le 'print int( {{ ansible_memtotal_mb }} / 2 * 1024 )'
+
+- name: adding-swap | /swapfile exists
+  when: swap0|success
+  register: swap1
+  ignore_errors: True
+  shell: swapon -s | grep /swapfile > /dev/null 2>&1
+
+- name: adding-swap | Prepare swapfile
+  when: swap1|failed
+  register: swap2
+  command: >
+    chdir=/
+    creates=/swapfile
+    dd if=/dev/zero of=/swapfile bs=1024 count={{ swap0.stdout }}
+
+- name: adding-swap | Make swapfile
+  when: swap2.changed
+  register: swap3 
+  ignore_errors: True
+  command: mkswap /swapfile 
+      
+- name: adding-swap | Swap on
+  when: swap1|failed and swap3|success
+  command: swapon /swapfile
+
