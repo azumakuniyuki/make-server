@@ -16,6 +16,7 @@
     - bash_profile
     - exrc
 
+- include: adding-swap.yml
 - include: install-pkg.yml
 - include: create-user.yml
 - include: make-config.yml
