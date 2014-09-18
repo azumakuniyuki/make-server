@@ -9,4 +9,5 @@ openssl:
   rebuild: False
   version: 1.0.1h
   install: /usr/local
+  buildat: /usr/local/src
 
