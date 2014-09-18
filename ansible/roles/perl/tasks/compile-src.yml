@@ -6,35 +6,35 @@
 # |_|                                           
 # compile-src
 #
-- name: 'compile-src | REBUILD | make clean'
-  shell: >
-    make clean distclean
-    chdir={{ local.src }}/perl-{{ perl.version }}/
-    removes=Makefile
+- name: compile-src | REBUILD | make clean
   when: perl.rebuild == True
-
-- name: 'compile-src | Perl {{ perl.version }} should be configured'
   shell: >
-    /bin/sh Configure -des -Dprefix={{ perl.install }}
-    creates=Makefile
-    chdir={{ local.src }}/perl-{{ perl.version }}/
+    chdir={{ perl.buildat }}/perl-{{ perl.version }}/
+    removes=Makefile
+    make clean distclean
 
-- name: 'compile-src | make Perl {{ perl.version }}'
+- name: compile-src | Perl {{ perl.version }} should be configured
+  shell: >
+    chdir={{ perl.buildat }}/perl-{{ perl.version }}/
+    creates=Makefile
+    /bin/sh Configure -des -Dprefix={{ perl.install }}
+
+- name: compile-src | make Perl {{ perl.version }}
   command: >
-    make
-    chdir={{ local.src }}/perl-{{ perl.version }}/
+    chdir={{ perl.buildat }}/perl-{{ perl.version }}/
     creates=perl
+    make
   register: make_perl_binary
 
-- name: 'compile-src | make test'
+- name: compile-src | make test
   when: make_perl_binary.changed
   command: >
+    chdir={{ perl.buildat }}/perl-{{ perl.version }}/
     make test
-    chdir={{ local.src }}/perl-{{ perl.version }}/
 
-- name: 'compile-src | make install perl {{ perl.version }}'
+- name: compile-src | make install perl {{ perl.version }}
   when: make_perl_binary.changed
   command: >
+    chdir={{ perl.buildat }}/perl-{{ perl.version }}/
     make install
-    chdir={{ local.src }}/perl-{{ perl.version }}/
 

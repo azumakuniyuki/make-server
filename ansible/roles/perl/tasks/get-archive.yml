@@ -6,15 +6,15 @@
 # |_|                                           
 # get-archive
 #
-- name: 'get-archive | Download Perl {{ perl.version }} at {{ local.src }}'
+- name: get-archive | Download Perl {{ perl.version }} at {{ perl.buildat }}
   get_url: >
     url=http://www.cpan.org/src/5.0/perl-{{ perl.version }}.tar.gz
-    dest={{ local.src }}/perl-{{ perl.version }}.tar.gz
+    dest={{ perl.buildat }}/perl-{{ perl.version }}.tar.gz
 
-- name: 'get-archive | Extract Perl {{ local.src }}/perl-{{ perl.version }}.tar.gz'
+- name: get-archive | Extract Perl {{ perl.buildat }}/perl-{{ perl.version }}.tar.gz
   unarchive: >
-    src={{ local.src }}/perl-{{ perl.version }}.tar.gz
-    dest={{ local.src }}
-    creates={{ local.src }}/perl-{{ perl.version }}
+    src={{ perl.buildat }}/perl-{{ perl.version }}.tar.gz
+    dest={{ perl.buildat }}
+    creates={{ perl.buildat }}/perl-{{ perl.version }}
     copy=no
 

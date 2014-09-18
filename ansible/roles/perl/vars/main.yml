@@ -7,5 +7,6 @@
 perl:
   rebuild: False
   version: 5.16.3
-  install: '/usr/local'
+  install: /usr/local
+  buildat: /usr/local/src
 

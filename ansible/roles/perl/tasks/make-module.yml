@@ -5,14 +5,14 @@
 # | .__/ \___|_|  |_/_/   \__\__,_|___/_|\_\___/
 # |_|                                           
 # make-module
-- name: 'make-module | Download cpanm'
+- name: make-module | Download cpanm
   get_url: >
     url='http://xrl.us/cpanm';
-    dest={{ local.src }}/cpanm
+    dest={{ perl.buildat }}/cpanm
 
-- name: 'make-module | Install {{ local.dir }}/bin/cpanm'
+- name: make-module | Install {{ local.dir }}/bin/cpanm
   shell: >
-    chdir={{ local.src }}
-    install -o root -m 0755 cpanm {{ local.dir }}/bin
+    chdir={{ perl.buildat }}
     creates={{ local.dir }}/bin/cpanm
+    install -o root -m 0755 cpanm {{ local.dir }}/bin
 
