@@ -5,13 +5,13 @@
 # |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/   \__\__,_|___/_|\_\___/
 #                    |___/                                                       
 # create-user
-- name: 'create-user | Group {{ postgresql.user.group }}({{ postgresql.user.gid }}) should be created'
+- name: create-user | Group {{ postgresql.user.group }}({{ postgresql.user.gid }}) should be created
   group: >
     gid={{ postgresql.user.gid }}
     name={{ postgresql.user.group }}
     state=present
 
-- name: 'create-user | User {{ postgresql.user.username }}({{ postgresql.user.uid }}) should be created'
+- name: create-user | User {{ postgresql.user.username }}({{ postgresql.user.uid }}) should be created
   user: >
     name={{ postgresql.user.username }} 
     uid={{ postgresql.user.uid }}

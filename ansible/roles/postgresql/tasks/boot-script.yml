@@ -5,21 +5,21 @@
 # |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/   \__\__,_|___/_|\_\___/
 #                    |___/                                                       
 # boot-script
-- name: 'boot-script | RedHat | Deploy /etc/init.d/postgresql'
+- name: boot-script | RedHat | Deploy /etc/init.d/{{ postgresql.initscript }}
   when: ansible_os_family == "RedHat"
   template: >
-    src=etc/init.d/postgresql.{{ ansible_os_family }}.j2
-    dest=/etc/rc.d/init.d/postgresql
+    src=etc/init.d/postgresql.RedHat.j2
+    dest=/etc/rc.d/init.d/{{ postgresql.initscript }}
     mode=0755
     owner=root
     group=root
 
-- name: 'boot-script | RedHat | Install /etc/rc.d/init.d/postgresql'
+- name: boot-script | RedHat | Install /etc/rc.d/init.d/{{ postgresql.initscript }}
   when: ansible_os_family == "RedHat"
   shell: >
-    /sbin/chkconfig --add postgresql
-    creates=/etc/rc.d/rc0.d/K36postgresql
+    /sbin/chkconfig --add {{ postgresql.initscript }}
+    creates=/etc/rc.d/rc0.d/K36{{ postgresql.initscript }}
 
-- name: 'boot-script | Turn on init script'
-  service: name=postgresql enabled=yes
+- name: boot-script | Turn on init script
+  service: name={{ postgresql.initscript }} enabled=yes
 

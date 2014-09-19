@@ -5,10 +5,9 @@
 # |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/   \__\__,_|___/_|\_\___/
 #                    |___/                                                       
 # install-pkg
-- name: 'install-pkg | Install dependencies for PostgreSQL {{ postgresql.version }}'
-  yum: >
-    name={{ item }}
-    state=present
+- name: install-pkg | Install dependencies for PostgreSQL {{ postgresql.version }}
+  when: ansible_os_family == "RedHat"
+  yum:  name={{ item }} state=present
   with_items:
     - python-psycopg2
 

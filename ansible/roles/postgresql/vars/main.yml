@@ -8,15 +8,17 @@ postgresql:
   started: True
   rebuild: False
   version: 9.3.4
-  serverroot: '/opt/postgresql'
-  datadirectory: '/opt/postgresql/data'
+  serverroot: /opt/postgresql
+  initscript: postgres
+  workingdir: /usr/local/src
+  datadirectory: /opt/postgresql/data
   user:
-    username: 'postgres'
+    username: postgres
     uid: 5432
     gid: 5432
-    home: '/opt/postgres'
-    group: 'postgres'
-    shell: '/bin/sh'
+    home: /opt/postgres
+    group: postgres
+    shell: /bin/sh
     comment: "'PostgreSQL Server'"
   conf:
     listen: '*'

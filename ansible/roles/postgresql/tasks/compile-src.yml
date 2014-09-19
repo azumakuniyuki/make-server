@@ -5,34 +5,33 @@
 # |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/   \__\__,_|___/_|\_\___/
 #                    |___/                                                       
 # compile-src
-#
-- name: 'compile-src | REBUILD | make clean'
+- name: compile-src | REBUILD | make clean
   command: >
-    make clean
-    chdir={{ local.src }}/postgresql-{{ postgresql.version }}/
+    chdir={{ postgresql.workingdir }}/postgresql-{{ postgresql.version }}/
     removes=GNUmakefile
+    make clean
   when: postgresql.rebuild == True
 
-- name: 'compile-src | PostgreSQL {{ postgresql.version }} should be configured'
+- name: compile-src | PostgreSQL {{ postgresql.version }} should be configured
   notify: Restart PostgreSQL
   command: >
+    creates=GNUmakefile
+    chdir={{ postgresql.workingdir }}/postgresql-{{ postgresql.version }}/
     /bin/sh configure
     --prefix={{ postgresql.serverroot }}
-    creates=GNUmakefile
-    chdir={{ local.src }}/postgresql-{{ postgresql.version }}/
 
-- name: 'compile-src | make PostgreSQL {{ postgresql.version }}'
+- name: compile-src | make PostgreSQL {{ postgresql.version }}
   notify: Restart PostgreSQL
   command: >
-    make
-    chdir={{ local.src }}/postgresql-{{ postgresql.version }}/
+    chdir={{ postgresql.workingdir }}/postgresql-{{ postgresql.version }}/
     creates=src/bin/pg_ctl/pg_ctl
+    make
   register: make_postgresql_binary
 
-- name: 'compile-src | PostgreSQL {{ postgresql.version }} should be installed'
+- name: compile-src | PostgreSQL {{ postgresql.version }} should be installed
   when: make_postgresql_binary.changed
   notify: Restart PostgreSQL
   command: >
+    chdir={{ postgresql.workingdir }}/postgresql-{{ postgresql.version }}/
     make install
-    chdir={{ local.src }}/postgresql-{{ postgresql.version }}/
 

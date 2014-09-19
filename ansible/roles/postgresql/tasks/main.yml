@@ -11,12 +11,12 @@
 - include: make-config.yml
 - include: boot-script.yml
 
-- name: 'Start PostgreSQL Server'
+- name: Start PostgreSQL Server
   when: postgresql.started == True
-  service: name=postgresql state=started
+  service: name={{ postgresql.initscript }} state=started
 
-- name: 'Stop PostgreSQL Server'
+- name: Stop PostgreSQL Server
   when: postgresql.started == False
-  service: name=postgresql state=stopped
+  service: name={{ postgresql.initscript }} state=stopped
 
 

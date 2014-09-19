@@ -5,7 +5,7 @@
 # |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/   \__\__,_|___/_|\_\___/
 #                    |___/                                                       
 # make-config
-- name: 'make-config | {{ postgresql.datadirectory }} should be 0700'
+- name: make-config | {{ postgresql.datadirectory }} should be 0700
   file: >
     path={{ postgresql.datadirectory }}
     mode=0700
@@ -13,7 +13,7 @@
     owner={{ postgresql.user.username }}
     group={{ postgresql.user.group }}
 
-- name: 'make-config | Each directory should be created'
+- name: make-config | Each directory should be created
   file: >
     path={{ postgresql.serverroot }}/{{ item }}
     mode=0755
@@ -24,14 +24,14 @@
     - dump
     - logs
 
-- name: 'make-config | {{ postgresql.datadirectory }} should be initialized'
+- name: make-config | {{ postgresql.datadirectory }} should be initialized
   shell: >
     chdir={{ postgresql.serverroot }}
+    creates={{ postgresql.datadirectory }}/base
     sudo -u {{ postgresql.user.username }} 
     -s {{ postgresql.serverroot }}/bin/initdb --no-locale -EUTF-8 -D{{ postgresql.datadirectory }}
-    creates={{ postgresql.datadirectory }}/base
 
-- name: 'make-config | Deploy configuration files into {{ postgresql.datadirectory }}'
+- name: make-config | Deploy configuration files into {{ postgresql.datadirectory }}
   notify: Restart PostgreSQL
   template: >
     src=data/{{ item }}.j2
