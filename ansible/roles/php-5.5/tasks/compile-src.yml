@@ -5,27 +5,17 @@
 # |_|   |_| |_|_|       |____(_)____/_/   \__\__,_|___/_|\_\___/
 #                                                               
 # compile-src
-- name: 'compile-src | REBUILD | make clean'
-  command: >
-    make clean
-    chdir={{ local.src }}/php-{{ php.version }}/
-    removes=Makefile
+- name: compile-src | REBUILD | make clean
   when: php.rebuild == True
-
-- name: 'compile-src | Prepare swapfile for compling'
-  when: ansible_memtotal_mb < 512
-  register: swapfile
-  shell: >
-    dd if=/dev/zero of=/swapfile bs=1024 count=262144
-    creates=/swapfile
-
-- name: 'compile-src | make swapfile'
-  when: swapfile.changed
-  shell: mkswap /swapfile && swapon /swapfile
-
-- name: 'compile-src | PHP-{{ php.version }} should be configured'
   command: >
-    chdir={{ local.src }}/php-{{ php.version }}
+    chdir={{ php.buildat }}/php-{{ php.version }}/
+    removes=Makefile
+    make clean
+
+- name: compile-src | PHP-{{ php.version }} should be configured
+  command: >
+    chdir={{ php.buildat }}/php-{{ php.version }}
+    creates=Makefile
     /bin/sh configure 
     --prefix={{ php.install }} 
     --with-apxs2filter={{ php.depends.apache.serverroot }}/bin/apxs
@@ -86,18 +76,17 @@
     --enable-posix=shared
     --enable-fileinfo=shared
     --with-mcrypt=/usr
-    creates=Makefile
 
-- name: 'compile-src | make PHP {{ php.version }}'
-  command: >
-    chdir={{ local.src }}/php-{{ php.version }}
-    make
-    creates=libs/libphp5.so
+- name: compile-src | make PHP {{ php.version }}
   register: make_php_binary
+  command: >
+    chdir={{ php.buildat }}/php-{{ php.version }}
+    creates=libs/libphp5.so
+    make
 
-- name: 'compile-src | make install PHP {{ php.version }}'
+- name: compile-src | make install PHP {{ php.version }}
   when: make_php_binary.changed
   command: >
-    chdir={{ local.src }}/php-{{ php.version }}
+    chdir={{ php.buildat }}/php-{{ php.version }}
     make install 
 

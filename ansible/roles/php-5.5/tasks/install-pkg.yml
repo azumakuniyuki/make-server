@@ -5,7 +5,7 @@
 # |_|   |_| |_|_|       |____(_)____/_/   \__\__,_|___/_|\_\___/
 #                                                               
 # install-pkg
-- name: 'install-pkg | Install dependencies for PHP {{ php.version }}'
+- name: install-pkg | Install dependencies for PHP {{ php.version }}
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   ignore_errors: False
@@ -88,20 +88,20 @@
     - zlib 
     - zlib-devel
 
-- name: 'install-pkg | Download libgd {{ php.depends.libgd.version }}'
+- name: install-pkg | Download libgd {{ php.depends.libgd.version }}
   get_url: >
       url=https://bitbucket.org/libgd/gd-libgd/downloads/libgd-{{ php.depends.libgd.version }}.tar.gz
-      dest={{ local.src }}
+      dest={{ php.buildat }}
 
-- name: 'install-pkg | Extract libgd {{ php.depends.libgd.version }}'
+- name: install-pkg | Extract libgd {{ php.depends.libgd.version }}
   unarchive: >
-    src={{ local.src }}/libgd-{{ php.depends.libgd.version }}.tar.gz
-    dest={{ local.src }}
+    src={{ php.buildat }}/libgd-{{ php.depends.libgd.version }}.tar.gz
+    dest={{ php.buildat }}
     copy=no
 
-- name: 'install-pkg | configure libgd {{ php.depends.libgd.version }}'
+- name: install-pkg | configure libgd {{ php.depends.libgd.version }}
   command: >
-    chdir={{ local.src }}/libgd-{{ php.depends.libgd.version }}
+    chdir={{ php.buildat }}/libgd-{{ php.depends.libgd.version }}
     creates=Makefile
     /bin/sh configure 
       --prefix={{ php.depends.libgd.install }} 
@@ -111,20 +111,20 @@
       --with-jpeg=/usr
       --with-xpm=/usr
 
-- name: 'install-pkg | make libgd {{ php.depends.libgd.version }}'
+- name: install-pkg | make libgd {{ php.depends.libgd.version }}
+  register: make_gd_binary
   command: >
-    chdir={{ local.src }}/libgd-{{ php.depends.libgd.version }} 
+    chdir={{ php.buildat }}/libgd-{{ php.depends.libgd.version }} 
     creates=src/gd.o
     make 
-  register: make_gd_binary
 
-- name: 'install-pkg | make install libgd {{ php.depends.libgd.version }}'
+- name: install-pkg | make install libgd {{ php.depends.libgd.version }}
   when: make_gd_binary.changed
   command: >
-    chdir={{ local.src }}/libgd-{{ php.depends.libgd.version }}
+    chdir={{ php.buildat }}/libgd-{{ php.depends.libgd.version }}
     make install 
 
-- name: 'install-pkg | Symbolic links in {{ php.depends.libgd.install }}/lib64 should be created'
+- name: install-pkg | Symbolic links in {{ php.depends.libgd.install }}/lib64 should be created
   when: ansible_userspace_bits == "64"
   file: >
     src={{ php.depends.libgd.install }}/lib/{{ item }} 

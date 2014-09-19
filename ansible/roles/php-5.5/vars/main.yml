@@ -6,9 +6,10 @@
 #                                                             
 php:
   rebuild: False
-  version: 5.5.16
-  install: '/usr/local'
+  version: 5.5.17
+  install: /usr/local
   inifile: development
+  buildat: /usr/local/src
   depends:
     apache: { serverroot: '/opt/httpd' }
     mysql:  { serverroot: '/opt/mysql', socket: '/tmp/mysql.sock' }
