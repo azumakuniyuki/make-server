@@ -1,0 +1,133 @@
+#  _           _ _     _           _                   
+# | |__  _   _(_) | __| |      ___| |_ __ _  __ _  ___ 
+# | '_ \| | | | | |/ _` |_____/ __| __/ _` |/ _` |/ _ \
+# | |_) | |_| | | | (_| |_____\__ \ || (_| | (_| |  __/
+# |_.__/ \__,_|_|_|\__,_|     |___/\__\__,_|\__, |\___|
+#                                           |___/      
+- hosts: all
+  user:  root
+  sudo:  True
+  vars:
+    local: /usr/local
+  tasks:
+    - name: build-stage | Python 2.7 should have been installed(0)
+      register: python27
+      ignore_errors: True
+      raw: which python 2> /dev/null
+
+    - name: build-stage | Linux | Python 2.7 should have been installed(1)
+      register: install_python
+      when: python27|failed and ansible_os_family == "RedHat"
+      raw:  /usr/bin/yum -y install python
+
+    - name: build-stage | Linux | Python 2.7 should have been installed(1)
+      register: install_python
+      when: python27|failed and ansible_os_family == "Debian"
+      raw:  /usr/bin/aptitude -y install python2.7
+
+    - name: build-stage | OpenBSD | Python 2.7 should have been installed(1)
+      register: install_python
+      when: python27|failed and ansible_os_family == "OpenBSD"
+      raw:  cd /usr/ports/lang/python && make install
+
+    - name: build-stage | FreeBSD | Python 2.7 should have been installed(1)
+      register: install_python
+      when: python27|failed and ansible_os_family == "FreeBSD"
+      raw:  cd /usr/ports/lang/python27 && make install
+
+    - name: build-stage | BSD | /usr/local/bin/python should be created as a link
+      when: ansible_os_family in [ "FreeBSD", "OpenBSD" ]
+      raw:  test -e {{ local }}/bin/python || ln -s {{ local }}/bin/python2.7 {{ local }}/bin/python
+
+    - name: build-stage | Linux | Python 2.7 should have been installed(2)
+      when: ansible_system == "Linux"
+      register: python
+      raw: which python 2> /dev/null
+
+    - name: build-stage | FreeBSD,OpenBSD | Python 2.7 should have been installed(2)
+      when: ansible_os_family in [ "FreeBSD", "OpenBSD" ]
+      register: python
+      raw: test -x /usr/local/bin/python
+
+
+    - name: build-stage | RedHat | sudo(8) should be installed
+      when: ansible_os_family == "RedHat"
+      yum:  name=sudo state=present
+
+    - name: build-stage | Debian | sudo(8) should be installed
+      when: ansible_os_family == "Debian"
+      apt:  name=sudo state=present
+
+    - name: build-stage | FreeBSD | sudo(8) should be installed
+      when: ansible_os_family == "FreeBSD"
+      pkgng: name=sudo state=present
+
+
+    - name: build-stage | wheel group should be created
+      ignore_errors: True
+      changed_when: wheel.rc > 0
+      register: wheel
+      shell: grep '^wheel' /etc/group 2> /dev/null
+
+    - name: build-stage | wheel group should be created
+      when: wheel|failed
+      group: name=wheel gid=0 system=yes state=present
+
+    - name: build-stage | root should be included in wheel group
+      user: name=root groups=wheel
+
+    - name: build-stage | RedHat | Enable sudo for users in wheel group
+      when: ansible_os_family == "RedHat"
+      replace: >
+        backup=yes
+        dest=/etc/sudoers
+        regexp='^# %wheel\s+ALL=\(ALL\)\s+ALL$'
+        replace='%wheel	ALL=(ALL)	ALL'
+
+    - name: build-stage | FreeBSD | Enable sudo for users in wheel group
+      when: ansible_os_family == "FreeBSD"
+      replace: >
+        backup=yes
+        dest={{ local }}/etc/sudoers
+        regexp='^# %wheel\s+ALL=\(ALL\)\s+ALL$'
+        replace='%wheel ALL=(ALL) ALL'
+
+    - name: build-stage | OpenBSD | Enable sudo for users in wheel group
+      when: ansible_os_family == "OpenBSD"
+      replace: >
+        backup=yes
+        dest=/etc/sudoers
+        regexp='^# %wheel\s+ALL=\(ALL\)\s+SETENV:\s+ALL$'
+        replace='%wheel        ALL=(ALL) SETENV: ALL'
+
+
+    - name: build-stage | Linux | Files in sudoers.d should be included(1)
+      when: ansible_system == "Linux"
+      register: sudoersd
+      ignore_errors: True
+      changed_when: sudoersd.rc > 0
+      shell: grep '^includedir' /etc/sudoers | awk '{ print $2 }'
+
+    - name: build-stage | FreeBSD | Files in sudoers.d should be included(1)
+      when: ansible_os_family == "FreeBSD"
+      register: sudoersd
+      ignore_errors: True
+      changed_when: sudoersd.rc > 0
+      shell: grep '^includedir' {{ local }}/etc/sudoers | awk '{ print $2 }'
+
+    - name: build-stage | Linux | Rewrite /etc/sudoers
+      when: python|success and sudoersd|failed and ansible_system == "Linux"
+      replace: >
+        backup=yes
+        dest=/etc/sudoers
+        regexp='^#includedir'
+        replace='includedir'
+
+    - name: build-stage | FreeBSD | Rewrite {{ local }}/etc/sudoers
+      when: python|success and sudoersd|failed and ansible_os_family == "FreeBSD"
+      replace: >
+        backup=yes
+        dest=/etc/sudoers
+        regexp='^#includedir'
+        replace='includedir'
+
