@@ -57,7 +57,7 @@ ansible:
 			test -f ./$(ANSIBLEDIR)/$$V || touch ./$(ANSIBLEDIR)/$$V ;\
 		done ;\
 	else \
-		for V in develop staging product make-server.yml deploy-user.yml; do \
+		for V in develop staging product 0-build-stage.yml 1-deploy-user.yml 9-make-server.yml; do \
 			test -f ./$(ANSIBLEDIR)/$$V || cp -vp $(EXAMPLE)/$(ANSIBLEDIR)/$$V ./$(ANSIBLEDIR)/ ;\
 		done ;\
 		if [ ! -f "./$(ANSIBLEDIR)/hosts" ]; then \
