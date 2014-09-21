@@ -13,3 +13,4 @@
 # ansible_ssh_port=22
 # ansible_ssh_user=neko
 # ansible_python_interpreter=/usr/local/bin/python
+# ansible_connection=paramiko
