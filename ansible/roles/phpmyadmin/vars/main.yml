@@ -8,7 +8,7 @@
 phpmyadmin:
   version: 4.2.8.1
   install: /home/virtpage/127.0.0.1/html
-  workingdir: /usr/local/src
+  tempdir: /usr/local/src
   config:
     database: 127.0.0.1
     cookie: 'php-my-admin'
