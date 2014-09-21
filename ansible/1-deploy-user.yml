@@ -1,0 +1,68 @@
+#      _            _                                       
+#   __| | ___ _ __ | | ___  _   _       _   _ ___  ___ _ __ 
+#  / _` |/ _ \ '_ \| |/ _ \| | | |_____| | | / __|/ _ \ '__|
+# | (_| |  __/ |_) | | (_) | |_| |_____| |_| \__ \  __/ |   
+#  \__,_|\___| .__/|_|\___/ \__, |      \__,_|___/\___|_|   
+#            |_|            |___/                           
+- hosts: all
+  user:  root
+  sudo:  True
+  vars:
+    conf:
+      home: /home
+    user:
+      username: deploy
+      group: deploy
+      uid:  1000
+      gid:  1000
+  tasks:
+    - name: deploy-user | Group for deployment should be created
+      group: >
+        name={{ user.username }}
+        gid={{ user.gid }}
+        state=present
+
+    - name: deploy-user | User for deployment should be created
+      user: >
+        name={{ user.username }}
+        uid={{ user.uid }}
+        group={{ user.group }}
+        groups=wheel
+        shell=/bin/bash
+        home={{ conf.home }}/{{ user.username }}
+        createhome=yes
+        state=present
+
+    - name: deploy-user | Linux | sudoers.d/deploy has been created
+      when: ansible_system == "Linux"
+      shell: >
+        chdir=/etc/sudoers.d
+        creates=deploy
+        printf "%%%s ALL=NOPASSWD%s ALL\n" {{ user.group }} : > deploy
+
+    - name: deploy-user | FreeBSD | sudoers.d/deploy has been created
+      when: ansible_os_family == "FreeBSD"
+      shell: >
+        chdir=/usr/local/etc/sudoers.d
+        creates=deploy
+        printf "%%%s ALL=NOPASSWD%s ALL\n" {{ user.group }} : > deploy
+
+    - name: deploy-user | OpenBSD | Check /etc/sudoers
+      when: ansible_system == "OpenBSD"
+      shell: grep %{{ user.group }} /etc/sudoers
+      register: sudoers
+      ignore_errors: True
+      changed_when: sudoers.rc == 1
+
+    - name: deploy user | {{ user.group }} should be registered in /etc/sudoers
+      when: sudoers.changed
+      ignore_errors: True
+      shell: >
+        printf "%%%s ALL=NOPASSWD%s ALL\n" {{ user.group }} : >> /etc/sudoers
+
+    - name: deploy-user | Authorized key should be deployed
+      authorized_key: >
+        user={{ user.username }}
+        key="{{ lookup('file', '../.ssh/id2-deploy-rsa.pub') }}"
+
+
