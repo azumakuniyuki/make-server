@@ -14,6 +14,8 @@ ANSIBLEDIR = ansible
 ANSIBLELOG = ./$(ANSIBLEDIR)/log
 ANSIBLECFG = ./$(ANSIBLEDIR)/config
 INVENTORY  = ./$(ANSIBLEDIR)/hosts
+INVENTORIES= staging develop product
+PLAYBOOKS  = 10-build-stage.yml 20-deploy-user.yml 90-make-server.yml
 SERVERSPEC = ./spec
 VAGRANTNET = 172.25
 VAGRANTSSH = ~/.vagrant.d/insecure_private_key
@@ -21,12 +23,21 @@ VAGRANTFILE= Vagrantfile
 DEPLOYKEY  = ./.ssh/id2-deploy-rsa
 
 .PHONY: clean
+
+clean:
+	rm -f $(ANSIBLELOG)
+	for V in `/bin/ls -1 ~/*.retry 2> /dev/null`; do rm -f $$V; done
+
 login:
 	ssh -l vagrant -i $(VAGRANTSSH) `make addr`
 
 ssh:
 	make key
 	ssh -l deploy -i $(DEPLOYKEY) `make addr`
+
+key:
+	test -d ./.ssh || mkdir ./.ssh
+	test -f $(DEPLOYKEY) || ssh-keygen -vf $(DEPLOYKEY) -N '' -C "deploy@`basename $(PWDNAME)`"
 
 os:
 	@test -f ./$(VAGRANTFILE) && grep 'config.vm.box = ' $(VAGRANTFILE) \
@@ -53,11 +64,11 @@ ansible:
 	mkdir -p ./$(ANSIBLEDIR)
 	make common-role
 	if [ "`basename $(HEREIAM)`" = "`basename $(EXAMPLE)`" ]; then \
-		for V in hosts develop staging product; do \
+		for V in hosts $(INVENTORIES); do \
 			test -f ./$(ANSIBLEDIR)/$$V || touch ./$(ANSIBLEDIR)/$$V ;\
 		done ;\
 	else \
-		for V in develop staging product 0-build-stage.yml 1-deploy-user.yml 9-make-server.yml; do \
+		for V in $(INVENTORIES) $(PLAYBOOKS); do \
 			test -f ./$(ANSIBLEDIR)/$$V || cp -vp $(EXAMPLE)/$(ANSIBLEDIR)/$$V ./$(ANSIBLEDIR)/ ;\
 		done ;\
 		if [ ! -f "./$(ANSIBLEDIR)/hosts" ]; then \
@@ -124,10 +135,6 @@ addr:
 	@if [ -f "./$(VAGRANTFILE)" ]; then \
 		grep 'private_network' ./$(VAGRANTFILE) | sed -e 's/^.*ip://g' | tr -d ' "' ;\
 	fi
-
-key:
-	@test -d ./.ssh || mkdir ./.ssh
-	@test -f $(DEPLOYKEY) || ssh-keygen -vf $(DEPLOYKEY) -N '' -C "deploy@`basename $(HEREIAM)`"
 
 list:
 	vagrant box list
