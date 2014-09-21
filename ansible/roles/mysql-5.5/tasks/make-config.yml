@@ -28,16 +28,19 @@
 
 - name: make-config | Calculation(innodb_buffer_pool_size)
   register: innodb_buffer_pool_size
+  changed_when: innodb_buffer_pool_size.rc > 0
   command: >
     perl -le 'print int {{ ansible_memtotal_mb }} * 0.60'
 
 - name: make-config | Calculation(innodb_log_file_size)
   register: innodb_log_file_size
+  changed_when: innodb_log_file_size.rc > 0
   command: >
     perl -le 'print int {{ innodb_buffer_pool_size.stdout }} * 0.20'
 
 - name: make-config | Calculation(thread_concurrency)
   register: thread_concurrency
+  changed_when: thread_concurrency.rc > 0
   command: >
     perl -le 'print int {{ ansible_processor_vcpus }} * 2'
 
@@ -55,10 +58,10 @@
 - name: make-config | MySQL database should be installed
   register: install_mysql_database
   command: >
-    chdir={{ mysql.serverroot }}
-    creates=data/mysql/db.MYI
+    chdir={{ mysql.datadirectory }}
+    creates=mysql/db.MYI
     {{ mysql.serverroot }}/scripts/mysql_install_db 
     --user={{ mysql.user.username }}
     --basedir={{ mysql.serverroot }} 
-    --datadir={{ mysql.serverroot }}/data
+    --datadir={{ mysql.datadirectory }}
 
