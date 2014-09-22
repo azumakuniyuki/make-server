@@ -853,8 +853,26 @@ default_socket_timeout = 60
 ;
 ; If you only provide the name of the extension, PHP will look for it in its
 ; default extension directory.
+extension=bcmath.so
+extension=curl.so
+extension=dom.so
+extension=fileinfo.so
 extension=json.so
-
+extension=opcache.so
+extension=pdo.so
+extension=pdo_dblib.so
+extension=pdo_mysql.so
+extension=pdo_sqlite.so
+extension=phar.so
+extension=posix.so
+extension=sysvmsg.so
+extension=sysvsem.so
+extension=sysvshm.so
+extension=xmlreader.so
+extension=xmlrpc.so
+extension=xmlwriter.so
+extension=xsl.so
+extension=zip.so
 
 ; Windows Extensions
 ; Note that ODBC support is built in, so no dll is needed for it.
@@ -912,7 +930,7 @@ cli_server.color = On
 [Date]
 ; Defines the default timezone used by the date functions
 ; http://php.net/date.timezone
-;date.timezone =
+date.timezone = Asia/Tokyo
 
 ; http://php.net/date.default-latitude
 ;date.default_latitude = 31.7667
