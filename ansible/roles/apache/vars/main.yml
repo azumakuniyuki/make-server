@@ -23,7 +23,8 @@ apache:
     comment: "'Apache httpd server'"
   conf:
     listen: 80
-    servername: 'www.example.jp'
-    serveradmin: 'webmaster@example.jp'
-    documentroot: '/opt/httpd/htdocs'
+    servername: www.example.jp
+    serveradmin: webmaster@example.jp
+    documentroot: /opt/httpd/htdocs
+    vhostroot: /home/virthost
 

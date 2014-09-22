@@ -11,11 +11,15 @@
     src=opt/apache/conf/httpd.conf.j2
     dest={{ apache.serverroot }}/conf/httpd.conf
 
-- name: make-config | Deploy {{ apache.serverroot }}/conf/extra/httpd-info.conf
+- name: make-config | Deploy {{ apache.serverroot }}/conf/extra
   notify: Restart Apache
   template: >
-    src=opt/apache/conf/extra/httpd-info.conf.j2
-    dest={{ apache.serverroot }}/conf/extra/httpd-info.conf
+    src=opt/apache/conf/extra/httpd-{{ item }}.conf.j2
+    dest={{ apache.serverroot }}/conf/extra/httpd-{{ item }}.conf
+  with_items:
+    - info
+    - mpm
+    - vhosts
 
 - name: make-config | Deploy log rotation script
   when: ansible_system == "Linux"
