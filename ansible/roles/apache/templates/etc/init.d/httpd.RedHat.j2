@@ -48,7 +48,7 @@ INITLOG_ARGS=""
 # work correctly with a thread-based MPM; notably PHP will refuse to start.
 
 httpd=${HTTPD-{{ apache.serverroot }}/bin/httpd}
-pidfile=${PIDFILE-{{ apache.serverroot }}/logs/${prog}.pid}
+pidfile=${PIDFILE-{{ apache.serverroot }}/logs/httpd.pid}
 lockfile=${LOCKFILE-/var/lock/subsys/${prog}}
 RETVAL=0
 
