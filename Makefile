@@ -9,13 +9,14 @@ HEREIAM    = $(shell pwd)
 ANSIBLE    = $(shell which ansible)
 PWDNAME    = $(shell echo $(HEREIAM) | xargs basename)
 EXAMPLE    = ~/var/rhosts/make-server
+SUBDIRS	   = ansible
 
 ANSIBLEDIR = ansible
 ANSIBLELOG = ./$(ANSIBLEDIR)/log
 ANSIBLECFG = ./$(ANSIBLEDIR)/config
 INVENTORY  = ./$(ANSIBLEDIR)/hosts
-INVENTORIES= staging develop product
-PLAYBOOKS  = 10-build-stage.yml 20-deploy-user.yml 90-make-server.yml
+INVENTORIES= sandbox install develop staging product
+PLAYBOOKS  = 10-build-stage.yml 20-deploy-user.yml 50-make-server.yml
 SERVERSPEC = ./spec
 VAGRANTNET = 172.25
 VAGRANTSSH = ~/.vagrant.d/insecure_private_key
@@ -23,11 +24,6 @@ VAGRANTFILE= Vagrantfile
 DEPLOYKEY  = ./.ssh/id2-deploy-rsa
 
 .PHONY: clean
-
-clean:
-	rm -f $(ANSIBLELOG)
-	for V in `/bin/ls -1 ~/*.retry 2> /dev/null`; do rm -f $$V; done
-
 login:
 	ssh -l vagrant -i $(VAGRANTSSH) `make addr`
 
@@ -47,8 +43,10 @@ here:
 	@echo $(PWDNAME)
 
 update:
-	@echo 'Update Makefile'
-	cp $(EXAMPLE)/Makefile ./
+	if [ "`basename $(HEREIAM)`" != "`basename $(EXAMPLE)`" ]; then \
+		echo 'Update Makefile' ;\
+		cp $(EXAMPLE)/Makefile ./ ;\
+	fi
 
 # Ansible related targets
 ping:
@@ -71,43 +69,41 @@ ansible:
 		for V in $(INVENTORIES) $(PLAYBOOKS); do \
 			test -f ./$(ANSIBLEDIR)/$$V || cp -vp $(EXAMPLE)/$(ANSIBLEDIR)/$$V ./$(ANSIBLEDIR)/ ;\
 		done ;\
-		if [ ! -f "./$(ANSIBLEDIR)/hosts" ]; then \
+		if [ ! -f "./$(ANSIBLEDIR)/sandbox" ]; then \
 			if [ -f "./$(VAGRANTFILE)" ]; then \
 				X="`make addr`" ;\
-				cat $(EXAMPLE)/$(ANSIBLEDIR)/hosts | sed \
+				cat $(EXAMPLE)/$(ANSIBLEDIR)/sandbox | sed \
 					-e "s/__IPV4ADDRESS__/$$X/g" \
 					-e 's/__SSHPORT__/22/g' \
-				> ./$(ANSIBLEDIR)/hosts ;\
+				> ./$(ANSIBLEDIR)/sandbox ;\
 			else \
-				cat $(EXAMPLE)/$(ANSIBLEDIR)/hosts | sed \
+				cat $(EXAMPLE)/$(ANSIBLEDIR)/sandbox | sed \
 					-e 's/__IPV4ADDRESS__/127.0.0.1/g' \
 					-e "s/__SSHPORT__/2222/g" \
-				> ./$(ANSIBLEDIR)/hosts ;\
+				> ./$(ANSIBLEDIR)/sandbox ;\
 			fi ;\
 		fi ;\
 	fi
+	cp ./$(ANSIBLEDIR)/sandbox ./$(INVENROTY)
 	if [ ! -f "$(ANSIBLECFG)" ]; then \
 		cp $(EXAMPLE)/ansible/config $(ANSIBLECFG) ;\
 		ln -fs $(ANSIBLECFG) ./ansible.cfg ;\
 	fi
 
-%-role:
-	if [ ! -d $(EXAMPLE)/$(ANSIBLEDIR)/roles/$* -o "`basename $(HEREIAM)`" = "`basename $(EXAMPLE)`" ]; then \
+%-role: ansible
+	if [ ! -d $(EXAMPLE)/$(ANSIBLEDIR)/roles/`echo $* | tr '-' '/'` -o "`basename $(HEREIAM)`" = "`basename $(EXAMPLE)`" ]; then \
 		for V in files handlers tasks templates vars defaults meta; do \
-			mkdir -p ./$(ANSIBLEDIR)/roles/$*/$$V ;\
+			mkdir -p ./$(ANSIBLEDIR)/roles/`echo $* | tr '-' '/'`/$$V ;\
 		done ;\
 	else \
 		mkdir -p ./$(ANSIBLEDIR)/roles ;\
-		if [ ! -d "./$(ANSIBLEDIR)/roles/$*" ]; then \
-			cp -Rvp $(EXAMPLE)/$(ANSIBLEDIR)/roles/$* ./$(ANSIBLEDIR)/roles/ ;\
-			if [ -f "$(EXAMPLE)/$(ANSIBLEDIR)/$*.yml" ]; then \
-				cp -vp  $(EXAMPLE)/$(ANSIBLEDIR)/$*.yml ./$(ANSIBLEDIR)/ || true;\
-			fi ;\
+		if [ ! -d "./$(ANSIBLEDIR)/roles/`echo $* | tr '-' '/'`" ]; then \
+			mkdir -p ./$(ANSIBLEDIR)/roles/`echo $* | tr '-' '/'`/ ;\
+			cp -Rvp $(EXAMPLE)/$(ANSIBLEDIR)/roles/`echo $* | tr '-' '/'`/* ./$(ANSIBLEDIR)/roles/`echo $* | tr '-' '/'`/ ;\
+			echo ;\
 		else \
-			cp -Rip $(EXAMPLE)/$(ANSIBLEDIR)/roles/$* ./$(ANSIBLEDIR)/roles/ ;\
-			if [ -f "$(EXAMPLE)/$(ANSIBLEDIR)/$*.yml" ]; then \
-				cp -ivp $(EXAMPLE)/$(ANSIBLEDIR)/$*.yml ./$(ANSIBLEDIR)/ || true ;\
-			fi ;\
+			cp -Rip $(EXAMPLE)/$(ANSIBLEDIR)/roles/`echo $* | tr '-' '/'`/* ./$(ANSIBLEDIR)/roles/`echo $* | tr '-' '/'`/ ;\
+			echo ;\
 		fi ;\
 	fi
 
@@ -119,6 +115,9 @@ test:
 	rake spec
 
 # Vagrant related targets
+vagrant:
+	test -f ./$(VAGRANTFILE)
+
 %-box:
 	if [ ! -f "./$(VAGRANTFILE)" ]; then \
 		vagrant init $* ;\
@@ -136,29 +135,29 @@ addr:
 		grep 'private_network' ./$(VAGRANTFILE) | sed -e 's/^.*ip://g' | tr -d ' "' ;\
 	fi
 
-list:
+list: vagrant
 	vagrant box list
 
-up:
+up: vagrant
 	ssh-keygen -R `make addr`
 	vagrant up
 
-destroy:
+destroy: vagrant
 	vagrant destroy
 	ssh-keygen -R `make addr`
 
-init-vm:
+init-vm: vagrant
 	make destroy && make up
 
 help:
 	vagrant --help
 
-down: 
+down: vagrant
 	make halt
 
-restart: 
+restart: vagrant
 	make reload
 
-%:
-	vagrant $@
+clean:
+	for V in `/bin/ls -1 ~/*.retry 2> /dev/null`; do rm -f $$V; done
 
