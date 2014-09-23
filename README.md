@@ -83,15 +83,18 @@ tree will be created in ./ansible/roles directory followed Best Practices.
 | Makefile          | Shortcuts for ansible and vagrant command |
 | README.md         | This file                                 |
 | Vagrantfile       | Template file for sandbox vm              |
-| ansible/          | Include files for ansible                 |
-| ansible/hosts     | Inventory file for sandbox(Vagrant VM)    |
-| ansible/install   | Inventory file for initializing as root   |
-| ansible/develop   | Inventory file for development            |
-| ansible/staging   | Inventory file for staging servers        |
-| ansible/product   | Inventory file for production servers     |
-| ansible/config    | Ansible configuration file for this node  |
-| ansible/log       | Log file specified in ansible/config file |
-| ansible/role/     | Ansible roles                             |
+| ansible/          | Files for ansible                         |
+|   hosts           | Inventory file for sandbox(Vagrant VM)    |
+|   install         | Inventory file for initializing as root   |
+|   develop         | Inventory file for development            |
+|   staging         | Inventory file for staging servers        |
+|   product         | Inventory file for production servers     |
+|   10-build-stage  | Playbook for installing Python 2.7        |
+|   20-deploy-user  | Playbook for creating user "deploy"       |
+|   30-update-sshd  | Playbook for changing sshd port           |
+|   config          | Ansible configuration file for this node  |
+|   log             | Log file specified in ansible/config file |
+|   role/           | Ansible roles                             |
 
 REPOSITORY
 ----------
