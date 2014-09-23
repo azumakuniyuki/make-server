@@ -15,14 +15,14 @@
     - bind9
     - apache
     - nginx
-    - mysql-5.5
+    - mysql/5.5
     - postgresql
-    - php-5.3
-    - php-5.5
+    - php/5.3
+    - php/5.5
     - phpmyadmin
     - dovecot
-    - local-sendmail
-    - sendmail
+    - sendmail/local
+    - sendmail/system
     - netqmail
     - vsftpd
     - cleanup
