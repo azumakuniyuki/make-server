@@ -21,6 +21,7 @@
   unarchive: >
     src={{ sendmail.workingdir }}/procmail-{{ procmail.version }}.tar.gz
     dest={{ sendmail.workingdir }}
+    creates={{ sendmail.workingdir }}/procmail-{{ procmail.version }}
     copy=no
 
 - name: get-archive | Download maildrop {{ maildrop.version }} at {{ sendmail.workingdir }}
@@ -39,6 +40,7 @@
   unarchive: >
     src={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
     dest={{ sendmail.workingdir }}
+    creates={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}
     copy=no
 
 - name: get-archive | Download sendmail {{ sendmail.version }} at {{ sendmail.workingdir }}
@@ -46,9 +48,10 @@
     url=ftp://ftp.sendmail.org/pub/sendmail/sendmail.{{ sendmail.version }}.tar.gz
     dest={{ sendmail.workingdir }}/sendmail.{{ sendmail.version }}.tar.gz
 
-- name: get-archive | Extract {{ sendmail.workingdir }}/sendmail.{{ sendmail.version }}
+- name: get-archive | Extract {{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}
   unarchive: >
     src={{ sendmail.workingdir }}/sendmail.{{ sendmail.version }}.tar.gz
     dest={{ sendmail.workingdir }}
+    creates={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}
     copy=no
 

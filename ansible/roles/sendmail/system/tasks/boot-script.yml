@@ -18,7 +18,7 @@
   when: ansible_os_family == "RedHat"
   shell: >
     /sbin/chkconfig --add {{ sendmail.initscript }}
-    creates=/etc/rc.d/rc0.d/K15{{ sendmail.initscript }}
+    creates=/etc/rc.d/rc0.d/K30{{ sendmail.initscript }}
 
 - name: boot-script | Turn on init script
   service: name={{ sendmail.initscript }} enabled=yes

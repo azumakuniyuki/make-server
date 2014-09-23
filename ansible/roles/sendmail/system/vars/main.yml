@@ -8,8 +8,8 @@ sendmail:
   started: True
   rebuild: False
   version: 8.14.9
-  configroot: /etc/mail
   initscript: sendmail
+  configroot: /etc/mail
   workingdir: /usr/local/src
   conf:
     backup: True
@@ -17,19 +17,20 @@ sendmail:
     ostype: linux
     mtaqueue: /var/spool/queues
     msaqueue: /var/spool/cqueue
-    classfiles:
+    parameters:
       - daemon-options
-      - generics-domains
-      - local-host-names
-      - masquerade-domains
       - queue-interval
-      - relay-domains
       - sid-options
       - sid-pass-domains
       - sid-peer-hosts
+    classfiles:
+      - generics-domains
+      - local-host-names
+      - masquerade-domains
+      - relay-domains
       - trusted-users
       - virtuser-domains
-    databasemaps:
+    dbmapfiles:
       - access
       - aliases
       - authinfo

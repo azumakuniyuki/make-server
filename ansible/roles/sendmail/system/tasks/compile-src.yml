@@ -28,7 +28,7 @@
     - procmail-localconfig.patch
 
 - name: compile-src | procmail | REBUILD | make clean
-  when: procmail.rebuild == 1
+  when: procmail.rebuild == True
   shell: >
     chdir={{ sendmail.workingdir }}/procmail-{{ procmail.version }}/
     removes=src/procmail
@@ -63,7 +63,7 @@
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 - name: compile-src | maildrop | REBUILD | make clean
-  when: maildrop.rebuild == 1
+  when: maildrop.rebuild == True
   shell: >
     chdir={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}/
     removes=maildrop/maildrop
@@ -86,15 +86,15 @@
 - name: compile-src | maildrop | Build maildrop {{ maildrop.version }}
   register: make_maildrop_binary
   shell: >
-    make
     chdir={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}
-    creates=maildrop/maildrop
+    creates=libs/maildrop/maildrop
+    make
 
 - name: compile-src | maildrop | Install maildrop {{ maildrop.version }}
   when: make_maildrop_binary.changed
   shell: >
-    make install-strip
     chdir={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}
+    make install-strip
 
 - name: compile-src | maildrop | Change owner each binary
   when: make_maildrop_binary.changed
@@ -161,6 +161,7 @@
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 - name: compile-src | Build libmilter
+  when: make_sendmail_binary.changed
   register: make_libmilter_binary
   shell: >
     chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/libmilter

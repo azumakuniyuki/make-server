@@ -25,7 +25,17 @@
 # ||__|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-- name: make-config | procmail | Log file should be created
+- name: make-config | procmail | Log file should be created(1)
+  register: procmaillog
+  ignore_errors: True
+  file: >
+    path=/var/log/procmail-local.log
+    mode=0600
+    owner=root
+    state=file
+
+- name: make-config | procmail | Log file should be created(2)
+  when: procmaillog|failed
   file: >
     path=/var/log/procmail-local.log
     mode=0600
@@ -45,7 +55,17 @@
 # ||__|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-- name: make-config | maildrop | Log file should be created
+- name: make-config | maildrop | Log file should be created(1)
+  register: maildroplog
+  ignore_errors: True
+  file: >
+    path=/var/log/maildrop-virtual.log
+    mode=0600
+    owner={{ sendmail.user.mda.username }}
+    state=file
+
+- name: make-config | maildrop | Log file should be created(2)
+  when: maildroplog|failed
   file: >
     path=/var/log/maildrop-virtual.log
     mode=0600
@@ -78,7 +98,7 @@
     owner=root
     group={{ sendmail.user.mta.group }}
     state=directory
-  with_items: [ 0, 1, 2, 3 ]
+  with_items: [ '0', '1', '2', '3' ]
 
 - name: make-config | MSP Queue directories should have been created
   file: >
@@ -116,119 +136,137 @@
     - back
     - dist
 
-- name: make-config | Copy cf directory tree
-  shell: >
-    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/
-    creates={{ sendmail.configroot }}/cf
-    /bin/cp -Rp ./cf {{ sendmail.configroot }}/
-
-- name: make-config | Deploy submit.mc file
-  template: >
-    src=etc/mail/submit.mc.j2
-    dest={{ sendmail.configroot }}/cf/cf/submit.mc
-
-- name: make-config | Install submit.cf into {{ sendmail.configroot }}/dist
-  shell: >
-    chdir={{ sendmail.configroot }}/cf/cf
-    {{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/devtools/bin/install.sh 
-    -c -o root -g bin -m 0444 submit.cf {{ sendmail.configroot }}/dist/submit.cf
-
-- name: make-config | Deploy sendmail.mc file
-  template: >
-    src=etc/mail/sendmail.mc.{{ ansible_system }}.j2
-    dest={{ sendmail.configroot }}/cf/cf/sendmail.mc
-
-- name: make-config | Deploy virtmail.m4 file
-  template: >
-    src=etc/mail/virtmail.m4.j2
-    dest={{ sendmail.configroot }}/cf/mailer/virtmail.m4
-
-- name: make-config | Build sendmail.cf and submit.cf
-  shell: >
-    chdir={{ sendmail.configroot }}/cf/cf
-    make {{ item }}
-  with_items:
-    - sendmail.cf
-    - submit.cf
-
-- name: make-config | Install sendmail.cf into {{ sendmail.configroot }}/dist
-  shell: >
-    chdir={{ sendmail.configroot }}/cf/cf
-    {{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/devtools/bin/install.sh 
-    -c -o root -g bin -m 0444 sendmail.cf {{ sendmail.configroot }}/dist/sendmail.cf
-
 - name: make-config | Deploy Makefile into {{ sendmail.configroot }}/
   template: >
     src=etc/mail/Makefile.j2
     dest={{ sendmail.configroot }}/Makefile
 
-- name: make-config | Deploy database maps into {{ sendmail.configroot }}/dist
+- name: make-config | Link source code directory tree as "cf"
+  file: >
+    src={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/
+    dest={{ sendmail.configroot }}/src
+    force=yes
+    owner=root
+    state=link
+
+- name: make-config | Deploy submit.mc file
+  register: submitmc
+  template: >
+    src=etc/mail/submit.mc.j2
+    dest={{ sendmail.configroot }}/src/cf/cf/submit.mc
+    owner=root
+    group=bin
+
+- name: make-config | Install submit.cf into {{ sendmail.configroot }}/dist
+  when: submitmc.changed
+  shell: >
+    chdir={{ sendmail.configroot }}/src/cf/cf
+    make install-submit-cf MAILDIR={{ sendmail.configroot }}/dist
+
+- name: make-config | Deploy sendmail.mc file
+  register: sendmailmc
+  template: >
+    src=etc/mail/sendmail.mc.j2
+    dest={{ sendmail.configroot }}/src/cf/cf/sendmail.mc
+    owner=root
+    group=bin
+
+- name: make-config | Deploy virtmail.m4 file
+  register: virtmailm4
+  template: >
+    src=etc/mail/virtmail.m4.j2
+    dest={{ sendmail.configroot }}/src/cf/mailer/virtmail.m4
+
+- name: make-config | Install sendmail.cf into {{ sendmail.configroot }}/dist
+  when: sendmailmc.changed or virtmailm4.changed
+  shell: >
+    chdir={{ sendmail.configroot }}/src/cf/cf
+    make install-sendmail-cf MAILDIR={{ sendmail.configroot }}/dist
+
+- name: make-config | Deploy files into {{ sendmail.configroot }}/dist
   template: >
     src=etc/mail/{{ item }}.j2
     dest={{ sendmail.configroot }}/dist/{{ item }}
-  with_items: sendmail.conf.dabasemaps
+  with_items: 
+    - '{{ sendmail.conf.dbmapfiles }}'
+    - '{{ sendmail.conf.classfiles }}'
+    - '{{ sendmail.conf.parameters }}'
 
-- name: make-config | Deploy class files into {{ sendmail.configroot }}/dist
-  template: >
-    src=etc/mail/{{ item }}.j2
-    dest={{ sendmail.configroot }}/dist/{{ item }}
-  with_items: sendmail.conf.classfiles
-
-- name: make-config | Backup files for {{ sendmail.configroot }}/back
-  when: sendmail.conf.backup == True
+- name: make-config | Initial deployment
   ignore_errors: True
   shell: >
-    chdir={{ sendmail.configroot }}
-    /bin/cp ./{{ item }} ./back/
+    chdir={{ sendmail.configroot }}/dist
+    creates={{ sendmail.configroot }}/{{ item }}
+    /bin/cp ./{{ item }} {{ sendmail.configroot }}/
   with_items: 
+    - '{{ sendmail.conf.dbmapfiles }}'
+    - '{{ sendmail.conf.classfiles }}'
+    - '{{ sendmail.conf.parameters }}'
     - sendmail.cf
     - submit.cf
 
-- name: make-config | Deploy files into {{ sendmail.configroot }}/
-  when: sendmail.conf.update == True
-  shell: >
-    chdir={{ sendmail.configroot }}
-    /bin/cp ./dist/{{ item }} ./
-  with_items: 
-    - sendmail.cf
-    - submit.cf
-
-- name: make-config | Backup class files for {{ sendmail.configroot }}/back
-  when: sendmail.conf.backup == True
+- name: make-config | Initial makemap(8)
   ignore_errors: True
   shell: >
     chdir={{ sendmail.configroot }}
-    /bin/cp ./{{ item }} ./back/
-  with_items: sendmail.conf.classfiles
-
-- name: make-config | Backup class files for {{ sendmail.configroot }}/back
-  when: sendmail.conf.backup == True
-  ignore_errors: True
-  shell: >
-    chdir={{ sendmail.configroot }}
-    /bin/cp ./{{ item }} ./back/
-  with_items: sendmail.conf.databasemaps
-
-- name: make-config | Deploy class files into {{ sendmail.configroot }}
-  when: sendmail.conf.update == True
-  shell: >
-    chdir={{ sendmail.configroot }}
-    /bin/cp ./dist/{{ item }} ./
-  with_items: sendmail.conf.classfiles
-
-- name: make-config | Deploy database maps into {{ sendmail.configroot }}
-  when: sendmail.conf.update == True
-  shell: >
-    chdir={{ sendmail.configroot }}
-    /bin/cp ./dist/{{ item }} ./
-  with_items: sendmail.conf.databasemaps
-
-- name: make-config | Execute makemap
-  when: sendmail.conf.update == True
-  command: >
-    chdir={{ sendmail.configroot }}
+    creates={{ sendmail.configroot }}/{{ item }}.db
     make {{ item }}.db
-  with_items: sendmail.conf.databasemaps
+  with_items: sendmail.conf.dbmapfiles
+
+- name: make-config | Initial backup
+  when: sendmail.conf.backup == True
+  ignore_errors: True
+  shell: >
+    chdir={{ sendmail.configroot }}
+    creates={{ sendmail.configroot }}/back/{{ item }}
+    /bin/cp ./{{ item }} ./back/
+  with_items: 
+    - '{{ sendmail.conf.dbmapfiles }}'
+    - '{{ sendmail.conf.classfiles }}'
+    - '{{ sendmail.conf.parameters }}'
+    - sendmail.cf
+    - submit.cf
+
+- name: make-config | Backup files into {{ sendmail.configroot }}/back
+  when: sendmail.conf.backup == True
+  register: backupcf
+  changed_when: backupcf.rc > 0
+  ignore_errors: True
+  shell: >
+    chdir={{ sendmail.configroot }}
+    diff -q ./back/{{ item }} ./{{ item }} || ( /bin/cp ./{{ item }} ./back/ && false )
+  with_items: 
+    - '{{ sendmail.conf.dbmapfiles }}'
+    - '{{ sendmail.conf.classfiles }}'
+    - '{{ sendmail.conf.parameters }}'
+    - sendmail.cf
+    - submit.cf
+
+- name: make-config | Update files in {{ sendmail.configroot }}
+  when: sendmail.conf.update == True
+  notify: Restart Sendmail
+  ignore_errors: True
+  register: updatecf 
+  changed_when: updatecf.rc > 0
+  shell: >
+    chdir={{ sendmail.configroot }}
+    diff -q ./{{ item }} ./dist/{{ item }} || ( /bin/cp ./dist/{{ item }} ./ && false )
+  with_items: 
+    - '{{ sendmail.conf.classfiles }}'
+    - '{{ sendmail.conf.parameters }}'
+    - sendmail.cf
+    - submit.cf
+
+- name: make-config | Update dbmaps in {{ sendmail.configroot }}
+  when: sendmail.conf.update == True
+  notify: Makemap DBs
+  register: updatedb
+  changed_when: updatedb.rc > 0
+  ignore_errors: True
+  shell: >
+    chdir={{ sendmail.configroot }}
+    diff -q ./{{ item }} ./dist/{{ item }} || ( /bin/cp ./dist/{{ item }} ./ && false )
+  with_items: sendmail.conf.dbmapfiles
 
 - name: make-config | Deploy files into {{ procmail.install }}
   template: >

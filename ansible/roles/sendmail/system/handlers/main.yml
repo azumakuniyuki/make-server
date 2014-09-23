@@ -7,3 +7,8 @@
 - name: Restart Sendmail
   when: sendmail.started == True
   service: name={{ sendmail.initscript }} state=restarted
+
+- name: Makemap DBs
+  shell: chdir={{ sendmail.configroot }} make {{ item }}.db
+  with_items: sendmail.conf.databasemaps
+
