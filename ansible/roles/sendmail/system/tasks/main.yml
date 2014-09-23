@@ -11,10 +11,10 @@
 - include: make-config.yml
 - include: boot-script.yml
 
-- name: 'Start Sendmail'
+- name: Start Sendmail
   when: sendmail.started == True
-  service: name=sendmail state=started
+  service: name={{ sendmail.initscript }} state=started
 
-- name: 'Stop Sendmail'
+- name: Stop Sendmail
   when: sendmail.started == False
-  service: name=sendmail state=stopped
+  service: name={{ sendmail.initscript }} state=stopped

@@ -20,9 +20,9 @@
 
 - name: compile-src | procmail | Apply patches
   shell: >
-    patch -p0 < ./{{ item }}
     chdir={{ sendmail.workingdir }}/procmail-{{ procmail.version }}
     creates={{ item }}.ok
+    patch -p0 < ./{{ item }}
   with_items:
     - procmail-conflict-types-for-getline.patch
     - procmail-localconfig.patch
@@ -30,28 +30,28 @@
 - name: compile-src | procmail | REBUILD | make clean
   when: procmail.rebuild == 1
   shell: >
-    make clean
     chdir={{ sendmail.workingdir }}/procmail-{{ procmail.version }}/
     removes=src/procmail
+    make clean
 
 - name: compile-src | procmail | Build procmail {{ procmail.version }}
   register: make_procmail_binary
   shell: >
-    echo | make
     chdir={{ sendmail.workingdir }}/procmail-{{ procmail.version }}
     creates=src/procmail
+    echo | make
 
 - name: compile-src | procmail | Install procmail {{ procmail.version }}
   when: make_procmail_binary.changed
   shell: >
-    make install
     chdir={{ sendmail.workingdir }}/procmail-{{ procmail.version }}
+    make install
 
 - name: compile-src | procmail | strip binaries
   when: make_procmail_binary.changed
   shell: >
-    strip ./bin/{{ item }}
     chdir={{ procmail.install }}
+    strip ./bin/{{ item }}
   with_items:
     - formail
     - lockfile
@@ -65,13 +65,14 @@
 - name: compile-src | maildrop | REBUILD | make clean
   when: maildrop.rebuild == 1
   shell: >
-    make clean
     chdir={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}/
     removes=maildrop/maildrop
+    make clean
 
 - name: compile-src | maildrop | maildrop should be configured
   shell: >
     chdir={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}
+    creates=Makefile
     /bin/sh ./configure
     --prefix={{ maildrop.install }}
     --bindir={{ maildrop.install }}/bin
@@ -81,7 +82,6 @@
     --enable-keep-fromline=1
     --enable-unicode
     --with-etcdir={{ maildrop.install }}/etc
-    creates=Makefile
 
 - name: compile-src | maildrop | Build maildrop {{ maildrop.version }}
   register: make_maildrop_binary
@@ -122,9 +122,9 @@
 - name: compile-src | REBUILD | make clean
   when: sendmail.rebuild == 1
   shell: >
-    make clean
     chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/
     removes={{ sendmail_object_directory.stdout }}/sendmail/sendmail
+    make clean
 
 - name: compile-src | Deploy site.config.m4
   template: >
@@ -134,9 +134,9 @@
 - name: compile-src | Build sendmail {{ sendmail.version }}
   register: make_sendmail_binary
   shell: > 
-    /bin/sh ./Build -c
     chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}
     creates={{ sendmail_object_directory.stdout }}/sendmail/sendmail
+    /bin/sh ./Build -c
 
 - name: compile-src | Each directory should be created
   file: >
@@ -164,8 +164,8 @@
   register: make_libmilter_binary
   shell: >
     chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/libmilter
-    /bin/sh ./Build -c
     creates={{ sendmail_object_directory.stdout }}/libmilter/libmilter.a
+    /bin/sh ./Build -c
 
 - name: compile-src | Install libmilter
   when: make_libmilter_binary.changed

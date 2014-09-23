@@ -98,7 +98,7 @@ dnl # * DOMAIN() ************************************************************
 dnl #
 dnl #  DOMAIN(`sendmail.org')dnl requires cf/domain/sendmail.org.m4
 dnl #
-OSTYPE(`linux')dnl
+OSTYPE(`{{ sendmail.conf.ostype }}')dnl
 
 
 dnl #########################################################################
@@ -108,7 +108,7 @@ dnl #
 dnl #  define(`MAIL_SETTINGS_DIR',`CF/')dnl
 dnl #
 define(`SENDMAILROOT',`')dnl
-define(`CF',`SENDMAILROOT/etc/mail')dnl
+define(`CF',`{{ sendmail.configroot }}')dnl
 define(`SPOOL',`SENDMAILROOT/var/spool')dnl
 define(`ZERO',`0s')dnl
 
@@ -145,7 +145,7 @@ define(`HELP_FILE',`/usr/share/data/helpfile')
 define(`confCT_FILE',`-o CF/trusted-users')
 define(`confDEAD_LETTER_DROP',`/var/tmp/dead.letter')dnl
 define(`confHOST_STATUS_DIRECTORY',`SPOOL/hoststat')dnl
-define(`QUEUE_DIR',`SPOOL/queues/q.*')dnl
+define(`QUEUE_DIR',`{{ sendmail.conf.mtaqueue }}/q.*')dnl
 define(`STATUS_FILE',`/var/tmp/sendmail.st')dnl
 define(`confPID_FILE',`/var/run/sendmail.pid')dnl
 

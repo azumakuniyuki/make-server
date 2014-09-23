@@ -9,9 +9,33 @@ sendmail:
   rebuild: False
   version: 8.14.9
   configroot: /etc/mail
+  initscript: sendmail
   workingdir: /usr/local/src
-  mtaqueue: /var/spool/queues
-  msaqueue: /var/spool/cqueue
+  conf:
+    backup: True
+    update: False
+    ostype: linux
+    mtaqueue: /var/spool/queues
+    msaqueue: /var/spool/cqueue
+    classfiles:
+      - daemon-options
+      - generics-domains
+      - local-host-names
+      - masquerade-domains
+      - queue-interval
+      - relay-domains
+      - sid-options
+      - sid-pass-domains
+      - sid-peer-hosts
+      - trusted-users
+      - virtuser-domains
+    databasemaps:
+      - access
+      - aliases
+      - authinfo
+      - genericstable
+      - mailertable
+      - virtusertable
   user:
     mta:
       username: sendmail

@@ -5,23 +5,23 @@
 # |____/ \___|_| |_|\__,_|_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
 #                                                                        
 # boot-script
-- name: boot-script | RedHat | Deploy /etc/init.d/sendmail
+- name: boot-script | RedHat | Deploy /etc/init.d/{{ sendmail.initscript }}
   when: ansible_os_family == "RedHat"
   template: >
     src=etc/init.d/sendmail.RedHat.j2
-    dest=/etc/init.d/sendmail
+    dest=/etc/init.d/{{ sendmail.initscript }}
     group=root
     owner=root
     mode=0755
 
-- name: boot-script | RedHat | Install /etc/rc.d/init.d/sendmail
+- name: boot-script | RedHat | Install /etc/rc.d/init.d/{{ sendmail.initscript }}
   when: ansible_os_family == "RedHat"
   shell: >
-    /sbin/chkconfig --add sendmail
-    creates=/etc/rc.d/rc0.d/K15sendmail
+    /sbin/chkconfig --add {{ sendmail.initscript }}
+    creates=/etc/rc.d/rc0.d/K15{{ sendmail.initscript }}
 
 - name: boot-script | Turn on init script
-  service: name=sendmail enabled=yes
+  service: name={{ sendmail.initscript }} enabled=yes
 
 - name: boot-script | Stop postfix
   ignore_errors: True
