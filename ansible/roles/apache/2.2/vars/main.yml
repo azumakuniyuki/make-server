@@ -22,6 +22,7 @@ apache:
     shell: /sbin/nolgin
     comment: "'Apache httpd server'"
   conf:
+    update: False
     listen: 80
     servername: www.example.jp
     serveradmin: webmaster@example.jp
