@@ -63,7 +63,7 @@ In this file, you build some web servers and a mail server of example.jp domain.
 ## Copy roles
 
     $ cd ~/var/rhosts/example.jp
-    $ make apache-role sendmail-role mysql-5.5-role
+    $ make apache-role sendmail/system-role mysql-5.5-role
     ...
 
 When `make apache-role` executed, roles/apache will be copied from
