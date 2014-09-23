@@ -158,10 +158,10 @@ help:
 	vagrant --help
 
 down: vagrant
-	make halt
+	vagrant halt
 
 restart: vagrant
-	make reload
+	vagrant reload
 
 clean:
 	for V in `/bin/ls -1 ~/*.retry 2> /dev/null`; do rm -f $$V; done
