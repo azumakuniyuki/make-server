@@ -63,7 +63,7 @@ In this file, you build some web servers and a mail server of example.jp domain.
 ## Copy roles
 
     $ cd ~/var/rhosts/example.jp
-    $ make apache-role sendmail-role mysql-role
+    $ make apache-role sendmail-role mysql-5.5-role
     ...
 
 When `make apache-role` executed, roles/apache will be copied from
@@ -78,19 +78,20 @@ tree will be created in ./ansible/roles directory followed Best Practices.
 
 ## List of files in make-server
 
-|   Filename        |   Description 
-|   --------        |   -----------     |
-| Makefile          | Shortcuts for ansible, serverspec, and vagrant command |
-| README.md         | This file |
-| Vagrantfile       | Template file for sandbox vm |
-| ansible/          | Include files for ansible |
-| ansible/hosts     | Inventory file for sandbox(Vagrant VM) |
-| ansible/develop   | Inventory file for development |
-| ansible/staging   | Inventory file for staging servers |
-| ansible/product   | Inventory file for production servers |
-| ansible/config    | Ansible configuration file for this node |
+|   Filename        |   Description                             |
+|-------------------|-------------------------------------------|
+| Makefile          | Shortcuts for ansible and vagrant command |
+| README.md         | This file                                 |
+| Vagrantfile       | Template file for sandbox vm              |
+| ansible/          | Include files for ansible                 |
+| ansible/hosts     | Inventory file for sandbox(Vagrant VM)    |
+| ansible/install   | Inventory file for initializing as root   |
+| ansible/develop   | Inventory file for development            |
+| ansible/staging   | Inventory file for staging servers        |
+| ansible/product   | Inventory file for production servers     |
+| ansible/config    | Ansible configuration file for this node  |
 | ansible/log       | Log file specified in ansible/config file |
-| ansible/role/     | Ansible roles |
+| ansible/role/     | Ansible roles                             |
 
 REPOSITORY
 ----------
