@@ -105,6 +105,13 @@ ansible:
 		fi ;\
 	fi
 
+role-index:
+	@find $(EXAMPLE)/ansible/roles -type f -name 'main.yml' \
+		| grep '/tasks/main.yml' \
+		| sed \
+			-e 's|/tasks/main.yml||g' \
+			-e 's|^.*/ansible/roles/||g' 
+
 # serverspec related targets
 serverspec:
 	serverspec-init
