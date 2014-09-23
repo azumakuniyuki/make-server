@@ -69,22 +69,20 @@ ansible:
 		for V in $(INVENTORIES) $(PLAYBOOKS); do \
 			test -f ./$(ANSIBLEDIR)/$$V || cp -vp $(EXAMPLE)/$(ANSIBLEDIR)/$$V ./$(ANSIBLEDIR)/ ;\
 		done ;\
-		if [ ! -f "./$(ANSIBLEDIR)/sandbox" ]; then \
-			if [ -f "./$(VAGRANTFILE)" ]; then \
-				X="`make addr`" ;\
-				cat $(EXAMPLE)/$(ANSIBLEDIR)/sandbox | sed \
-					-e "s/__IPV4ADDRESS__/$$X/g" \
-					-e 's/__SSHPORT__/22/g' \
-				> ./$(ANSIBLEDIR)/sandbox ;\
-			else \
-				cat $(EXAMPLE)/$(ANSIBLEDIR)/sandbox | sed \
-					-e 's/__IPV4ADDRESS__/127.0.0.1/g' \
-					-e "s/__SSHPORT__/2222/g" \
-				> ./$(ANSIBLEDIR)/sandbox ;\
-			fi ;\
+		if [ -f "./$(VAGRANTFILE)" ]; then \
+			X="`make addr`" ;\
+			cat $(EXAMPLE)/$(ANSIBLEDIR)/sandbox | sed \
+				-e "s/__IPV4ADDRESS__/$$X/g" \
+				-e 's/__SSHPORT__/22/g' \
+			> ./$(ANSIBLEDIR)/sandbox ;\
+		else \
+			cat $(EXAMPLE)/$(ANSIBLEDIR)/sandbox | sed \
+				-e 's/__IPV4ADDRESS__/127.0.0.1/g' \
+				-e "s/__SSHPORT__/2222/g" \
+			> ./$(ANSIBLEDIR)/sandbox ;\
 		fi ;\
 	fi
-	cp ./$(ANSIBLEDIR)/sandbox ./$(INVENROTY)
+	cp ./$(ANSIBLEDIR)/sandbox ./$(INVENTORY)
 	if [ ! -f "$(ANSIBLECFG)" ]; then \
 		cp $(EXAMPLE)/ansible/config $(ANSIBLECFG) ;\
 		ln -fs $(ANSIBLECFG) ./ansible.cfg ;\
