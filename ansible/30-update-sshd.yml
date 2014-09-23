@@ -1,0 +1,36 @@
+#                  _       _                     _         _ 
+#  _   _ _ __   __| | __ _| |_ ___       ___ ___| |__   __| |
+# | | | | '_ \ / _` |/ _` | __/ _ \_____/ __/ __| '_ \ / _` |
+# | |_| | |_) | (_| | (_| | ||  __/_____\__ \__ \ | | | (_| |
+#  \__,_| .__/ \__,_|\__,_|\__\___|     |___/___/_| |_|\__,_|
+#       |_|                                                  
+- hosts: all
+  user:  root
+  sudo:  True
+  vars:
+    sshd:
+      port: 2222
+      rootlogin: 'no'
+  tasks:
+    - name: update-sshd | Rewrite the value of Port({{ sshd.port }})
+      notify: Restart SSHD
+      replace:
+        backup=yes
+        dest=/etc/ssh/sshd_config
+        regexp='^#Port 22'
+        replace='Port {{ sshd.port }}'
+        validate='sshd -t'
+
+    - name: update-sshd | PermitRootLogin {{ sshd.rootlogin }}
+      notify: Restart SSHD
+      replace:
+        backup=yes
+        dest=/etc/ssh/sshd_config
+        regexp='^#PermitRootLogin yes'
+        replace='PermitRootLogin {{ sshd.rootlogin }}'
+        validate='sshd -t'
+
+  handlers:
+    - name: Restart SSHD
+      service: name=sshd state=restarted
+
