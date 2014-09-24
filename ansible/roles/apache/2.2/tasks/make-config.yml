@@ -25,5 +25,5 @@
   when: ansible_system == "Linux"
   template: >
     src=etc/logrotate.d/apache.j2
-    dest=/etc/logrotate.d/apache
+    dest=/etc/logrotate.d/{{ apache.rotatefile }}
 
