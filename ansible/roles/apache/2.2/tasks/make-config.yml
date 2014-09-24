@@ -10,12 +10,14 @@
   template: >
     src=opt/apache/conf/httpd.conf.j2
     dest={{ apache.serverroot }}/conf/httpd.conf
+    backup=yes
 
 - name: make-config | Deploy {{ apache.serverroot }}/conf/extra
   notify: Restart Apache
   template: >
     src=opt/apache/conf/extra/httpd-{{ item }}.conf.j2
     dest={{ apache.serverroot }}/conf/extra/httpd-{{ item }}.conf
+    backup=yes
   with_items:
     - info
     - mpm
@@ -26,4 +28,5 @@
   template: >
     src=etc/logrotate.d/apache.j2
     dest=/etc/logrotate.d/{{ apache.rotatefile }}
+    backup=no
 
