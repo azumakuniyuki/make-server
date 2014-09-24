@@ -1,0 +1,50 @@
+#              _                ___            _        
+#  _ __   __ _(_)_ __ __  __   / / |_ __ _ ___| | _____ 
+# | '_ \ / _` | | '_ \\ \/ /  / /| __/ _` / __| |/ / __|
+# | | | | (_| | | | | |>  <  / / | || (_| \__ \   <\__ \
+# |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
+#        |___/                                          
+# compile-src
+- name: compile-src | REBUILD | make clean
+  command: >
+    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
+    removes=Makefile
+    make clean
+  when: nginx.rebuild == True
+
+- name: compile-src | nginx {{ nginx.version }} should be configured
+  notify: Restart nginx
+  command: >
+    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
+    creates=Makefile
+    /bin/sh configure
+    --prefix={{ nginx.serverroot }}
+    --with-ld-opt=-L/usr/local/lib
+    --with-http_ssl_module
+    --with-http_gzip_static_module
+    --without-http_ssi_module
+    --without-http_autoindex_module
+    --without-http_geo_module
+    --without-http_fastcgi_module
+    --without-http_uwsgi_module
+    --without-http_memcached_module
+    --without-mail_pop3_module
+    --without-mail_imap_module
+    --without-mail_smtp_module
+    --with-http_stub_status_module
+
+- name: compile-src | make nginx {{ nginx.version }}
+  notify: Restart nginx
+  command: >
+    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
+    creates=objs/nginx
+    make
+  register: make_nginx_binary
+
+- name: compile-src | nginx {{ nginx.version }} should be installed
+  when: make_nginx_binary.changed
+  notify: Restart nginx
+  command: >
+    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
+    make install
+

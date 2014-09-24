@@ -1,0 +1,13 @@
+{{ nginx.serverroot }}/logs/*log
+{
+    daily
+    rotate 64
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+        [ ! -f {{ nginx.serverroot }}/logs/nginx.pid ] || kill -USR1 `cat {{ nginx.serverroot }}/logs/nginx.pid`
+    endscript
+}
+

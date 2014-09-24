@@ -1,0 +1,21 @@
+#              _                ___            _        
+#  _ __   __ _(_)_ __ __  __   / / |_ __ _ ___| | _____ 
+# | '_ \ / _` | | '_ \\ \/ /  / /| __/ _` / __| |/ / __|
+# | | | | (_| | | | | |>  <  / / | || (_| \__ \   <\__ \
+# |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
+#        |___/                                          
+# install-pkg
+- name: install-pkg | RedHat | Each package for nginx {{ nginx.version }} should be installed
+  when: ansible_os_family == "RedHat"
+  yum:  name={{ item }} state=present
+  with_items:
+    - pcre
+    - pcre-devel
+
+- name: install-pkg | Debian | Each package for nginx {{ nginx.version }} should be installed
+  when: ansible_os_family == "Debian"
+  apt: pkg={{ item }} state=present
+  with_items:
+    - libpcre3
+    - libpcre3-dev
+

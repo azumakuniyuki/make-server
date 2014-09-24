@@ -1,0 +1,22 @@
+#              _                ___            _        
+#  _ __   __ _(_)_ __ __  __   / / |_ __ _ ___| | _____ 
+# | '_ \ / _` | | '_ \\ \/ /  / /| __/ _` / __| |/ / __|
+# | | | | (_| | | | | |>  <  / / | || (_| \__ \   <\__ \
+# |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
+#        |___/                                          
+#
+- include: install-pkg.yml
+- include: create-user.yml
+- include: get-archive.yml
+- include: compile-src.yml
+- include: make-config.yml
+- include: boot-script.yml
+
+- name: Start nginx httpd
+  when: nginx.started == True
+  service: name={{ nginx.initscript }} state=started
+
+- name: Stop nginx httpd
+  when: nginx.started == False
+  service: name={{ nginx.initscript }} state=stopped
+

@@ -1,0 +1,179 @@
+#              _                              __ 
+#  _ __   __ _(_)_ __ __  __  ___ ___  _ __  / _|
+# | '_ \ / _` | | '_ \\ \/ / / __/ _ \| '_ \| |_ 
+# | | | | (_| | | | | |>  < | (_| (_) | | | |  _|
+# |_| |_|\__, |_|_| |_/_/\_(_)___\___/|_| |_|_|  
+#        |___/                                   
+# {{ nginx.serverroot }}/conf/nginx.conf
+#
+user    {{ nginx.user.username }} {{ nginx.user.group }};
+pid     logs/nginx.pid;
+
+# Defines the number of worker processes.
+# The optimal value depends on many factors including (but not limited to) the
+# number of CPU cores, the number of hard disk drives that store data, and load
+# pattern. When one is in doubt, setting it to the number of available CPU cores
+# would be a good start (the value “auto” will try to autodetect it).
+worker_processes 1;
+
+# number of file descriptors used for nginx
+# the limit for the maximum FDs on the server is usually set by the OS.
+# if you don't set FD's then OS settings will be used which is by default 2000
+# worker_rlimit_nofile 2000;
+
+# Configures logging. Several logs can be specified on the same level (1.5.2).
+#   syntax:   error_log file | stderr | syslog:server=address[,parameter=value]
+#             [debug | info | notice | warn | error | crit | alert | emerg];
+#   default:  error_log logs/error.log error;
+#   context:  main, http, server, location
+# http://nginx.org/en/docs/ngx_core_module.html#error_log
+error_log   logs/error.log;
+
+events {
+    # determines how much clients will be served per worker
+    # max clients = worker_connections * worker_processes
+    # max clients is also limited by the number of socket connections available 
+    # on the system (~64k)
+    worker_connections 1024;
+
+    # optmized to serve many clients with each thread, essential for linux
+    use epoll;
+
+    # accept as many connections as possible, may flood worker connections 
+    # if set too low
+    multi_accept on;
+}
+
+http {
+    include         mime.types;
+    default_type    application/octet-stream;
+    server_tokens   off;
+
+    # Specifies log format.
+    # The log format can contain common variables, and variables that exist only
+    # at the time of a log write:
+    #   $bytes_sent             the number of bytes sent to a client
+    #   $connection             connection serial number
+    #   $connection_requests    the current number of requests made through a 
+    #                           connection (1.1.18)
+    #   $msec                   time in seconds with a milliseconds resolution 
+    #                           at the time of the log write
+    #   $pipe                   "p" if request was pipelined, "." otherwise
+    #   $request_length         request length (including request line, header,
+    #                           and request body)
+    #   $request_time           request processing time in seconds with a milli-
+    #                           seconds resolution; 
+    #                           time elapsed between the first bytes were read
+    #                           from the client and the write after the last 
+    #                           bytes were sent to the client
+    #   $status                 response status
+    #   $time_iso8601           local time in the ISO 8601 standard format
+    #   $time_local             local time in the Common Log Format
+    #
+    log_format      main '$remote_addr - $remote_user [$time_local] "$request" '
+                         '$status $body_bytes_sent "$http_referer" '
+                         '"$http_user_agent" "$http_x_forwarded_for"';
+
+    # syntax:
+    #   access_log  path [format [buffer=size [flush=time]]];
+    #   access_log  path format gzip[=level] [buffer=size] [flush=time];
+    #   access_log  syslog:server=address[,parameter=value] [format];
+    #   access_log  off;
+    #
+    # default:
+    #   access_log  logs/access.log combined;
+    #
+    # context:
+    #   http, server, location, if in location, limit_except
+    #
+    # http://nginx.org/en/docs/http/ngx_http_log_module.html
+    access_log      off;
+
+    # http://nginx.org/en/docs/http/ngx_http_core_module.html
+    # copies data between one FD and other from within the kernel
+    # faster then read() + write()
+    sendfile on;
+
+    # send headers in one peace, its better then sending them one by one 
+    tcp_nopush on;
+
+    # don't buffer data sent, good for small data bursts in real time
+    tcp_nodelay on;
+
+    # server will close connection after this time
+    keepalive_timeout 65;
+
+    # number of requests client can make over keep-alive -- for testing
+    # keepalive_requests 100000;
+
+    # request timed out -- default 60
+    # client_body_timeout 10;
+
+    # if client stop responding, free up memory -- default 60
+    # send_timeout 20;
+
+    # reduce the data that needs to be sent over network
+    # http://nginx.org/en/docs/http/ngx_http_gzip_module.html
+    gzip            on;
+    gzip_min_length 10240;
+    gzip_proxied    expired no-cache no-store private auth;
+    gzip_types      text/plain text/css text/xml text/javascript application/x-javascript application/xml;
+    gzip_disable    "MSIE [1-6]\.";
+
+    # Includes another file, or files matching the specified mask, 
+    # into configuration. Included files should consist of syntactically correct
+    # directives and blocks.
+    #
+    # http://nginx.org/en/docs/ngx_core_module.html#include
+    #include virthosts/example.jp.conf;
+
+    server {
+        listen {{ nginx.conf.listen }};
+        server_name {{ nginx.conf.servername }};
+        server_name_in_redirect off;
+
+        location ~ /(images|css|js|\.ico|\.txt) {
+            root {{ nginx.conf.documentroot }};
+            expires 7d;
+
+            # cache informations about FDs, frequently accessed files
+            # can boost performance, but you need to test those values
+            open_file_cache max=500 inactive=60s; 
+            open_file_cache_valid 70s; 
+            open_file_cache_min_uses 2;
+            open_file_cache_errors on;
+            access_log off;
+        }
+
+        location / {
+            root    {{ nginx.conf.documentroot }};
+            index   index.html index.htm;
+
+            # http://nginx.org/en/docs/http/ngx_http_access_module.html
+            # The rules are checked in sequence until the first match is found.
+            #
+            # allow 127.0.0.1;
+            # deny all;
+        }
+
+        # access munin
+        location /munin {
+            root {{ munin.cron.conf.htmldir }};
+            #auth_basic "Administrator Login";
+            #auth_basic_user_file /etc/munin/munin-htpasswd;
+            break;
+        }
+    }
+
+    server {
+        listen 127.0.0.1;
+        server_name localhost;
+
+        location /nginx_status {
+            stub_status on;
+            access_log off;
+            allow 127.0.0.1;
+            deny all;
+        }
+    }
+}

@@ -1,0 +1,30 @@
+#              _                ___            _        
+#  _ __   __ _(_)_ __ __  __   / / |_ __ _ ___| | _____ 
+# | '_ \ / _` | | '_ \\ \/ /  / /| __/ _` / __| |/ / __|
+# | | | | (_| | | | | |>  <  / / | || (_| \__ \   <\__ \
+# |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
+#        |___/                                          
+# make-config
+- name: make-config | Each directory for nginx should be created
+  file: >
+    path={{ nginx.serverroot }}/{{ item }}
+    mode=0755
+    state=directory
+    owner=root
+    group=root
+  with_items:
+    - conf/virthosts
+    - keys
+
+- name: make-config | Deploy {{ nginx.serverroot }}/conf/nginx.conf
+  notify: Restart nginx
+  template: >
+    src=opt/nginx/conf/nginx.conf.j2
+    dest={{ nginx.serverroot }}/conf/nginx.conf
+
+- name: make-config | Deploy log rotation script
+  when: ansible_system == "Linux"
+  template: >
+    src=etc/logrotate.d/nginx.j2
+    dest=/etc/logrotate.d/munin-httpd
+

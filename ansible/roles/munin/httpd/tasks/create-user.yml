@@ -1,0 +1,33 @@
+#              _                ___            _        
+#  _ __   __ _(_)_ __ __  __   / / |_ __ _ ___| | _____ 
+# | '_ \ / _` | | '_ \\ \/ /  / /| __/ _` / __| |/ / __|
+# | | | | (_| | | | | |>  <  / / | || (_| \__ \   <\__ \
+# |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
+#        |___/                                          
+# create-user
+#
+- name: create-user | Group {{ nginx.user.group }}({{ nginx.user.gid }}) should be created
+  group: >
+    name={{ nginx.user.group }}
+    gid={{ nginx.user.gid }}
+    state=present
+
+- name: create-user | Other groups should exist
+  group: >
+    name={{ item.name }}
+    gid={{ item.gid }}
+    state=present
+  with_items: nginx.user.groups
+
+- name: create-user | User {{ nginx.user.username }}({{ nginx.user.uid }}) should be created
+  user: >
+    name={{ nginx.user.username }} 
+    uid={{ nginx.user.uid }}
+    group={{ nginx.user.group }} 
+    groups={{ nginx.user.groups[0].name }} 
+    shell={{ nginx.user.shell }}
+    home={{ nginx.serverroot }}
+    comment={{ nginx.user.comment }}
+    createhome=no
+    state=present
+
