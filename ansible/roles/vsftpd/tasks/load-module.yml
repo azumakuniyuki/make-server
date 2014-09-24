@@ -4,14 +4,14 @@
 #  \ V /\__ \  _| |_| |_) | (_| |/ / | || (_| \__ \   <\__ \
 #   \_/ |___/_|  \__| .__/ \__,_/_/   \__\__,_|___/_|\_\___/
 #                   |_|                                     
-- name: 'load-module | Kernel modules for FTP PASV connection should be loaded'
+- name: load-module | Kernel modules for FTP PASV connection should be loaded
   when: ansible_os_family in [ "RedHat", "Debian" ]
   modprobe: name={{ item }} state=present
   with_items:
     - nf_conntrack_ftp
     - nf_nat_ftp
 
-- name: 'load-module | RedHat | Update /etc/sysconfig/iptables-config (1)'
+- name: load-module | RedHat | Update /etc/sysconfig/iptables-config (1)
   when: ansible_os_family == "RedHat"
   lineinfile: >
     dest=/etc/sysconfig/iptables-config
@@ -21,7 +21,7 @@
     regexp='^IPTABLES_MODULES="([0-9a-zA-Z_]+)"$'
     line='IPTABLES_MODULES="\1 nf_conntrack_ftp nf_nat_ftp"'
 
-- name: 'load-module | RedHat | Update /etc/sysconfig/iptables-config (2)'
+- name: load-module | RedHat | Update /etc/sysconfig/iptables-config (2)
   when: ansible_os_family == "RedHat"
   lineinfile: >
     dest=/etc/sysconfig/iptables-config

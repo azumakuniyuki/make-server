@@ -5,21 +5,21 @@
 #   \_/ |___/_|  \__| .__/ \__,_/_/   \__\__,_|___/_|\_\___/
 #                   |_|                                     
 # boot-script
-- name: 'boot-script | RedHat | Deploy /etc/init.d/vsftpd'
+- name: boot-script | RedHat | Deploy /etc/init.d/{{ vsftpd.initscript }}
   when: ansible_os_family == "RedHat"
   template: >
     src=etc/init.d/vsftpd.RedHat.j2
-    dest=/etc/init.d/vsftpd
+    dest=/etc/init.d/{{ vsftpd.initscript }}
     mode=0755
     owner=root
     group=root
 
-- name: 'boot-script | RedHat | Install /etc/rc.d/init.d/vsftpd'
+- name: boot-script | RedHat | Install /etc/rc.d/init.d/{{ vsftpd.initscript }}
   when: ansible_os_family == "RedHat"
   shell: >
-    /sbin/chkconfig --add vsftpd
-    creates=/etc/rc.d/rc0.d/K50vsftpd
+    /sbin/chkconfig --add {{ vsftpd.initscript }}
+    creates=/etc/rc.d/rc0.d/K50{{ vsftpd.initscript }}
 
-- name: 'boot-script | Turn on init script'
-  service: name=vsftpd enabled=yes
+- name: boot-script | Turn on init script
+  service: name={{ vsftpd.initscript }} enabled=yes
 

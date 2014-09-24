@@ -5,38 +5,38 @@
 #   \_/ |___/_|  \__| .__/ \__,_/_/   \__\__,_|___/_|\_\___/
 #                   |_|                                     
 # compile-src
-- name: 'compile-src | REBUILD | make clean'
-  command: >
-    make clean
-    chdir={{ local.src }}/vsftpd-{{ vsftpd.version }}/
-    removes=vsftpd
+- name: compile-src | REBUILD | make clean
   when: vsftpd.rebuild == True
+  command: >
+    chdir={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}/
+    removes=vsftpd
+    make clean
 
-- name: 'compile-src | Patches should be copied'
+- name: compile-src | Patches should be copied
+  with_items: vsftpd.patches
   template: >
     src=usr/local/src/{{ item }}.j2
-    dest={{ local.src }}/vsftpd-{{ vsftpd.version }}/{{ item }}
-  with_items: vsftpd.patches
+    dest={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}/{{ item }}
 
-- name: 'compile-src | Patches should have been applied'
+- name: compile-src | Patches should have been applied
+  with_items: vsftpd.patches
   shell: >
-    patch -p0 < {{ item }}
-    chdir={{ local.src }}/vsftpd-{{ vsftpd.version }}/
+    chdir={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}/
     creates={{ item }}.ok
-  with_items: vsftpd.patches
+    patch -p0 < {{ item }}
 
-- name: 'compile-src | make vsftpd {{ vsftpd.version }}'
+- name: compile-src | make vsftpd {{ vsftpd.version }}
   notify: Restart vsftpd
-  command: >
-    make
-    chdir={{ local.src }}/vsftpd-{{ vsftpd.version }}/
-    creates=vsftpd
   register: make_vsftpd_binary
+  command: >
+    chdir={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}/
+    creates=vsftpd
+    make
 
-- name: 'compile-src | make install vsftpd {{ vsftpd.version }}'
+- name: compile-src | make install vsftpd {{ vsftpd.version }}
   when: make_vsftpd_binary.changed
   notify: Restart vsftpd
   command: >
+    chdir={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}/
     make install
-    chdir={{ local.src }}/vsftpd-{{ vsftpd.version }}/
 

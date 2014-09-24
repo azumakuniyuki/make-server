@@ -4,7 +4,7 @@
 #  \ V /\__ \  _| |_| |_) | (_| |/ / | | | | (_| | | | | (_| | |  __/ |  \__ \
 #   \_/ |___/_|  \__| .__/ \__,_/_/  |_| |_|\__,_|_| |_|\__,_|_|\___|_|  |___/
 #                   |_|                                                       
-- name: 'Restart vsftpd'
+- name: Restart vsftpd
   when: vsftpd.started == True
-  service: name=vsftpd state=restarted
+  service: name={{ vsftpd.initscript }} state=restarted
 

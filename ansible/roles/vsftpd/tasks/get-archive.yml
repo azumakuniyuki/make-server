@@ -5,16 +5,16 @@
 #   \_/ |___/_|  \__| .__/ \__,_/_/   \__\__,_|___/_|\_\___/
 #                   |_|                                     
 # get-archive
-- name: 'get-archive | Download vsftpd {{ vsftpd.version }} at {{ local.src }}'
+- name: get-archive | Download vsftpd {{ vsftpd.version }} at {{ vsftpd.workingdir }}
   get_url: >
     url=https://security.appspot.com/downloads/vsftpd-{{ vsftpd.version }}.tar.gz
-    dest={{ local.src }}/vsftpd-{{ vsftpd.version }}.tar.gz
+    dest={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}.tar.gz
     validate_certs=no
 
-- name: 'get-archive | Extract vsftpd {{ vsftpd.version }} at {{ local.src }}'
+- name: get-archive | Extract vsftpd {{ vsftpd.version }} at {{ vsftpd.workingdir }}
   unarchive: >
-    src={{ local.src }}/vsftpd-{{ vsftpd.version }}.tar.gz
-    dest={{ local.src }}
-    creates={{ local.src }}/vsftpd-{{ vsftpd.version }}
+    src={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}.tar.gz
+    dest={{ vsftpd.workingdir }}
+    creates={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}
     copy=no
 

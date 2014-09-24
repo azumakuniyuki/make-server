@@ -5,7 +5,7 @@
 #   \_/ |___/_|  \__| .__/ \__,_/_/   \__\__,_|___/_|\_\___/
 #                   |_|                                     
 # make-config
-- name: 'make-config | Each sub directory must exist in {{ vsftpd.serverroot }}'
+- name: make-config | Each sub directory must exist in {{ vsftpd.serverroot }}
   file: >
     path={{ vsftpd.serverroot }}/{{ item }}
     mode=0755
@@ -14,7 +14,7 @@
     group=root
   with_items: [ 'etc', 'var/run', 'var/log', 'var/empty' ]
 
-- name: 'make-config | Deploy {{ vsftpd.serverroot }}/etc/vsftpd.conf'
+- name: make-config | Deploy {{ vsftpd.serverroot }}/etc/vsftpd.conf
   notify: Restart vsftpd
   template: >
     src=opt/vsftpd/etc/vsftpd.conf.j2
@@ -23,7 +23,7 @@
     owner=root
     group=root
 
-- name: 'make-config | Deploy {{ vsftpd.serverroot }}/etc/ftp-users'
+- name: make-config | Deploy {{ vsftpd.serverroot }}/etc/ftp-users
   template: >
     src=opt/vsftpd/etc/ftp-users.j2
     dest={{ vsftpd.serverroot }}/etc/ftp-users
@@ -31,7 +31,7 @@
     owner=root
     group=root
 
-- name: 'make-config | Deploy /etc/logrotate.d/vsftpd'
+- name: make-config | Deploy /etc/logrotate.d/vsftpd
   template: >
     src=etc/logrotate.d/vsftpd.j2
     dest=/etc/logrotate.d/vsftpd

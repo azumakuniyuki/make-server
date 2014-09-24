@@ -8,16 +8,18 @@ vsftpd:
   started: True
   rebuild: False
   version: 3.0.2
-  serverroot: '/opt/vsftpd'
+  serverroot: /opt/vsftpd
+  initscript: vsftpd
+  workingdir: /usr/local/src
   patches:
     - 'vsftpd-2009-10-19-localconfig.patch'
   user:
-    username: 'vsftpd'
+    username: vsftpd
     uid: 9261
     gid: 9261
-    group: 'vsftpd'
-    shell: '/sbin/nolgin'
+    group: vsftpd
+    shell: /sbin/nolgin
     comment: "'vsftpd FTP Server'"
   conf:
-    banner: 'FTP Server'
+    banner: FTP Server
 

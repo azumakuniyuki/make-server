@@ -12,11 +12,11 @@
 - include: boot-script.yml
 - include: load-module.yml
 
-- name: 'Start vsftpd Server'
+- name: Start vsftpd Server
   when: vsftpd.started == True
-  service: name=vsftpd state=started
+  service: name={{ vsftpd.initscript }} state=started
 
-- name: 'Stop vsftpd Server'
+- name: Stop vsftpd Server
   when: vsftpd.started == False
-  service: name=vsftpd state=stopped
+  service: name={{ vsftpd.initscript }} state=stopped
 

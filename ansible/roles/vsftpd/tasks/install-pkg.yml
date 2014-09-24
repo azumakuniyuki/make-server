@@ -5,14 +5,14 @@
 #   \_/ |___/_|  \__| .__/ \__,_/_/   \__\__,_|___/_|\_\___/
 #                   |_|                                     
 # install-pkg
-- name: 'install-pkg | RedHat | Install dependencies for vsftpd {{ vsftpd.version }}'
+- name: install-pkg | RedHat | Install dependencies for vsftpd {{ vsftpd.version }}
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   with_items:
     - libcap
     - libcap-devel
 
-- name: 'install-pkg | Debian | Install dependencies for vsftpd {{ vsftpd.version }}'
+- name: install-pkg | Debian | Install dependencies for vsftpd {{ vsftpd.version }}
   when: ansible_os_family == "Debian"
   yum:  name={{ item }} state=present
   with_items:
