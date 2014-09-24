@@ -5,41 +5,8 @@
 #  \___/| .__/ \___|_| |_|____/____/|_____/_/   \__\__,_|___/_|\_\___/
 #       |_|                                                           
 #
-- name: get-archive | Download OpenSSL archive
-  get_url: >
-    url=http://www.openssl.org/source/openssl-{{ openssl.version }}.tar.gz
-    dest={{ openssl.buildat }}/openssl-{{ openssl.version }}.tar.gz
-
-- name: get-archive | Extract {{ openssl.buildat }}/openssl-{{ openssl.version }}.tar.gz
-  unarchive: >
-    src={{ openssl.buildat }}/openssl-{{ openssl.version }}.tar.gz
-    dest={{ openssl.buildat }}
-    creates={{ openssl.buildat }}/openssl-{{ openssl.version }}
-    copy=no
-
-- name: compile-src | REBUILD | make clean
-  when: openssl.rebuild == True
-  command: >
-    chdir={{ openssl.buildat }}/openssl-{{ openssl.version }}/
-    removes=./crypto/opensslconf.h.bak
-    make clean
-
-- name: compile-src | OpenSSL {{ openssl.version }} should be configured
-  shell: >
-    creates=./crypto/opensslconf.h.bak
-    chdir={{ openssl.buildat }}/openssl-{{ openssl.version }}/
-    /bin/sh ./config --prefix={{ openssl.install }}
-
-- name: compile-src | OpenSSL {{ openssl.version }} should be made
-  register: make_openssl_binary
-  command: >
-    chdir={{ openssl.buildat }}/openssl-{{ openssl.version }}/
-    creates=libcrypto.a
-    make
-
-- name: compile-src | OpenSSL {{ openssl.version }} should be installed
-  when: make_openssl_binary.changed
-  command: >
-    chdir={{ openssl.buildat }}/openssl-{{ openssl.version }}/
-    make install
+- include: install-pkg.yml
+- include: get-archive.yml
+- include: compile-src.yml
+- include: make-config.yml
 

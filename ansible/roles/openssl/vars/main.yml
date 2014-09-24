@@ -7,7 +7,7 @@
 #
 openssl:
   rebuild: False
-  version: 1.0.1h
-  install: /usr/local
-  buildat: /usr/local/src
+  version: 1.0.1i
+  install: /opt/openssl
+  workingdir: /usr/local/src
 
