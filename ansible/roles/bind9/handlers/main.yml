@@ -6,4 +6,4 @@
 #                                                                        
 - name: Restart BIND
   when: bind.started == True
-  service: name={{ bind.initscript }} state=restarted
+  service: name={{ bind.initscript }} state=restarted pattern=sbin/named

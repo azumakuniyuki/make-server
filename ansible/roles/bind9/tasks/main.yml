@@ -13,9 +13,9 @@
 
 - name: Start bind9
   when: bind.started == True
-  service: name={{ bind.initscript }} state=started
+  service: name={{ bind.initscript }} state=started pattern=sbin/named
 
 - name: Stop bind9
   when: bind.started == False
-  service: name={{ bind.initscript }} state=stopped
+  service: name={{ bind.initscript }} state=stopped pattern=sbin/named
 
