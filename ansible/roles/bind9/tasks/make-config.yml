@@ -64,6 +64,7 @@
   template: >
     src=opt/named/etc/named.conf.j2
     dest={{ bind.changeroot }}/etc/named.conf
+    backup=yes
 
 - name: make-config | localtime file must exist
   shell: >
@@ -117,7 +118,7 @@
     - l/localhost.zone
     - 1/127.in-addr.arpa.rev
 
-- name: make-config | dig command should be linked to /usr/local/bin/dig
+- name: make-config | dig command should be linked from /usr/local/bin/dig
   file: >
     src={{ bind.serverroot }}/bin/dig
     dest=/usr/local/bin/dig
