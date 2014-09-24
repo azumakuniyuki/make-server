@@ -128,13 +128,13 @@
 
 - name: make-config | config distribution/backup directory should be created
   file: >
-    path={{ sendmail.configroot }}/{{ item }}
+    path={{ item }}
     mode=0755
     owner=root
     state=directory
   with_items:
-    - back
-    - dist
+    - '{{ sendmail.prevconfig }}'
+    - '{{ sendmail.nextconfig }}'
 
 - name: make-config | Deploy Makefile into {{ sendmail.configroot }}/
   template: >
@@ -157,11 +157,11 @@
     owner=root
     group=bin
 
-- name: make-config | Install submit.cf into {{ sendmail.configroot }}/dist
+- name: make-config | Install submit.cf into {{ sendmail.nextconfig }}
   when: submitmc.changed
   shell: >
     chdir={{ sendmail.configroot }}/src/cf/cf
-    make install-submit-cf MAILDIR={{ sendmail.configroot }}/dist
+    make install-submit-cf MAILDIR={{ sendmail.nextconfig }}
 
 - name: make-config | Deploy sendmail.mc file
   register: sendmailmc
@@ -177,16 +177,16 @@
     src=etc/mail/virtmail.m4.j2
     dest={{ sendmail.configroot }}/src/cf/mailer/virtmail.m4
 
-- name: make-config | Install sendmail.cf into {{ sendmail.configroot }}/dist
+- name: make-config | Install sendmail.cf into {{ sendmail.nextconfig }}
   when: sendmailmc.changed or virtmailm4.changed
   shell: >
     chdir={{ sendmail.configroot }}/src/cf/cf
-    make install-sendmail-cf MAILDIR={{ sendmail.configroot }}/dist
+    make install-sendmail-cf MAILDIR={{ sendmail.nextconfig }}
 
-- name: make-config | Deploy files into {{ sendmail.configroot }}/dist
+- name: make-config | Deploy files into {{ sendmail.nextconfig }}
   template: >
     src=etc/mail/{{ item }}.j2
-    dest={{ sendmail.configroot }}/dist/{{ item }}
+    dest={{ sendmail.nextconfig }}/{{ item }}
   with_items: 
     - '{{ sendmail.conf.dbmapfiles }}'
     - '{{ sendmail.conf.classfiles }}'
@@ -195,7 +195,7 @@
 - name: make-config | Initial deployment
   ignore_errors: True
   shell: >
-    chdir={{ sendmail.configroot }}/dist
+    chdir={{ sendmail.nextconfig }}
     creates={{ sendmail.configroot }}/{{ item }}
     /bin/cp ./{{ item }} {{ sendmail.configroot }}/
   with_items: 
@@ -217,9 +217,9 @@
   when: sendmail.conf.backup == True
   ignore_errors: True
   shell: >
-    chdir={{ sendmail.configroot }}
-    creates={{ sendmail.configroot }}/back/{{ item }}
-    /bin/cp ./{{ item }} ./back/
+    chdir={{ sendmail.prevconfig }}
+    creates={{ sendmail.prevconfig }}/{{ item }}
+    /bin/cp ../{{ item }} ./
   with_items: 
     - '{{ sendmail.conf.dbmapfiles }}'
     - '{{ sendmail.conf.classfiles }}'
@@ -227,14 +227,14 @@
     - sendmail.cf
     - submit.cf
 
-- name: make-config | Backup files into {{ sendmail.configroot }}/back
+- name: make-config | Backup files into {{ sendmail.prevconfig }}
   when: sendmail.conf.backup == True
   register: backupcf
   changed_when: backupcf.rc > 0
   ignore_errors: True
   shell: >
-    chdir={{ sendmail.configroot }}
-    diff -q ./back/{{ item }} ./{{ item }} || ( /bin/cp ./{{ item }} ./back/ && false )
+    chdir={{ sendmail.prevconfig }}
+    diff -q ./{{ item }} ../{{ item }} || ( /bin/cp ../{{ item }} ./ && false )
   with_items: 
     - '{{ sendmail.conf.dbmapfiles }}'
     - '{{ sendmail.conf.classfiles }}'
@@ -249,8 +249,8 @@
   register: updatecf 
   changed_when: updatecf.rc > 0
   shell: >
-    chdir={{ sendmail.configroot }}
-    diff -q ./{{ item }} ./dist/{{ item }} || ( /bin/cp ./dist/{{ item }} ./ && false )
+    chdir={{ sendmail.nextconfig }}
+    diff -q ../{{ item }} ./{{ item }} || ( /bin/cp ./{{ item }} ../ && false )
   with_items: 
     - '{{ sendmail.conf.classfiles }}'
     - '{{ sendmail.conf.parameters }}'
@@ -264,8 +264,8 @@
   changed_when: updatedb.rc > 0
   ignore_errors: True
   shell: >
-    chdir={{ sendmail.configroot }}
-    diff -q ./{{ item }} ./dist/{{ item }} || ( /bin/cp ./dist/{{ item }} ./ && false )
+    chdir={{ sendmail.nextconfig }}
+    diff -q ../{{ item }} ./{{ item }} || ( /bin/cp ./{{ item }} ../ && false )
   with_items: sendmail.conf.dbmapfiles
 
 - name: make-config | Deploy files into {{ procmail.install }}

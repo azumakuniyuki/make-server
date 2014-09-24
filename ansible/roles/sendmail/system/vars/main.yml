@@ -11,6 +11,8 @@ sendmail:
   initscript: sendmail
   configroot: /etc/mail
   workingdir: /usr/local/src
+  nextconfig: /etc/mail/next
+  prevconfig: /etc/mail/prev
   conf:
     backup: True
     update: False
