@@ -18,3 +18,9 @@
     mode=0755
     owner=root
 
+- name: main | Link /usr/bin/cpanm
+  file: >
+    src=/usr/local/bin/cpanm
+    dest=/usr/bin/cpanm
+    state=link
+
