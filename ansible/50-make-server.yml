@@ -15,6 +15,9 @@
     - bind9
     - apache/2.2
     - nginx
+    - munin/cron
+    - munin/node
+    - munin/httpd
     - mysql/5.5
     - postgresql
     - php/5.3
