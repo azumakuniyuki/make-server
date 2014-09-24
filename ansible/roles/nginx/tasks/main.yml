@@ -12,11 +12,11 @@
 - include: make-config.yml
 - include: boot-script.yml
 
-- name: 'Start nginx httpd'
+- name: Start nginx httpd
   when: nginx.started == True
-  service: name=nginx state=started
+  service: name={{ nginx.initscript }} state=started
 
-- name: 'Stop nginx httpd'
+- name: Stop nginx httpd
   when: nginx.started == False
-  service: name=nginx state=stopped
+  service: name={{ nginx.initscript }} state=stopped
 
