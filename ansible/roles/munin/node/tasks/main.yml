@@ -24,7 +24,7 @@
 
 - name: main | Link munin-plugins(apache)
   notify: Restart munin-node
-  when: munin.plugins.apache == True
+  when: munin.node.plugins.apache == True
   file: >
     src=/usr/share/munin/plugins/{{ item }}
     dest=/etc/munin/plugins/{{ item }}
@@ -36,7 +36,7 @@
 
 - name: main | Deploy /etc/munin/plugin-conf.d/apache
   notify: Restart munin-node
-  when: munin.plugins.apache == True
+  when: munin.node.plugins.apache == True
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
@@ -46,7 +46,7 @@
 
 - name: main | Link munin-plugins(bind9)
   notify: Restart munin-node
-  when: munin.plugins.bind9 == True
+  when: munin.node.plugins.bind9 == True
   file: >
     src=/usr/share/munin/plugins/{{ item }}
     dest=/etc/munin/plugins/{{ item }}
@@ -57,7 +57,7 @@
 
 - name: main | Deploy /etc/munin/plugin-conf.d/bind9
   notify: Restart munin-node
-  when: munin.plugins.bind9 == True
+  when: munin.node.plugins.bind9 == True
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
@@ -67,7 +67,7 @@
 
 - name: main | Link munin-plugins(nginx)
   notify: Restart munin-node
-  when: munin.plugins.nginx == True
+  when: munin.node.plugins.nginx == True
   file: >
     src=/usr/share/munin/plugins/{{ item }}
     dest=/etc/munin/plugins/{{ item }}
@@ -78,7 +78,7 @@
 
 - name: main | Deploy /etc/munin/plugin-conf.d/nginx
   notify: Restart munin-node
-  when: munin.plugins.nginx == True
+  when: munin.node.plugins.nginx == True
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
@@ -88,7 +88,7 @@
 
 - name: main | Link munin-plugins(mysql)
   notify: Restart munin-node
-  when: munin.plugins.mysql == True
+  when: munin.node.plugins.mysql == True
   file: >
     src=/usr/share/munin/plugins/{{ item }}
     dest=/etc/munin/plugins/{{ item }}
@@ -102,7 +102,7 @@
 
 - name: main | Deploy /etc/munin/plugin-conf.d/mysql
   notify: Restart munin-node
-  when: munin.plugins.mysql == True
+  when: munin.node.plugins.mysql == True
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
@@ -111,17 +111,17 @@
 
 
 - name: main | git clone munin-plugins(pgpool)
-  when: munin.plugins.pgpool == True
+  when: munin.node.plugins.pgpool == True
   register: munin_pgpool
   git: >
     repo=git://github.com/azumakuniyuki/pgpool-plugins-for-munin.git
-    dest={{ munin.workingdir }}/pgpool-plugins-for-munin
+    dest={{ munin.node.workingdir }}/pgpool-plugins-for-munin
     accept_hostkey=yes
 
 - name: main | Install munin-plugins(pgpool)
   when: munin_pgpool.changed
   shell: >
-    chdir={{ munin.workingdir }}/pgpool-plugins-for-munin
+    chdir={{ munin.node.workingdir }}/pgpool-plugins-for-munin
     creates=/usr/share/munin/plugins/pgpool2_connections
     install -o root -m 0755 pgpool2_connections /usr/share/munin/plugins/
 
@@ -135,7 +135,7 @@
 
 - name: main | Deploy /etc/munin/plugin-conf.d/pgpool
   notify: Restart munin-node
-  when: munin.plugins.pgpool == True
+  when: munin.node.plugins.pgpool == True
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
@@ -145,7 +145,7 @@
 
 - name: main | Link munin-plugins(postfix)
   notify: Restart munin-node
-  when: munin.plugins.postfix == True
+  when: munin.node.plugins.postfix == True
   file: >
     src=/usr/share/munin/plugins/{{ item }}
     dest=/etc/munin/plugins/{{ item }}
@@ -156,7 +156,7 @@
 
 - name: main | Deploy /etc/munin/plugin-conf.d/postfix
   notify: Restart munin-node
-  when: munin.plugins.postfix == True
+  when: munin.node.plugins.postfix == True
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
@@ -166,7 +166,7 @@
 
 - name: main | Link munin-plugins(postgres)
   notify: Restart munin-node
-  when: munin.plugins.postgres == True
+  when: munin.node.plugins.postgres == True
   file: >
     src=/usr/share/munin/plugins/{{ item }}
     dest=/etc/munin/plugins/{{ item }}
@@ -180,7 +180,7 @@
 
 - name: main | Deploy /etc/munin/plugin-conf.d/postgres
   notify: Restart munin-node
-  when: munin.plugins.postgres == True
+  when: munin.node.plugins.postgres == True
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
@@ -190,7 +190,7 @@
     
 - name: main | Link munin-plugins(sendmail)
   notify: Restart munin-node
-  when: munin.plugins.sendmail == True
+  when: munin.node.plugins.sendmail == True
   file: >
     src=/usr/share/munin/plugins/{{ item }}
     dest=/etc/munin/plugins/{{ item }}
@@ -200,7 +200,7 @@
 
 - name: main | Deploy /etc/munin/plugin-conf.d/sendmail
   notify: Restart munin-node
-  when: munin.plugins.sendmail == True
+  when: munin.node.plugins.sendmail == True
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
@@ -209,6 +209,6 @@
 
 
 - name: munin | start munin-node on boot
-  when: munin.started == True
+  when: munin.node.started == True
   service: name=munin-node enabled=yes
 
