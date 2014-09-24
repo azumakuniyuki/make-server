@@ -1,0 +1,37 @@
+#                        _          __                      ___            _        
+#  _ __ ___  _   _ _ __ (_)_ __    / /__ _ __ ___  _ __    / / |_ __ _ ___| | _____ 
+# | '_ ` _ \| | | | '_ \| | '_ \  / / __| '__/ _ \| '_ \  / /| __/ _` / __| |/ / __|
+# | | | | | | |_| | | | | | | | |/ / (__| | | (_) | | | |/ / | || (_| \__ \   <\__ \
+# |_| |_| |_|\__,_|_| |_|_|_| |_/_/ \___|_|  \___/|_| |_/_/   \__\__,_|___/_|\_\___/
+#                                                                                   
+- name: main | Install munin
+  yum:  name=munin state=present
+
+- name: main | Deploy /etc/munin/munin.conf
+  template: >
+    src=etc/munin/munin.conf.j2
+    dest=/etc/munin/munin.conf
+
+- name: main | Deploy /etc/munin/munin-htpasswd
+  template: >
+    src=etc/munin/munin-htpasswd.j2
+    dest=/etc/munin/munin-htpasswd
+
+- name: main | RedHat | Deploy cron
+  when: ansible_os_family == "RedHat"
+  template: >
+    src=etc/crontab.j2
+    dest=/var/spool/cron/munin
+    owner=munin
+    group=munin
+    mode=0600
+
+- name: main | FreeBSD,OpenBSD | Deploy cron
+  when: ansible_os_family in [ "FreeBSD", "OpenBSD" ]
+  template: >
+    src=etc/crontab.j2
+    dest=/var/cron/tabs/munin
+    owner=munin
+    group=munin
+    mode=0600
+
