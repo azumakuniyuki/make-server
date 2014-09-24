@@ -1,0 +1,214 @@
+#                        _          __               _         ___            _        
+#  _ __ ___  _   _ _ __ (_)_ __    / / __   ___   __| | ___   / / |_ __ _ ___| | _____ 
+# | '_ ` _ \| | | | '_ \| | '_ \  / / '_ \ / _ \ / _` |/ _ \ / /| __/ _` / __| |/ / __|
+# | | | | | | |_| | | | | | | | |/ /| | | | (_) | (_| |  __// / | || (_| \__ \   <\__ \
+# |_| |_| |_|\__,_|_| |_|_|_| |_/_/ |_| |_|\___/ \__,_|\___/_/   \__\__,_|___/_|\_\___/
+#                                                                                      
+- name: main | Install munin-node
+  when: ansible_os_family == "RedHat"
+  yum: name=munin-node state=present
+
+- name: main | Install Perl modules
+  cpanm: name={{ item }}
+  with_items:
+    - LWP::UserAgent
+    - IPC::Cmd
+    - JSON::Syck
+
+- name: main | Deploy /etc/munin/munin-node config
+  notify: Restart munin-node
+  template: >
+    src=etc/munin/munin-node.conf.j2
+    dest=/etc/munin/munin-node.conf
+
+
+- name: main | Link munin-plugins(apache)
+  notify: Restart munin-node
+  when: munin.plugins.apache == True
+  file: >
+    src=/usr/share/munin/plugins/{{ item }}
+    dest=/etc/munin/plugins/{{ item }}
+    state=link
+  with_items:
+    - apache_accesses
+    - apache_processes
+    - apache_volume
+
+- name: main | Deploy /etc/munin/plugin-conf.d/apache
+  notify: Restart munin-node
+  when: munin.plugins.apache == True
+  template: >
+    src=etc/munin/plugin-conf.d/{{ item }}.j2
+    dest=/etc/munin/plugin-conf.d/{{ item }}
+  with_items:
+    - apache
+
+
+- name: main | Link munin-plugins(bind9)
+  notify: Restart munin-node
+  when: munin.plugins.bind9 == True
+  file: >
+    src=/usr/share/munin/plugins/{{ item }}
+    dest=/etc/munin/plugins/{{ item }}
+    state=link
+  with_items:
+    - bind9
+    - bind9_rndc
+
+- name: main | Deploy /etc/munin/plugin-conf.d/bind9
+  notify: Restart munin-node
+  when: munin.plugins.bind9 == True
+  template: >
+    src=etc/munin/plugin-conf.d/{{ item }}.j2
+    dest=/etc/munin/plugin-conf.d/{{ item }}
+  with_items:
+    - bind9
+
+
+- name: main | Link munin-plugins(nginx)
+  notify: Restart munin-node
+  when: munin.plugins.nginx == True
+  file: >
+    src=/usr/share/munin/plugins/{{ item }}
+    dest=/etc/munin/plugins/{{ item }}
+    state=link
+  with_items:
+    - nginx_request
+    - nginx_status
+
+- name: main | Deploy /etc/munin/plugin-conf.d/nginx
+  notify: Restart munin-node
+  when: munin.plugins.nginx == True
+  template: >
+    src=etc/munin/plugin-conf.d/{{ item }}.j2
+    dest=/etc/munin/plugin-conf.d/{{ item }}
+  with_items:
+    - nginx
+
+
+- name: main | Link munin-plugins(mysql)
+  notify: Restart munin-node
+  when: munin.plugins.mysql == True
+  file: >
+    src=/usr/share/munin/plugins/{{ item }}
+    dest=/etc/munin/plugins/{{ item }}
+    state=link
+  with_items:
+    - mysql_bytes
+    - mysql_innodb
+    - mysql_queries
+    - mysql_slowqueries
+    - mysql_threads
+
+- name: main | Deploy /etc/munin/plugin-conf.d/mysql
+  notify: Restart munin-node
+  when: munin.plugins.mysql == True
+  template: >
+    src=etc/munin/plugin-conf.d/{{ item }}.j2
+    dest=/etc/munin/plugin-conf.d/{{ item }}
+  with_items:
+    - mysql
+
+
+- name: main | git clone munin-plugins(pgpool)
+  when: munin.plugins.pgpool == True
+  register: munin_pgpool
+  git: >
+    repo=git://github.com/azumakuniyuki/pgpool-plugins-for-munin.git
+    dest={{ munin.workingdir }}/pgpool-plugins-for-munin
+    accept_hostkey=yes
+
+- name: main | Install munin-plugins(pgpool)
+  when: munin_pgpool.changed
+  shell: >
+    chdir={{ munin.workingdir }}/pgpool-plugins-for-munin
+    creates=/usr/share/munin/plugins/pgpool2_connections
+    install -o root -m 0755 pgpool2_connections /usr/share/munin/plugins/
+
+- name: main | Link munin-plugins(pgpool)
+  notify: Restart munin-node
+  when: munin_pgpool.changed
+  file: >
+    src=/usr/share/munin/plugins/pgpool2_connections
+    dest=/etc/munin/plugins/pgpool2_connections
+    state=link
+
+- name: main | Deploy /etc/munin/plugin-conf.d/pgpool
+  notify: Restart munin-node
+  when: munin.plugins.pgpool == True
+  template: >
+    src=etc/munin/plugin-conf.d/{{ item }}.j2
+    dest=/etc/munin/plugin-conf.d/{{ item }}
+  with_items:
+    - pgpool
+
+
+- name: main | Link munin-plugins(postfix)
+  notify: Restart munin-node
+  when: munin.plugins.postfix == True
+  file: >
+    src=/usr/share/munin/plugins/{{ item }}
+    dest=/etc/munin/plugins/{{ item }}
+    state=link
+  with_items:
+    - postfix_mailqueue
+    - postfix_mailvolume
+
+- name: main | Deploy /etc/munin/plugin-conf.d/postfix
+  notify: Restart munin-node
+  when: munin.plugins.postfix == True
+  template: >
+    src=etc/munin/plugin-conf.d/{{ item }}.j2
+    dest=/etc/munin/plugin-conf.d/{{ item }}
+  with_items:
+    - postfix
+
+
+- name: main | Link munin-plugins(postgres)
+  notify: Restart munin-node
+  when: munin.plugins.postgres == True
+  file: >
+    src=/usr/share/munin/plugins/{{ item }}
+    dest=/etc/munin/plugins/{{ item }}
+    state=link
+  with_items:
+    - postgres_cache_
+    - postgres_checkpoints
+    - postgres_connections_db
+    - postgres_users
+    - postgres_xlog
+
+- name: main | Deploy /etc/munin/plugin-conf.d/postgres
+  notify: Restart munin-node
+  when: munin.plugins.postgres == True
+  template: >
+    src=etc/munin/plugin-conf.d/{{ item }}.j2
+    dest=/etc/munin/plugin-conf.d/{{ item }}
+  with_items:
+    - postgres
+
+    
+- name: main | Link munin-plugins(sendmail)
+  notify: Restart munin-node
+  when: munin.plugins.sendmail == True
+  file: >
+    src=/usr/share/munin/plugins/{{ item }}
+    dest=/etc/munin/plugins/{{ item }}
+    state=link
+  with_items:
+    - sendmail_mailqueue
+
+- name: main | Deploy /etc/munin/plugin-conf.d/sendmail
+  notify: Restart munin-node
+  when: munin.plugins.sendmail == True
+  template: >
+    src=etc/munin/plugin-conf.d/{{ item }}.j2
+    dest=/etc/munin/plugin-conf.d/{{ item }}
+  with_items:
+    - sendmail
+
+
+- name: munin | start munin-node on boot
+  when: munin.started == True
+  service: name=munin-node enabled=yes
+
