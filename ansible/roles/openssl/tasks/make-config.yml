@@ -1,0 +1,13 @@
+#   ___                   ____ ____  _        ___            _        
+#  / _ \ _ __   ___ _ __ / ___/ ___|| |      / / |_ __ _ ___| | _____ 
+# | | | | '_ \ / _ \ '_ \\___ \___ \| |     / /| __/ _` / __| |/ / __|
+# | |_| | |_) |  __/ | | |___) |__) | |___ / / | || (_| \__ \   <\__ \
+#  \___/| .__/ \___|_| |_|____/____/|_____/_/   \__\__,_|___/_|\_\___/
+#       |_|                                                           
+# make-config
+- name: make-config | openssl command should be linked from /usr/local/bin
+  file: >
+    src={{ openssl.install }}/bin/openssl
+    dest=/usr/local/bin/openssl
+    state=link
+
