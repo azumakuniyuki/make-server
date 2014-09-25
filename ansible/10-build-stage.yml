@@ -71,9 +71,10 @@
 
     - name: build-stage | wheel group should be created
       when: wheel|failed
-      group: name=wheel gid=0 system=yes state=present
+      group: name=wheel system=yes state=present
 
     - name: build-stage | root should be included in wheel group
+      ignore_errors: True
       user: name=root groups=wheel
 
     - name: build-stage | RedHat | Enable sudo for users in wheel group
