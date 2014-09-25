@@ -38,18 +38,18 @@
       shell: >
         chdir=/etc/sudoers.d
         creates=deploy
-        printf "Defaults secure_path='%s'\n%%%s ALL=NOPASSWD%s ALL\n"
+        printf "Defaults secure_path = '%s'\n%%%s ALL=NOPASSWD%s ALL\n"
         '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-        {{ user.group }} : > deploy
+        {{ user.group }} : | tr "'" '"' > deploy
 
     - name: deploy-user | FreeBSD | sudoers.d/deploy has been created
       when: ansible_os_family == "FreeBSD"
       shell: >
         chdir=/usr/local/etc/sudoers.d
         creates=deploy
-        printf "Defaults secure_path='%s'\n%%%s ALL=NOPASSWD%s ALL\n"
+        printf "Defaults secure_path = '%s'\n%%%s ALL=NOPASSWD%s ALL\n"
         '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-        {{ user.group }} : > deploy
+        {{ user.group }} : | tr "'" '"' > deploy
 
     - name: deploy-user | OpenBSD | Check /etc/sudoers
       when: ansible_system == "OpenBSD"
