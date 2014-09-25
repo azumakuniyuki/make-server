@@ -91,17 +91,17 @@
 - name: install-pkg | Download libgd {{ php.depends.libgd.version }}
   get_url: >
       url=https://bitbucket.org/libgd/gd-libgd/downloads/libgd-{{ php.depends.libgd.version }}.tar.gz
-      dest={{ php.buildat }}
+      dest={{ php.workingdir }}
 
 - name: install-pkg | Extract libgd {{ php.depends.libgd.version }}
   unarchive: >
-    src={{ php.buildat }}/libgd-{{ php.depends.libgd.version }}.tar.gz
-    dest={{ php.buildat }}
+    src={{ php.workingdir }}/libgd-{{ php.depends.libgd.version }}.tar.gz
+    dest={{ php.workingdir }}
     copy=no
 
 - name: install-pkg | configure libgd {{ php.depends.libgd.version }}
   command: >
-    chdir={{ php.buildat }}/libgd-{{ php.depends.libgd.version }}
+    chdir={{ php.workingdir }}/libgd-{{ php.depends.libgd.version }}
     creates=Makefile
     /bin/sh configure 
       --prefix={{ php.depends.libgd.install }} 
@@ -114,14 +114,14 @@
 - name: install-pkg | make libgd {{ php.depends.libgd.version }}
   register: make_gd_binary
   command: >
-    chdir={{ php.buildat }}/libgd-{{ php.depends.libgd.version }} 
+    chdir={{ php.workingdir }}/libgd-{{ php.depends.libgd.version }} 
     creates=src/gd.o
     make 
 
 - name: install-pkg | make install libgd {{ php.depends.libgd.version }}
   when: make_gd_binary.changed
   command: >
-    chdir={{ php.buildat }}/libgd-{{ php.depends.libgd.version }}
+    chdir={{ php.workingdir }}/libgd-{{ php.depends.libgd.version }}
     make install 
 
 - name: install-pkg | Symbolic links in {{ php.depends.libgd.install }}/lib64 should be created

@@ -5,15 +5,15 @@
 # |_|   |_| |_|_|       |____(_)____/_/   \__\__,_|___/_|\_\___/
 #                                                               
 # get-archive
-- name: get-archive | Download PHP {{ php.version }} at {{ php.buildat }}
+- name: get-archive | Download PHP {{ php.version }} at {{ php.workingdir }}
   get_url: >
     url=http://jp1.php.net/distributions/php-{{ php.version }}.tar.bz2
-    dest={{ php.buildat }}/php-{{ php.version }}.tar.bz2
+    dest={{ php.workingdir }}/php-{{ php.version }}.tar.bz2
 
-- name: get-archive | Extract {{ php.buildat }}/php-{{ php.version }}.tar.bz2
+- name: get-archive | Extract {{ php.workingdir }}/php-{{ php.version }}.tar.bz2
   unarchive: >
-    src={{ php.buildat }}/php-{{ php.version }}.tar.bz2
-    dest={{ php.buildat }}
-    creates={{ php.buildat }}/php-{{ php.version }}
+    src={{ php.workingdir }}/php-{{ php.version }}.tar.bz2
+    dest={{ php.workingdir }}
+    creates={{ php.workingdir }}/php-{{ php.version }}
     copy=no
 

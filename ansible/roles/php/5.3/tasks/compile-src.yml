@@ -6,14 +6,14 @@
 # compile-src
 - name: compile-src | REBUILD | make clean
   command: >
-    chdir={{ php.buildat }}/php-{{ php.version }}/
+    chdir={{ php.workingdir }}/php-{{ php.version }}/
     removes=Makefile
     make clean
   when: php.rebuild == True
 
 - name: compile-src | PHP-{{ php.version }} should be configured
   command: >
-    chdir={{ php.buildat }}/php-{{ php.version }}
+    chdir={{ php.workingdir }}/php-{{ php.version }}
     creates=Makefile
     /bin/sh configure 
     --prefix={{ php.install }} 
@@ -80,7 +80,7 @@
 - name: compile-src | make PHP {{ php.version }}
   register: make_php_binary
   command: >
-    chdir={{ php.buildat }}/php-{{ php.version }}
+    chdir={{ php.workingdir }}/php-{{ php.version }}
     creates=libs/libphp5.so
     make
 
@@ -88,5 +88,5 @@
   when: make_php_binary.changed
   command: >
     make install 
-    chdir={{ php.buildat }}/php-{{ php.version }}
+    chdir={{ php.workingdir }}/php-{{ php.version }}
 

@@ -9,7 +9,7 @@ php:
   version: 5.5.17
   install: /usr/local
   inifile: development
-  buildat: /usr/local/src
+  workingdir: /usr/local/src
   depends:
     apache: { serverroot: '/opt/httpd' }
     mysql:  { serverroot: '/opt/mysql', socket: '/tmp/mysql.sock' }

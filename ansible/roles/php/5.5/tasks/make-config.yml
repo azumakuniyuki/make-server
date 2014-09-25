@@ -8,6 +8,7 @@
   template: >
     src=usr/local/etc/php.ini-{{ item }}.j2
     dest={{ php.install }}/etc/php.ini-{{ item }}
+    backup=yes
   with_items:
     - production
     - development
@@ -16,4 +17,5 @@
   template: >
     src=usr/local/etc/php.ini-{{ php.inifile }}.j2
     dest={{ php.install }}/etc/php.ini
+    backup=yes
 

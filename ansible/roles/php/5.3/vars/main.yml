@@ -8,7 +8,7 @@ php:
   rebuild: False
   version: 5.3.27
   install: /usr/local
-  buildat: /usr/local/src
+  workingdir: /usr/local/src
   depends:
     apache: { serverroot: '/opt/httpd' }
     mysql:  { serverroot: '/opt/mysql', socket: '/tmp/mysql.sock' }

@@ -8,11 +8,11 @@
 - name: make-module | Download cpanm
   get_url: >
     url='http://xrl.us/cpanm';
-    dest={{ perl.buildat }}/cpanm
+    dest={{ perl.workingdir }}/cpanm
 
 - name: make-module | Install {{ local.dir }}/bin/cpanm
   shell: >
-    chdir={{ perl.buildat }}
+    chdir={{ perl.workingdir }}
     creates={{ local.dir }}/bin/cpanm
     install -o root -m 0755 cpanm {{ local.dir }}/bin
 

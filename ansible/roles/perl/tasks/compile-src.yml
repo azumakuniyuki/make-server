@@ -9,19 +9,19 @@
 - name: compile-src | REBUILD | make clean
   when: perl.rebuild == True
   shell: >
-    chdir={{ perl.buildat }}/perl-{{ perl.version }}/
+    chdir={{ perl.workingdir }}/perl-{{ perl.version }}/
     removes=Makefile
     make clean distclean
 
 - name: compile-src | Perl {{ perl.version }} should be configured
   shell: >
-    chdir={{ perl.buildat }}/perl-{{ perl.version }}/
+    chdir={{ perl.workingdir }}/perl-{{ perl.version }}/
     creates=Makefile
     /bin/sh Configure -des -Dprefix={{ perl.install }}
 
 - name: compile-src | make Perl {{ perl.version }}
   command: >
-    chdir={{ perl.buildat }}/perl-{{ perl.version }}/
+    chdir={{ perl.workingdir }}/perl-{{ perl.version }}/
     creates=perl
     make
   register: make_perl_binary
@@ -29,12 +29,12 @@
 - name: compile-src | make test
   when: make_perl_binary.changed
   command: >
-    chdir={{ perl.buildat }}/perl-{{ perl.version }}/
+    chdir={{ perl.workingdir }}/perl-{{ perl.version }}/
     make test
 
 - name: compile-src | make install perl {{ perl.version }}
   when: make_perl_binary.changed
   command: >
-    chdir={{ perl.buildat }}/perl-{{ perl.version }}/
+    chdir={{ perl.workingdir }}/perl-{{ perl.version }}/
     make install
 
