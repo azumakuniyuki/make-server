@@ -6,7 +6,7 @@
 #
 config:
   selinux: False
-  useswap: True
+  useswap: 512
 local:
   dir: /usr/local
   src: /usr/local/src

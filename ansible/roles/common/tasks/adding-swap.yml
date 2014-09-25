@@ -6,9 +6,9 @@
 #                                                                       
 # adding-swap
 - name: adding-swap | Calculate swap space size
-  when: config.useswap == True and ansible_memtotal_mb < 512
   register: swap0
-  command: perl -le 'print int( {{ ansible_memtotal_mb }} / 2 * 1024 )'
+  changed_when: swap0.rc < 0
+  shell: echo '( {{ ansible_memtotal_mb }} / 2 * 1024 )' | bc
 
 - name: adding-swap | /swapfile exists
   when: swap0|success
@@ -17,7 +17,7 @@
   shell: swapon -s | grep /swapfile > /dev/null 2>&1
 
 - name: adding-swap | Prepare swapfile
-  when: swap1|failed
+  when: swap1|failed and ansible_memtotal_mb < {{ config.useswap }}
   register: swap2
   command: >
     chdir=/
@@ -32,5 +32,6 @@
       
 - name: adding-swap | Swap on
   when: swap1|failed and swap3|success
+  ignore_errors: True
   command: swapon /swapfile
 
