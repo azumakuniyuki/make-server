@@ -8,8 +8,9 @@ mysql:
   started: True
   rebuild: False
   version: 5.5.39
-  serverroot: /opt/mysql
   initscript: mysql
+  rotatefile: mysql
+  serverroot: /opt/mysql
   workingdir: /usr/local/src
   datadirectory: /opt/mysql/data
   user:

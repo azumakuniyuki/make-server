@@ -48,12 +48,14 @@
   template: >
     src=opt/mysql/etc/{{ mysql.conf.file }}.j2
     dest={{ mysql.serverroot }}/etc/my.cnf
+    backup=yes
 
-- name: make-config | Deploy /etc/logrotate.d/mysql
+- name: make-config | Deploy /etc/logrotate.d/{{ mysql.rotatefile }}
   when: ansible_os_family in [ 'RedHat', 'Debian' ]
   template: >
     src=etc/logrotate.d/mysql-log-rotate.j2
-    dest=/etc/logrotate.d/mysql
+    dest=/etc/logrotate.d/{{ mysql.rotatefile }}
+    backup=yes
 
 - name: make-config | MySQL database should be installed
   register: install_mysql_database
