@@ -22,6 +22,7 @@
     mode=0644
     owner=root
     group=root
+    backup=yes
 
 - name: make-config | Deploy {{ vsftpd.serverroot }}/etc/ftp-users
   template: >
@@ -30,12 +31,14 @@
     mode=0644
     owner=root
     group=root
+    backup=yes
 
-- name: make-config | Deploy /etc/logrotate.d/vsftpd
+- name: make-config | Deploy /etc/logrotate.d/{{ vsftpd.rotatefile }}
   template: >
     src=etc/logrotate.d/vsftpd.j2
-    dest=/etc/logrotate.d/vsftpd
+    dest=/etc/logrotate.d/{{ vsftpd.rotatefile }}
     mode=0644
     owner=root
     group=root
+    backup=yes
 

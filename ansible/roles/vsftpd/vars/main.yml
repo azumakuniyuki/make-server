@@ -8,8 +8,9 @@ vsftpd:
   started: True
   rebuild: False
   version: 3.0.2
-  serverroot: /opt/vsftpd
   initscript: vsftpd
+  rotatefile: vsftpd
+  serverroot: /opt/vsftpd
   workingdir: /usr/local/src
   patches:
     - 'vsftpd-2009-10-19-localconfig.patch'
