@@ -12,6 +12,17 @@
     dest={{ apache.serverroot }}/conf/httpd.conf
     backup=yes
 
+- name: make-config | Deploy {{ apache.serverroot }}/conf/extra
+  notify: Restart Apache
+  template: >
+    src=opt/apache/conf/extra/httpd-{{ item }}.conf.j2
+    dest={{ apache.serverroot }}/conf/extra/httpd-{{ item }}.conf
+    backup=yes
+  with_items:
+    - info
+    - mpm
+    - vhosts
+
 - name: make-config | Enable PHP5 module(0)
   register: libphp5
   changed_when: libphp5.rc < 0
@@ -28,17 +39,6 @@
     regexp='^# LoadModule php5_module.*$'
     replace='LoadModule php5_module modules/libphp5.so'
     validate='{{ apache.serverroot }}/bin/apachectl -f %s -t'
-
-- name: make-config | Deploy {{ apache.serverroot }}/conf/extra
-  notify: Restart Apache
-  template: >
-    src=opt/apache/conf/extra/httpd-{{ item }}.conf.j2
-    dest={{ apache.serverroot }}/conf/extra/httpd-{{ item }}.conf
-    backup=yes
-  with_items:
-    - info
-    - mpm
-    - vhosts
 
 - name: make-config | Deploy log rotation script
   when: ansible_system == "Linux"
