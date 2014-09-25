@@ -97,6 +97,7 @@
   unarchive: >
     src={{ php.workingdir }}/libgd-{{ php.depends.libgd.version }}.tar.gz
     dest={{ php.workingdir }}
+    creates={{ php.workingdir }}/libgd-{{ php.depends.libgd.version }}
     copy=no
 
 - name: install-pkg | configure libgd {{ php.depends.libgd.version }}
