@@ -21,10 +21,12 @@
   template: >
     src=opt/nginx/conf/nginx.conf.j2
     dest={{ nginx.serverroot }}/conf/nginx.conf
+    backup=yes
 
 - name: make-config | Deploy log rotation script
   when: ansible_system == "Linux"
   template: >
     src=etc/logrotate.d/nginx.j2
     dest=/etc/logrotate.d/munin-httpd
+    backup=yes
 
