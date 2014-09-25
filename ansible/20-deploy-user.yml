@@ -33,25 +33,23 @@
         createhome=yes
         state=present
 
-    - name: deploy-user | sudoers.d/deploy has been created(1)
-      shell: >
-        chdir=/tmp
-        creates=etc-sudoers-deploy
-        printf "%%%s ALL=NOPASSWD%s ALL\n" {{ user.group }} : > etc-sudoers-deploy
-
     - name: deploy-user | Linux | sudoers.d/deploy has been created
       when: ansible_system == "Linux"
       shell: >
         chdir=/etc/sudoers.d
         creates=deploy
-        install -o root -m 0400 /tmp/etc-sudoers-deploy /etc/sudoers.d/
+        printf "Defaults env_reset\nDefaults secure_path='%s'\n%%%s ALL=NOPASSWD%s ALL\n"
+        '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+        {{ user.group }} : > deploy
 
     - name: deploy-user | FreeBSD | sudoers.d/deploy has been created
       when: ansible_os_family == "FreeBSD"
       shell: >
         chdir=/usr/local/etc/sudoers.d
         creates=deploy
-        install -o root -m 0400 /tmp/etc-sudoers-deploy /usr/local/etc/sudoers.d/
+        printf "Defaults env_reset\nDefaults secure_path='%s'\n%%%s ALL=NOPASSWD%s ALL\n"
+        '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+        {{ user.group }} : > deploy
 
     - name: deploy-user | OpenBSD | Check /etc/sudoers
       when: ansible_system == "OpenBSD"
