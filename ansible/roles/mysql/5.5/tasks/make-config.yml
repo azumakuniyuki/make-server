@@ -50,6 +50,19 @@
     dest={{ mysql.serverroot }}/etc/my.cnf
     backup=yes
 
+- name: make-config | Symbolic link to mysql related command should be created
+  file: >
+    src={{ mysql.serverroot }}/bin/{{ item }}
+    dest=/usr/local/bin/{{ item }}
+    state=link
+  with_items:
+    - mysql
+    - mysql_config
+    - mysqladmin
+
+- name: make-config | Install MySQLdb Python package
+  pip:  name=mysql-python state=present
+
 - name: make-config | Deploy /etc/logrotate.d/{{ mysql.rotatefile }}
   when: ansible_os_family in [ 'RedHat', 'Debian' ]
   template: >
