@@ -36,6 +36,7 @@
   template: >
     src=data/{{ item }}.j2
     dest={{ postgresql.datadirectory }}/{{ item }}
+    backup=yes
   with_items:
     - postgresql.conf
     - pg_hba.conf
