@@ -21,13 +21,13 @@
     test -e libphp5.so
 
 - name: make-config | Enable PHP5 module(1)
-  when: libphp5.rc > 0
+  when: libphp5|success
   replace: >
     backup=yes
     dest={{ apache.serverroot }}/conf/httpd.conf
     regexp='^# LoadModule php5_module.*$'
     replace='LoadModule php5_module modules/libphp5.so'
-    validate='{{ apache.serverroot }}/bin/apachectl -t'
+    validate='{{ apache.serverroot }}/bin/apachectl -f %s -t'
 
 - name: make-config | Deploy {{ apache.serverroot }}/conf/extra
   notify: Restart Apache
