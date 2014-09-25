@@ -101,34 +101,3 @@
         regexp='^# %wheel\s+ALL=\(ALL\)\s+SETENV:\s+ALL$'
         replace='%wheel        ALL=(ALL) SETENV: ALL'
 
-
-    - name: build-stage | Linux | Files in sudoers.d should be included(1)
-      when: ansible_system == "Linux"
-      register: sudoersd
-      ignore_errors: True
-      changed_when: sudoersd.rc > 0
-      shell: grep '^includedir' /etc/sudoers | awk '{ print $2 }'
-
-    - name: build-stage | FreeBSD | Files in sudoers.d should be included(1)
-      when: ansible_os_family == "FreeBSD"
-      register: sudoersd
-      ignore_errors: True
-      changed_when: sudoersd.rc > 0
-      shell: grep '^includedir' {{ local }}/etc/sudoers | awk '{ print $2 }'
-
-    - name: build-stage | Linux | Rewrite /etc/sudoers
-      when: python|success and sudoersd|failed and ansible_system == "Linux"
-      replace: >
-        backup=yes
-        dest=/etc/sudoers
-        regexp='^#includedir'
-        replace='includedir'
-
-    - name: build-stage | FreeBSD | Rewrite {{ local }}/etc/sudoers
-      when: python|success and sudoersd|failed and ansible_os_family == "FreeBSD"
-      replace: >
-        backup=yes
-        dest=/etc/sudoers
-        regexp='^#includedir'
-        replace='includedir'
-
