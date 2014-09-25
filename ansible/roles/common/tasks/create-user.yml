@@ -6,11 +6,15 @@
 #
 # create-user
 #
-- name: create-user | Each group should be created
+- name: create-user | Each group should be created(1)
   group: >
     name={{ item.group }}
     gid={{ item.gid }}
     state=present
+  with_items: unixusers
+
+- name: create-user | Each group should be created(2)
+  group: name={{ item.groups }} state=present
   with_items: unixusers
 
 - name: create-user | Each user should be created
