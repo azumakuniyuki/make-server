@@ -20,6 +20,7 @@
   template: >
     src=etc/munin/munin-node.conf.j2
     dest=/etc/munin/munin-node.conf
+    backup=yes
 
 
 - name: main | Link munin-plugins(apache)
@@ -40,6 +41,7 @@
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
+    backup=yes
   with_items:
     - apache
 
@@ -61,6 +63,7 @@
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
+    backup=yes
   with_items:
     - bind9
 
@@ -82,6 +85,7 @@
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
+    backup=yes
   with_items:
     - nginx
 
@@ -106,6 +110,7 @@
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
+    backup=yes
   with_items:
     - mysql
 
@@ -139,6 +144,7 @@
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
+    backup=yes
   with_items:
     - pgpool
 
@@ -160,6 +166,7 @@
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
+    backup=yes
   with_items:
     - postfix
 
@@ -184,6 +191,7 @@
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
+    backup=yes
   with_items:
     - postgres
 
@@ -204,6 +212,7 @@
   template: >
     src=etc/munin/plugin-conf.d/{{ item }}.j2
     dest=/etc/munin/plugin-conf.d/{{ item }}
+    backup=yes
   with_items:
     - sendmail
 
