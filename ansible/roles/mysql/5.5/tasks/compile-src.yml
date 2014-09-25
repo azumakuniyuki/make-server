@@ -26,6 +26,7 @@
     creates={{ mysql.workingdir }}/mysql-{{ mysql.version }}/CMakeCache.txt
     cmake . 
       -DCMAKE_INSTALL_PREFIX={{ mysql.serverroot }} 
+      -DMYSQL_DATADIR={{ mysql.datadirectory }}
       -DSYSCONFDIR={{ mysql.serverroot }}/etc 
       -DMYSQL_UNIX_ADDR={{ mysql.conf.socket }}
       -DDEFAULT_CHARSET=utf8 
