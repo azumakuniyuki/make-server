@@ -11,11 +11,13 @@
   template: >
     src=etc/munin/munin.conf.j2
     dest=/etc/munin/munin.conf
+    backup=yes
 
 - name: main | Deploy /etc/munin/munin-htpasswd
   template: >
     src=etc/munin/munin-htpasswd.j2
     dest=/etc/munin/munin-htpasswd
+    backup=yes
 
 - name: main | RedHat | Deploy cron
   when: ansible_os_family == "RedHat"
@@ -25,6 +27,7 @@
     owner=munin
     group=munin
     mode=0600
+    backup=yes
 
 - name: main | FreeBSD,OpenBSD | Deploy cron
   when: ansible_os_family in [ "FreeBSD", "OpenBSD" ]
@@ -34,4 +37,5 @@
     owner=munin
     group=munin
     mode=0600
+    backup=yes
 
