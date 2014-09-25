@@ -8,8 +8,9 @@ nginx:
   started: False
   rebuild: False
   version: 1.6.1
-  serverroot: /opt/nginx
   initscript: nginx
+  rotatefile: nginx
+  serverroot: /opt/nginx
   workingdir: /usr/local/src
   user:
     username: nginx
