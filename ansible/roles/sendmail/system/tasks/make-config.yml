@@ -141,7 +141,7 @@
     src=etc/mail/Makefile.j2
     dest={{ sendmail.configroot }}/Makefile
 
-- name: make-config | Link source code directory tree as "cf"
+- name: make-config | Link source code directory tree
   file: >
     src={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/
     dest={{ sendmail.configroot }}/src
