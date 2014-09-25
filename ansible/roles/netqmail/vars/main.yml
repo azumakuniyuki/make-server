@@ -8,8 +8,8 @@ qmail:
   started: False
   rebuild: False
   version: 1.06
-  serverroot: /var/qmail
   initscript: qmail
+  serverroot: /var/qmail
   workingdir: /usr/local/src
   config:
     queuelife: 86400

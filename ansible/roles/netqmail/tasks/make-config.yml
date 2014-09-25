@@ -59,6 +59,7 @@
   template: >
     src=var/qmail/etc/tcp.smtp.j2
     dest={{ qmail.serverroot }}/etc/tcp.smtp
+    backup=yes
 
 - name: make-config | Create tcp.smtp.cdb
   notify: Restart qmail
