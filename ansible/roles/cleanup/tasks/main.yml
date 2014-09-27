@@ -6,8 +6,9 @@
 #                               |_|                              
 - name: delete-swap | Swap off
   when: swap1|failed or swap3|success
-  register: swap9
   ignore_errors: True
+  register: swap9
+  changed_when: swap9.rc == 0
   command: swapoff /swapfile
 
 - name: delete-swap | Delete /swapfile
