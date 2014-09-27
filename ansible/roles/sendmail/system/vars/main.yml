@@ -71,6 +71,6 @@ procmail:
   spool: /var/spool/procmail
 maildrop:
   rebuild: False
-  version: 2.7.1
+  version: 2.7.2
   install: /usr/local
 
