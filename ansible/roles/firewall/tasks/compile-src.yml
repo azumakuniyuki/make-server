@@ -7,7 +7,7 @@
 # compile-src
 - name: compile-src | Deploy firewall-script files
   shell: >
-    chdir={{ firewall.workingdir }}/firewall-scripts
     make install
+    chdir={{ firewall.workingdir }}/firewall-scripts
     creates=/etc/firewall/firewall-rules
 

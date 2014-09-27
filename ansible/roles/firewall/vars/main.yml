@@ -6,6 +6,7 @@
 #                                                            
 firewall:
  started: True
+ program: iptables
  workingdir: /usr/local/src
  port:
   ssh: 22

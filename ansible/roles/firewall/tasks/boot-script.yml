@@ -7,5 +7,5 @@
 # boot-script
 - name: boot-script | Be sure iptables should be enabled
   when: ansible_system == "Linux" and firewall.started
-  service: name=iptables enabled=yes
+  service: name={{ firewall.program }} enabled=yes
 

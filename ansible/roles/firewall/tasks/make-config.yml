@@ -10,6 +10,7 @@
   template: >
     src=etc/firewall/{{ item }}.j2
     dest=/etc/firewall/{{ item }}
+    backup=yes
   with_items:
     - my-ipv4-address
     - internal-hosts
@@ -21,22 +22,22 @@
 - name: make-config | Be sure the wall should be deployed
   when: ansible_system == "Linux" and firewall.started
   register: wall_has_been_deployed
+  changed_when: "'OK' in wall_has_been_deployed"
   shell: >
     chdir=/etc/firewall
     ./make-linux-iptables wall
-  changed_when: "'OK' in wall_has_been_deployed"
 
 - name: make-config | Be sure /etc/sysconfig/iptables should be created
   when: ansible_system == "Linux" and firewall.started
   shell: >
     chdir=/etc/firewall
-    ./make-linux-iptables dump > /etc/sysconfig/iptables
-    creates=/etc/sysconfig/iptables
+    creates=/etc/sysconfig/{{ firewall.program }}
+    ./make-linux-iptables dump > /etc/sysconfig/{{ firewall.program }}
 
 - name: make-config | Be sure /etc/sysconfig/iptables should be updated
   when: ansible_system == "Linux" and firewall.started
   when: firewall_scripts.changed
   shell: >
     chdir=/etc/firewall
-    ./make-linux-iptables dump > /etc/sysconfig/iptables
+    ./make-linux-iptables dump > /etc/sysconfig/{{ firewall.program }}
 

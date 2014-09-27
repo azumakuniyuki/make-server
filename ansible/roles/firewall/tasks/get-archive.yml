@@ -9,4 +9,5 @@
   git:  >
     repo='https://github.com/azumakuniyuki/firewall-scripts.git'
     dest={{ firewall.workingdir }}/firewall-scripts
+    accept_hostkey=yes
 

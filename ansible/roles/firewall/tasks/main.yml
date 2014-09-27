@@ -8,11 +8,11 @@
 - include: compile-src.yml
 - include: make-config.yml
 
-- name: 'Start firewall'
+- name: Start firewall
   when: firewall.started == True and ansible_system == "Linux"
-  service: name=iptables state=started
+  service: name={{ firewall.program }} state=started
 
-- name: 'Stop firewall'
+- name: Stop firewall
   when: firewall.started == False and ansible_system == "Linux"
-  service: name=iptables state=stopped
+  service: name={{ firewall.program }} state=stopped
 
