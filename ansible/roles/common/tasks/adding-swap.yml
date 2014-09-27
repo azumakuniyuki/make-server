@@ -13,11 +13,12 @@
 - name: adding-swap | /swapfile exists
   when: swap0|success
   register: swap1
+  changed_when: swap1.rc == 255
   ignore_errors: True
   shell: swapon -s | grep /swapfile > /dev/null 2>&1
 
 - name: adding-swap | Prepare swapfile
-  when: swap1|failed and ansible_memtotal_mb < {{ config.useswap }}
+  when: swap1|failed and config.useswap == True and ansible_memtotal_mb < {{ config.swapmem }}
   register: swap2
   command: >
     chdir=/
@@ -27,11 +28,14 @@
 - name: adding-swap | Make swapfile
   when: swap2.changed
   register: swap3 
+  changed_when: swap2.rc == 0
   ignore_errors: True
   command: mkswap /swapfile 
       
 - name: adding-swap | Swap on
   when: swap1|failed and swap3|success
+  register: swap4
+  changed_when: swap4.rc == 0
   ignore_errors: True
   command: swapon /swapfile
 
