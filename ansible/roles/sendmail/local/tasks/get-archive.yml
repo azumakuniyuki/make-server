@@ -14,7 +14,7 @@
 
 - name: get-archive | Deploy procmail-{{ procmail.verison }}.tar.gz
   copy: >
-    src=usr/local/src/procmail-{{ procmail.version }}.tar.gz
+    src=procmail-{{ procmail.version }}.tar.gz
     dest={{ sendmail.workingdir }}
 
 - name: get-archive | Extract {{ sendmail.workingdir }}/procmail-{{ procmail.version }}.tar.gz
@@ -32,7 +32,7 @@
 
 - name: get-archive | Deploy maildrop-{{ maildrop.verison }}.tar.bz2
   copy: >
-    src=usr/local/src/maildrop-{{ maildrop.version }}.tar.bz2
+    src=maildrop-{{ maildrop.version }}.tar.bz2
     dest={{ sendmail.workingdir }}
 
 - name: get-archive | Extract {{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
