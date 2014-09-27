@@ -7,12 +7,14 @@
 # get-archive
 - name: get-archive | Download procmail {{ procmail.version }} at {{ sendmail.workingdir }}
   ignore_errors: True
+  chagend_when: get_procmail.rc == 0
   register: get_procmail
   get_url: >
     url=ftp://ftp.ring.gr.jp/pub/net/mail/procmail/procmail-{{ procmail.version }}.tar.gz
     dest={{ sendmail.workingdir }}/procmail-{{ procmail.version }}.tar.gz
 
 - name: get-archive | Deploy procmail-{{ procmail.verison }}.tar.gz
+  when: get_procmail|failed
   copy: >
     src=procmail-{{ procmail.version }}.tar.gz
     dest={{ sendmail.workingdir }}
@@ -26,12 +28,14 @@
 
 - name: get-archive | Download maildrop {{ maildrop.version }} at {{ sendmail.workingdir }}
   ignore_errors: True
+  changed_when: get_maildrop.rc == 0
   register: get_maildrop
   get_url: >
     url=ftp://ftp.jaist.ac.jp/pub/sourceforge/c/co/courier/maildrop/{{ maildrop.version }}/maildrop-{{ maildrop.version }}.tar.bz2
     dest={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
 
 - name: get-archive | Deploy maildrop-{{ maildrop.verison }}.tar.bz2
+  when: get_maildrop|failed
   copy: >
     src=maildrop-{{ maildrop.version }}.tar.bz2
     dest={{ sendmail.workingdir }}
