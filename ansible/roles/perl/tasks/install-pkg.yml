@@ -5,4 +5,7 @@
 # | .__/ \___|_|  |_/_/   \__\__,_|___/_|\_\___/
 # |_|                                           
 # install-pkg
+- name: install-pkg | Install Perl core modules
+  when: ansible_os_family == "RedHat"
+  yum:  name=perl-core state=present
 
