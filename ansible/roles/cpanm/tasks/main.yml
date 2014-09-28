@@ -24,3 +24,7 @@
     dest=/usr/bin/cpanm
     state=link
 
+- name: main | Install Perl core modules
+  when: ansible_os_family == "RedHat"
+  yum:  name=perl-core state=present
+
