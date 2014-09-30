@@ -141,7 +141,7 @@ addr:
 		grep 'private_network' ./$(VAGRANTFILE) | sed -e 's/^.*ip://g' | tr -d ' "' ;\
 	fi
 
-list: vagrant
+list:
 	vagrant box list
 
 up: vagrant
