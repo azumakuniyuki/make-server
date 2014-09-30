@@ -242,6 +242,15 @@
     - sendmail.cf
     - submit.cf
 
+- name: make-config | Update submit.cf in {{ sendmail.configroot }}
+  notify: Restart Sendmail
+  ignore_errors: True
+  register: updatesubmitcf
+  changed_when: updatecf.rc > 0
+  shell: >
+    chdir={{ sendmail.nextconfig }}
+    diff -q ../submit.cf ./submit.cf || ( /bin/cp ./submit.cf ../ && false )
+
 - name: make-config | Update files in {{ sendmail.configroot }}
   when: sendmail.conf.update == True
   notify: Restart Sendmail
