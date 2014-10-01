@@ -7,6 +7,38 @@
 - name: main | Install munin
   yum:  name=munin state=present
 
+- name: main | Create DB directory
+  file: >
+    path={{ munin.cron.conf.dbdir }}
+    mode=0755
+    owner=munin
+    group=munin
+    state=directory
+
+- name: main | Create HTML directory
+  file: >
+    path={{ munin.cron.conf.htmldir }}
+    mode=0755
+    owner=munin
+    group=munin
+    state=directory
+
+- name: main | Create Log directory
+  file: >
+    path={{ munin.cron.conf.logdir }}
+    mode=0775
+    owner=root
+    group=munin
+    state=directory
+
+- name: main | Create Run directory
+  file: >
+    path={{ munin.cron.conf.logdir }}
+    mode=0755
+    owner=munin
+    group=munin
+    state=directory
+
 - name: main | Deploy /etc/munin/munin.conf
   template: >
     src=etc/munin/munin.conf.j2
@@ -19,23 +51,12 @@
     dest=/etc/munin/munin-htpasswd
     backup=yes
 
-- name: main | RedHat | Deploy cron
-  when: ansible_os_family == "RedHat"
-  template: >
-    src=etc/crontab.j2
-    dest=/var/spool/cron/munin
-    owner=munin
-    group=munin
-    mode=0600
-    backup=yes
-
-- name: main | FreeBSD,OpenBSD | Deploy cron
-  when: ansible_os_family in [ "FreeBSD", "OpenBSD" ]
-  template: >
-    src=etc/crontab.j2
-    dest=/var/cron/tabs/munin
-    owner=munin
-    group=munin
-    mode=0600
-    backup=yes
+- name: main | Install crontab
+  when: munin.cron.enabled == True
+  cron: >
+    name='munin monitor'
+    minute='*/5'
+    job='/usr/bin/munin-cron'
+    user=munin
+    state=present
 

@@ -6,6 +6,7 @@
 #                                                                                 
 munin:
   cron:
+    enabeld: True
     workingdir: /usr/local/src
     conf:
       dbdir:   /var/lib/munin
