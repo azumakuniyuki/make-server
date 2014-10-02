@@ -213,6 +213,18 @@
     state=link
   with_items:
     - sendmail_mailqueue
+    - sendmail_mailstats
+    - sendmail_mailtraffic
+
+- name: main | Remove postfix plugins(sendmail)
+  notify: Restart munin-node
+  when: munin.node.plugins.sendmail == True
+  file: >
+    path=/etc/munin/plugins/{{ item }}
+    state=absent
+  with_items:
+    - postfix_mailqueue
+    - postfix_mailvolume
 
 - name: main | Deploy /etc/munin/plugin-conf.d/sendmail
   notify: Restart munin-node
