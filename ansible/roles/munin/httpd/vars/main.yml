@@ -23,6 +23,6 @@ nginx:
     comment: "'nginx httpd server'"
   conf:
     listen: 3384
-    servername: '127.0.0.1'
-    documentroot: '/opt/munin/httpd/html'
+    servername: 127.0.0.1
+    documentroot: /opt/munin/httpd/html
 
