@@ -12,4 +12,6 @@ phpmyadmin:
   config:
     database: 127.0.0.1
     cookie: 'php-my-admin'
+    user: root
+    group: wheel
 

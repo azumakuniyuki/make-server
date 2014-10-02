@@ -10,7 +10,8 @@
   file: >
     path={{ phpmyadmin.install }}
     mode=0755
-    owner=root
+    owner={{ phpmyadmin.config.user }}
+    group={{ phpmyadmin.config.group }}
     state=directory
 
 - name: make-config | Install phpMyAdmin {{ phpmyadmin.version }}
