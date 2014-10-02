@@ -3,7 +3,7 @@
 #
 
 log_level 4
-log_file {{ munin.node.logdirectory }}/munin-node/munin-node.log
+log_file {{ munin.node.logdirectory }}/munin-node.log
 pid_file /var/run/munin/munin-node.pid
 
 background 1
@@ -56,8 +56,8 @@ allow ^::1$
 # cidr_deny  192.0.2.42/32
 
 # Which address to bind to;
-host *
 # host 127.0.0.1
+host {{ ansible_eth0.ipv4.address }}
 
 # And which port
 port 4949

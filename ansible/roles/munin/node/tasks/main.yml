@@ -14,6 +14,7 @@
     - LWP::UserAgent
     - IPC::Cmd
     - JSON::Syck
+    - Net::CIDR
 
 - name: main | Deploy /etc/munin/munin-node config
   notify: Restart munin-node
@@ -22,6 +23,13 @@
     dest=/etc/munin/munin-node.conf
     backup=yes
 
+- name: main | Log directory should be created
+  file: >
+    path={{ munin.node.logdirectory }}
+    mode=0755
+    owner=munin
+    group=munin
+    state=directory
 
 - name: main | Link munin-plugins(apache)
   notify: Restart munin-node
