@@ -19,6 +19,8 @@ sendmail:
     ostype: linux
     mtaqueue: /var/spool/queues
     msaqueue: /var/spool/cqueue
+    hoststat: /var/spool/hoststat
+    statfile: /var/tmp/sendmail.st
     parameters:
       - daemon-options
       - queue-interval

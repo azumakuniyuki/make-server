@@ -108,9 +108,18 @@
     group={{ sendmail.user.msa.group }}
     state=directory
 
-- name: make-config | /var/spool/hoststat should be created
+- name: make-config | {{ sendmail.conf.statfile }} should be created
   file: >
-    path=/var/spool/hoststat
+    path={{ sendmail.conf.statfile }}
+    owner=root
+    mode=0644
+    state=touch
+
+- name: make-config | {{ sendmail.conf.hoststat }} should be created
+  file: >
+    path={{ sendmail.conf.hoststat }}
+    owner=root
+    mode=0755
     state=directory
 
 - name: make-config | /usr/sbin/smtpd should be created

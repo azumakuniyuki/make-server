@@ -144,9 +144,9 @@ dnl #  define(`confUSERDB_SPEC',`CF/userdb.db')		UserDatabaseSpec
 define(`HELP_FILE',`/usr/share/data/helpfile')
 define(`confCT_FILE',`-o CF/trusted-users')
 define(`confDEAD_LETTER_DROP',`/var/tmp/dead.letter')dnl
-define(`confHOST_STATUS_DIRECTORY',`SPOOL/hoststat')dnl
+define(`confHOST_STATUS_DIRECTORY',`{{ sendmail.conf.hoststat }}')dnl
 define(`QUEUE_DIR',`{{ sendmail.conf.mtaqueue }}/q.*')dnl
-define(`STATUS_FILE',`/var/tmp/sendmail.st')dnl
+define(`STATUS_FILE',`{{ sendmail.conf.statfile }}')dnl
 define(`confPID_FILE',`/var/run/sendmail.pid')dnl
 
 
