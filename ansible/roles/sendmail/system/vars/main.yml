@@ -14,8 +14,6 @@ sendmail:
   nextconfig: /etc/mail/next
   prevconfig: /etc/mail/prev
   conf:
-    backup: True
-    update: False
     ostype: linux
     mtaqueue: /var/spool/queues
     msaqueue: /var/spool/cqueue
