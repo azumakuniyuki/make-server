@@ -33,7 +33,7 @@
 
 - name: main | Create Run directory
   file: >
-    path={{ munin.cron.conf.logdir }}
+    path={{ munin.cron.conf.rundir }}
     mode=0755
     owner=munin
     group=munin
