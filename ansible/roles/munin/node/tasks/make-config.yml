@@ -15,7 +15,7 @@
 - name: make-config | Deploy logrotate.d/munin-node
   template: >
     src=etc/logrotate.d/munin-node.j2
-    dest=/etc/logrotate.d/munin-node.j2
+    dest=/etc/logrotate.d/munin-node
     backup=no
 
 - name: make-config | Log directory should be created
