@@ -1,0 +1,12 @@
+{{ munin.cron.conf.logdir }}/munin-update.log
+{{ munin.cron.conf.logdir }}/munin-graph.log
+{{ munin.cron.conf.logdir }}/munin-html.log
+{{ munin.cron.conf.logdir }}/munin-limits.log {
+    daily
+    missingok
+    rotate 7
+    compress
+    notifempty
+    create 640 munin munin
+    #su munin munin
+}
