@@ -1,0 +1,153 @@
+#                  _                      _ _              
+#  _ __ ___   __ _| | _____       ___ ___| | | _____ _   _ 
+# | '_ ` _ \ / _` | |/ / _ \_____/ __/ __| | |/ / _ \ | | |
+# | | | | | | (_| |   <  __/_____\__ \__ \ |   <  __/ |_| |
+# |_| |_| |_|\__,_|_|\_\___|     |___/___/_|_|\_\___|\__, |
+#                                                    |___/ 
+- hosts: all
+  user:  root
+  sudo:  True
+  vars:
+    fetchfile: True
+    fetchinto: ../tmp/
+    directory: /var/tmp/ssl
+    algorithm: des3
+    certs:
+      - fileprefix: EXAMPLE.JP
+        passphrase: nekochan22
+        seckeysize: 2048
+        expiration: 365
+        x509:
+          commonname: example.jp
+          email: postmaster@example.jp
+          country: JP
+          state: Kyoto
+          city: Kyoto
+          company: 'EXAMPLE Co. Ltd.'
+          section: Network
+
+
+  tasks:
+    - name: make-sslkey | {{ directory }}/ should be created
+      file: >
+        path={{ directory }}
+        mode=0755
+        owner=root
+        state=directory
+
+    - name: make-sslkey | {{ directory }}/{{ item.x509.commonname }} should be created
+      file: >
+        path={{ directory }}/{{ item.x509.commonname }}
+        mode=0755
+        owner=root
+        state=directory
+      with_items: certs
+
+    - name: make-sslkey | Each private key should be created
+      shell: >
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        creates={{ item.fileprefix }}-WITH-PASSPHRASE.KEY
+        openssl genrsa -{{ algorithm }} -out {{ item.fileprefix }}-WITH-PASSPHRASE.KEY
+          -passout pass:{{ item.passphrase }} {{ item.seckeysize }}
+      with_items: certs
+
+    - name: make-sslkey | Each private key should be readable with pass phrase
+      register: check_rsa0
+      changed_when: check_rsa0.rc > 0
+      shell: >
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        openssl rsa -in {{ item.fileprefix }}-WITH-PASSPHRASE.KEY -text
+          -passin pass:{{ item.passphrase }}
+      with_items: certs
+
+    - name: make-sslkey | Each private key without passphrase should be created
+      shell: >
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        creates={{ item.fileprefix }}-WITHOUT-PASSPHRASE.KEY
+        openssl rsa -in {{ item.fileprefix }}-WITH-PASSPHRASE.KEY 
+          -out {{ item.fileprefix }}-WITHOUT-PASSPHRASE.KEY
+          -passin pass:{{ item.passphrase }}
+      with_items: certs
+
+    - name: make-sslkey | Each private key without pass phrase should be readable
+      register: check_rsa1
+      changed_when: check_rsa1.rc > 0
+      shell: >
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        openssl rsa -in {{ item.fileprefix }}-WITHOUT-PASSPHRASE.KEY -text
+      with_items: certs
+
+    - name: make-sslkey | Each private key for web server should be created
+      shell: >
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        creates={{ item.fileprefix }}.KEY
+        cp {{ item.fileprefix }}-WITHOUT-PASSPHRASE.KEY {{ item.fileprefix }}.KEY
+      with_items: certs
+
+    - name: make-sslkey | Each private key for web servers should be readable without pass phrase
+      register: check_rsa2
+      changed_when: check_rsa2.rc > 0
+      shell: >
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        openssl rsa -in {{ item.fileprefix }}.KEY -text
+      with_items: certs
+
+    - name: make-sslkey | Each CSR should be created
+      shell: >
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        creates={{ item.fileprefix }}.CSR
+        openssl req -new -key {{ item.fileprefix }}.KEY -out {{ item.fileprefix }}.CSR 
+          -days {{ item.expiration }}
+          -subj 
+            `printf "/C=%s/ST=%s/L=%s/O=%s/OU=%s/CN=%s/emailAddress=%s/"
+              {{ item.x509.country }} {{ item.x509.state }} {{ item.x509.city }}
+              {{ item.x509.company }} {{ item.x509.section }} 
+              {{ item.x509.commonname }} {{ item.x509.email }}`
+      with_items: certs
+
+    - name: make-sslkey | Each CSR should be validated
+      register: check_csr
+      changed_when: check_csr.rc > 0
+      shell: > 
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        openssl req -in {{ item.fileprefix }}.CSR -text
+      with_items: certs
+
+    - name: make-sslkey | Each self signed certificate should be created
+      shell: >
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        creates={{ item.fileprefix }}.CRT
+        openssl x509 -req -in {{ item.fileprefix }}.CSR -days {{ item.expiration }}
+          -signkey {{ item.fileprefix }}.KEY -out {{ item.fileprefix }}.CRT
+      with_items: certs
+
+    - name: make-sslkey | Each certificate should be validated
+      register: check_crt
+      changed_when: check_crt.rc > 0
+      shell: > 
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        openssl x509 -in {{ item.fileprefix }}.CRT -text
+      with_items: certs
+
+    - name: make-sslkey | Pass phrase should be saved in the file
+      shell: >
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        creates={{ item.fileprefix }}.PASSPHRASE
+        echo {{ item.passphrase }} > {{ item.fileprefix }}.PASSPHRASE && chmod 0400 {{ item.fileprefix }}.PASSPHRASE
+      with_items: certs
+
+    - name: make-sslkey | Archive should be created
+      shell: >
+        chdir={{ directory }}
+        creates={{ item.x509.commonname }}.tar.gz
+        tar cvfz {{ item.x509.commonname }}.tar.gz {{ item.x509.commonname }}/
+      with_items: certs
+
+    - name: make-sslkey | Archive should be downloaded in the tmp/ directory
+      when: fetchfile == True
+      fetch: >
+        src={{ directory }}/{{ item.x509.commonname }}.tar.gz
+        dest={{ fetchinto }}
+        flat=yes
+      with_items: certs
+
