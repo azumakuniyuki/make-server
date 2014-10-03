@@ -91,7 +91,10 @@ tree will be created in ./ansible/roles directory followed Best Practices.
 |   product         | Inventory file for production servers     |
 |   10-build-stage  | Playbook for installing Python 2.7        |
 |   20-deploy-user  | Playbook for creating user "deploy"       |
+|   21-enable-epel  | Playbook to enable EPEL repository        |
 |   30-update-sshd  | Playbook for changing sshd port           |
+|   49-make-sslkey  | Playbook for generating key,csr,and crt   |
+|   50-make-server  | Playbook for making servers               |
 |   config          | Ansible configuration file for this node  |
 |   log             | Log file specified in ansible/config file |
 |   role/           | Ansible roles                             |
