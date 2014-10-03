@@ -17,7 +17,7 @@ ANSIBLECFG = ./$(ANSIBLEDIR)/config
 INVENTORY  = ./$(ANSIBLEDIR)/hosts
 INVENTORIES= sandbox install develop staging product
 PLAYBOOKS  = 10-build-stage.yml 20-deploy-user.yml 21-enable-epel.yml \
-			 30-update-sshd.yml 50-make-server.yml
+			 30-update-sshd.yml 49-make-sslkey.yml 50-make-server.yml
 SERVERSPEC = ./spec
 VAGRANTNET = 172.25
 VAGRANTSSH = ~/.vagrant.d/insecure_private_key
@@ -61,6 +61,7 @@ node:
 
 ansible:
 	mkdir -p ./$(ANSIBLEDIR)
+	mkdir ./tmp
 	make common-role
 	if [ "`basename $(HEREIAM)`" = "`basename $(EXAMPLE)`" ]; then \
 		for V in hosts $(INVENTORIES); do \
