@@ -108,7 +108,14 @@
     group={{ sendmail.user.msa.group }}
     state=directory
 
-- name: make-config | {{ sendmail.conf.statfile }} should be created
+- name: make-config | {{ sendmail.conf.statfile }} should be created(0)
+  register: sendmail_st
+  changed_when: sendmail_st.rc > 0
+  ignore_errors: True
+  command: test -e {{ sendmail.conf.statfile }}
+
+- name: make-config | {{ sendmail.conf.statfile }} should be created(1)
+  when: sendmail_st|failed
   file: >
     path={{ sendmail.conf.statfile }}
     owner=root
