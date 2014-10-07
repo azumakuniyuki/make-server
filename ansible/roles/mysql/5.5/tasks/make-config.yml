@@ -80,3 +80,17 @@
     --basedir={{ mysql.serverroot }} 
     --datadir={{ mysql.datadirectory }}
 
+- name: make-config | Deploy /root/.my.cnf
+  register: root_my_cnf
+  template: >
+    src=root/dot-my.cnf.j2
+    dest=/root/.my.cnf
+
+- name: make-config | Change mode /root/.my.cnf
+  when: root_my_cnf|changed
+  file: >
+    path=/root/.my.cnf
+    mode=0600
+    owner=root
+    state=present
+
