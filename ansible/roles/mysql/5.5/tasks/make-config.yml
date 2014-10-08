@@ -92,5 +92,5 @@
     path=/root/.my.cnf
     mode=0600
     owner=root
-    state=present
+    state=file
 
