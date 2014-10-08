@@ -47,6 +47,9 @@ update:
 	if [ "`basename $(HEREIAM)`" != "`basename $(EXAMPLE)`" ]; then \
 		echo 'Update Makefile' ;\
 		cp $(EXAMPLE)/Makefile ./ ;\
+		for V in $(PLAYBOOKS); do \
+			test -f ./$(ANSIBLEDIR)/$$V || cp $(EXAMPLE)/ansible/$$V ./$(ANSIBLEDIR) ;\
+		done ;\
 	fi
 
 # Ansible related targets
