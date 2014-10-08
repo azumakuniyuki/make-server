@@ -5,6 +5,14 @@
 #  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/   \__\__,_|___/_|\_\___/
 #                                                                       
 # adding-swap
+- name: adding-swap | RedHat | bc command should be installed
+  when: ansible_os_family == "RedHat"
+  yum:  name=bc state=present
+
+- name: adding-swap | Debian | bc command should be installed
+  when: ansible_os_family == "Debian"
+  apt:  name=bc state=present
+
 - name: adding-swap | Calculate swap space size
   register: swap0
   changed_when: swap0.rc < 0
@@ -18,7 +26,7 @@
   shell: swapon -s | grep /swapfile > /dev/null 2>&1
 
 - name: adding-swap | Prepare swapfile
-  when: swap1|failed and config.useswap == True and ansible_memtotal_mb < {{ config.swapmem }}
+  when: swap1|failed and ansible_memtotal_mb < {{ config.useswap }}
   register: swap2
   command: >
     chdir=/
