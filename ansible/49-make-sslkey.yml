@@ -23,8 +23,8 @@
           country: JP
           state: Kyoto
           city: Kyoto
-          company: 'EXAMPLE Co. Ltd.'
-          section: Network
+          company: '"EXAMPLE Co. Ltd."'
+          section: '"Network System"'
   tasks:
     - name: make-sslkey | {{ directory }}/ should be created
       file: >
@@ -90,17 +90,24 @@
         openssl rsa -in {{ item.fileprefix }}.KEY -text
       with_items: certs
 
+    - name: make-sslkey | Subject for each CSR should be created
+      shell: >
+        chdir={{ directory }}/{{ item.x509.commonname }}
+        creates={{ item.fileprefix }}.SUBJ
+        printf "/C=%s/ST=%s/L=%s/O=%s/OU=%s/CN=%s/emailAddress=%s/"
+              '{{ item.x509.country }}' '{{ item.x509.state }}' '{{ item.x509.city }}'
+              '{{ item.x509.company }}' '{{ item.x509.section }}'
+              '{{ item.x509.commonname }}' '{{ item.x509.email }}'
+              | tr -d '"' | tr -d "'" > {{ item.fileprefix }}.SUBJ
+      with_items: certs
+
     - name: make-sslkey | Each CSR should be created
       shell: >
         chdir={{ directory }}/{{ item.x509.commonname }}
         creates={{ item.fileprefix }}.CSR
         openssl req -new -key {{ item.fileprefix }}.KEY -out {{ item.fileprefix }}.CSR 
           -days {{ item.expiration }}
-          -subj 
-            `printf "/C=%s/ST=%s/L=%s/O=%s/OU=%s/CN=%s/emailAddress=%s/"
-              {{ item.x509.country }} {{ item.x509.state }} {{ item.x509.city }}
-              {{ item.x509.company }} {{ item.x509.section }} 
-              {{ item.x509.commonname }} {{ item.x509.email }}`
+          -subj "`cat {{ item.fileprefix }}.SUBJ`"
       with_items: certs
 
     - name: make-sslkey | Each CSR should be validated
@@ -146,6 +153,14 @@
       fetch: >
         src={{ directory }}/{{ item.x509.commonname }}.tar.gz
         dest={{ fetchinto }}
+        flat=yes
+      with_items: certs
+
+    - name: make-sslkey | CSR should be downloaded in the tmp/ directory
+      when: fetchfile == True
+      fetch: >
+        src={{ directory }}/{{ item.x509.commonname }}/{{ item.fileprefix }}.CSR
+        dest=/tmp/
         flat=yes
       with_items: certs
 
