@@ -5,19 +5,28 @@
 # |_| |_|_|  \___| \_/\_/ \__,_|_|_/_/   \__\__,_|___/_|\_\___/
 #                                                              
 # make-config
-- name: make-config | Deploy each file in /etc/firewall
-  register: firewall_scripts
+- name: make-config | Deploy each file in /etc/firewall(1)
+  register: firewall_scripts1
   template: >
     src=etc/firewall/{{ item }}.j2
     dest=/etc/firewall/{{ item }}
     backup=yes
   with_items:
     - my-ipv4-address
-    - internal-hosts
     - firewall-rules
     - trusted-hosts
     - extroot-hosts
     - monitor-hosts
+
+- name: make-config | Deploy each file in /etc/firewall(2)
+  when: ansible_eth1 is defined
+  register: firewall_scripts2
+  template: >
+    src=etc/firewall/{{ item }}.j2
+    dest=/etc/firewall/{{ item }}
+    backup=yes
+  with_items:
+    - internal-hosts
 
 - name: make-config | Be sure the wall should be deployed
   when: ansible_system == "Linux" and firewall.started
@@ -36,7 +45,7 @@
 
 - name: make-config | Be sure /etc/sysconfig/iptables should be updated
   when: ansible_system == "Linux" and firewall.started
-  when: firewall_scripts.changed
+  when: firewall_scripts1.changed or firewall_scripts2.changed
   shell: >
     chdir=/etc/firewall
     ./make-linux-iptables dump > /etc/sysconfig/{{ firewall.program }}
