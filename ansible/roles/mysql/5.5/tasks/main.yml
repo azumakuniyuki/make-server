@@ -6,16 +6,19 @@
 #         |___/                                                              
 - include: install-pkg.yml
 - include: create-user.yml
+  when: mysql.daemon == True
 - include: get-archive.yml
 - include: compile-src.yml
 - include: make-config.yml
+  when: mysql.daemon == True
 - include: boot-script.yml
+  when: mysql.daemon == True
 
 - name: Start MySQL Server
-  when: mysql.started == True
+  when: mysql.daemon == True and mysql.started == True
   service: name={{ mysql.initscript }} state=started
 
 - name: Stop MySQL Server
-  when: mysql.started == False
+  when: mysql.daemon == True and mysql.started == False
   service: name={{ mysql.initscript }} state=stopped
 
