@@ -19,7 +19,7 @@
         dest=/etc/ssh/sshd_config
         regexp='^#Port 22'
         replace='Port {{ sshd.port }}'
-        validate='sshd -t'
+        validate='sshd -t -f %s'
 
     - name: update-sshd | PermitRootLogin {{ sshd.rootlogin }}
       notify: Restart SSHD
@@ -28,7 +28,7 @@
         dest=/etc/ssh/sshd_config
         regexp='^#PermitRootLogin yes'
         replace='PermitRootLogin {{ sshd.rootlogin }}'
-        validate='sshd -t'
+        validate='sshd -t -f %s'
 
   handlers:
     - name: Restart SSHD
