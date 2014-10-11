@@ -42,6 +42,10 @@
         '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
         {{ user.group }} : | tr "'" '"' > deploy
 
+    - name: deploy-user | Linux | sudoers.d/deploy is 0440
+      when: ansible_system == "Linux"
+      file: path=/etc/sudoers.d/deploy mode=0440 state=file
+
     - name: deploy-user | FreeBSD | sudoers.d/deploy has been created
       when: ansible_os_family == "FreeBSD"
       shell: >
@@ -50,6 +54,10 @@
         printf "Defaults secure_path = '%s'\n%%%s ALL=NOPASSWD%s ALL\n"
         '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
         {{ user.group }} : | tr "'" '"' > deploy
+
+    - name: deploy-user | FreeBSD | sudoers.d/deploy is 0440
+      when: ansible_os_family == "FreeBSD"
+      file: path=/usr/local/etc/sudoers.d/deploy mode=0440 state=file
 
     - name: deploy-user | OpenBSD | Check /etc/sudoers
       when: ansible_system == "OpenBSD"
