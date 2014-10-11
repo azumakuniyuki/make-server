@@ -7,6 +7,7 @@
 # create-user
 #
 - name: create-user | Each group should be created(1)
+  when: config.adduser == True
   group: >
     name={{ item.group }}
     gid={{ item.gid }}
@@ -14,10 +15,15 @@
   with_items: unixusers
 
 - name: create-user | Each group should be created(2)
+  when: config.adduser == True
   group: name={{ item.groups }} state=present
   with_items: unixusers
 
+- name: create-user | wheel group should be created
+  group: name=wheel state=present
+
 - name: create-user | Each user should be created
+  when: config.adduser == True
   user: >
     name={{ item.username }} 
     password={{ item.password }}

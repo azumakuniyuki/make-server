@@ -6,6 +6,7 @@
 #
 config:
   selinux: False
+  adduser: True
   useswap: 512
 local:
   dir: /usr/local
@@ -19,12 +20,13 @@ local:
 # See also
 #   http://docs.ansible.com/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
 unixusers:
-  - username: deploy
+  - username: admin
     password: $1$HakataNo$9.s0dLxBeUTgTarKe3uU//
     shell: /bin/bash
-    group: deploy
+    group: admin
     groups: wheel
-    home: /home/deploy
+    home: /home/admin
     uid: 1001
     gid: 1001
+    adduser: True
 
