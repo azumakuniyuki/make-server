@@ -3,3 +3,4 @@ ansible.cfg
 .vagrant
 *.un~
 data/
+tmp/
