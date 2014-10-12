@@ -1,0 +1,73 @@
+#            _     _                  _                      _    
+#   __ _  __| | __| |      _ __   ___| |___      _____  _ __| | __
+#  / _` |/ _` |/ _` |_____| '_ \ / _ \ __\ \ /\ / / _ \| '__| |/ /
+# | (_| | (_| | (_| |_____| | | |  __/ |_ \ V  V / (_) | |  |   < 
+#  \__,_|\__,_|\__,_|     |_| |_|\___|\__| \_/\_/ \___/|_|  |_|\_\
+#                                                                 
+- hosts: all
+  user:  root
+  sudo:  True
+  vars:
+    interfaces:
+      - device: eth1
+        onboot: yes
+        ipv4:
+          address: 192.0.2.2
+          netmask: 255.255.255.0
+  tasks:
+    - name: add-network | RedHat | Create Each device file
+      when: ansible_os_family == "RedHat"
+      notify: Restart Network
+      shell: >
+        chdir=/etc/sysconfig/network-scripts
+        creates=ifcfg-{{ item.device }}
+        printf "DEVICE=%s\nIPADDR=%s\nNETMASK=%s\nONBOOT=%s\n"
+        "{{ item.device }}" "{{ item.ipv4.address }}" "{{ item.ipv4.netmask }}"
+        "{{ item.onboot }}" > ifcfg-{{ item.device }}
+      with_items: interfaces
+
+    - name: add-network | RedHat | Rewrite each network config file(DEVICE)
+      when: ansible_os_family == "RedHat"
+      notify: Restart Network
+      replace:
+        backup=yes
+        dest=/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}
+        regexp='^DEVICE=.*$'
+        replace='DEVICE={{ item.device }}'
+      with_items: interfaces
+
+    - name: add-network | RedHat | Rewrite each network config file(IPADDR)
+      when: ansible_os_family == "RedHat"
+      notify: Restart Network
+      replace:
+        backup=yes
+        dest=/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}
+        regexp='^IPADDR=.*$'
+        replace='IPADDR={{ item.ipv4.address }}'
+      with_items: interfaces
+
+    - name: add-network | RedHat | Rewrite each network config file(NETMASK)
+      when: ansible_os_family == "RedHat"
+      notify: Restart Network
+      replace:
+        backup=yes
+        dest=/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}
+        regexp='^NETMASK=.*$'
+        replace='NETMASK={{ item.ipv4.netmask }}'
+      with_items: interfaces
+
+    - name: add-network | RedHat | Rewrite each network config file(ONBOOT)
+      when: ansible_os_family == "RedHat"
+      notify: Restart Network
+      replace:
+        backup=yes
+        dest=/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}
+        regexp='^ONBOOT=.*$'
+        replace='ONBOOT={{ item.onboot }}'
+      with_items: interfaces
+
+  handlers:
+    - name: Restart Network
+      service: name=network state=restarted
+
+
