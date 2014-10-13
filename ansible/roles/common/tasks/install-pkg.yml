@@ -51,6 +51,7 @@
     - wget
     - telnet
     - finger
+    - nkf
 
 - name: install-pkg | Debian | Each package for development should be installed
   when: ansible_os_family == "Debian"
