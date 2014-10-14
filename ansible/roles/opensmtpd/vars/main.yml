@@ -6,9 +6,10 @@
 #       |_|                                                                      
 #
 opensmtpd:
-  started: True
+  started: False
   rebuild: False
   version: 5.4.2p1
+  initscript: opensmtpd
   serverroot: /opt/opensmtpd
   workingdir: /usr/local/src
   mtaqueue: /var/spool/queues
