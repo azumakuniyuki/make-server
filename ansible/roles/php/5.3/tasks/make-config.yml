@@ -1,0 +1,21 @@
+#  ____  _   _ ____      ____   _____   ___            _        
+# |  _ \| | | |  _ \    | ___| |___ /  / / |_ __ _ ___| | _____ 
+# | |_) | |_| | |_) |___|___ \   |_ \ / /| __/ _` / __| |/ / __|
+# |  __/|  _  |  __/_____|__) | ___) / / | || (_| \__ \   <\__ \
+# |_|   |_| |_|_|       |____(_)____/_/   \__\__,_|___/_|\_\___/
+# make-config
+- name: make-config | Deploy php.ini into {{ php.install }}/etc
+  template: >
+    src=usr/local/etc/php.ini-{{ item }}.j2
+    dest={{ php.install }}/etc/php.ini-{{ item }}
+    backup=yes
+  with_items:
+    - production
+    - development
+
+- name: make-config | Copy php.ini-{{ php.inifile }} to php.ini
+  template: >
+    src=usr/local/etc/php.ini-{{ php.inifile }}.j2
+    dest={{ php.install }}/etc/php.ini
+    backup=yes
+
