@@ -128,9 +128,9 @@ BEGIN {
             }
 
             foreach my $e ( keys %$commandset ) {
-                $getcommand = qx/which $e/; chomp $getcommand;
-                $getcommand = q() unless -x $getcommand;
-                $getcommand ||= shift [ grep { $_ .= $e; $_ if -x $_ } @$searchpath ];
+                $getcommand   = qx/which $e/; chomp $getcommand;
+                $getcommand   = q() unless -x $getcommand;
+                $getcommand ||= shift @{ [ grep { $_ .= $e; $_ if -x $_ } @$searchpath ] };
                 next unless $getcommand;
 
                 $getcommand .= ' '.$commandset->{ $e };
