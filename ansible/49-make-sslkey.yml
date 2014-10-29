@@ -46,7 +46,7 @@
         chdir={{ directory }}/{{ item.x509.commonname }}
         creates={{ item.fileprefix }}-WITH-PASSPHRASE.KEY
         openssl genrsa -{{ algorithm }} -out {{ item.fileprefix }}-WITH-PASSPHRASE.KEY
-          -passout pass:{{ item.passphrase }} {{ item.seckeysize }}
+        -passout pass:{{ item.passphrase }} {{ item.seckeysize }}
       with_items: certs
 
     - name: make-sslkey | Each private key should be readable with pass phrase
@@ -55,7 +55,7 @@
       shell: >
         chdir={{ directory }}/{{ item.x509.commonname }}
         openssl rsa -in {{ item.fileprefix }}-WITH-PASSPHRASE.KEY -text
-          -passin pass:{{ item.passphrase }}
+        -passin pass:{{ item.passphrase }}
       with_items: certs
 
     - name: make-sslkey | Each private key without passphrase should be created
@@ -63,8 +63,8 @@
         chdir={{ directory }}/{{ item.x509.commonname }}
         creates={{ item.fileprefix }}-WITHOUT-PASSPHRASE.KEY
         openssl rsa -in {{ item.fileprefix }}-WITH-PASSPHRASE.KEY 
-          -out {{ item.fileprefix }}-WITHOUT-PASSPHRASE.KEY
-          -passin pass:{{ item.passphrase }}
+        -out {{ item.fileprefix }}-WITHOUT-PASSPHRASE.KEY
+        -passin pass:{{ item.passphrase }}
       with_items: certs
 
     - name: make-sslkey | Each private key without pass phrase should be readable
@@ -95,10 +95,10 @@
         chdir={{ directory }}/{{ item.x509.commonname }}
         creates={{ item.fileprefix }}.SUBJ
         printf "/C=%s/ST=%s/L=%s/O=%s/OU=%s/CN=%s/emailAddress=%s/"
-              '{{ item.x509.country }}' '{{ item.x509.state }}' '{{ item.x509.city }}'
-              '{{ item.x509.company }}' '{{ item.x509.section }}'
-              '{{ item.x509.commonname }}' '{{ item.x509.email }}'
-              | tr -d '"' | tr -d "'" > {{ item.fileprefix }}.SUBJ
+        '{{ item.x509.country }}' '{{ item.x509.state }}' '{{ item.x509.city }}'
+        '{{ item.x509.company }}' '{{ item.x509.section }}'
+        '{{ item.x509.commonname }}' '{{ item.x509.email }}'
+        | tr -d '"' | tr -d "'" > {{ item.fileprefix }}.SUBJ
       with_items: certs
 
     - name: make-sslkey | Each CSR should be created
@@ -106,8 +106,8 @@
         chdir={{ directory }}/{{ item.x509.commonname }}
         creates={{ item.fileprefix }}.CSR
         openssl req -new -key {{ item.fileprefix }}.KEY -out {{ item.fileprefix }}.CSR 
-          -days {{ item.expiration }}
-          -subj "`cat {{ item.fileprefix }}.SUBJ`"
+        -days {{ item.expiration }}
+        -subj "`cat {{ item.fileprefix }}.SUBJ`"
       with_items: certs
 
     - name: make-sslkey | Each CSR should be validated
@@ -123,7 +123,7 @@
         chdir={{ directory }}/{{ item.x509.commonname }}
         creates={{ item.fileprefix }}.CRT
         openssl x509 -req -in {{ item.fileprefix }}.CSR -days {{ item.expiration }}
-          -signkey {{ item.fileprefix }}.KEY -out {{ item.fileprefix }}.CRT
+        -signkey {{ item.fileprefix }}.KEY -out {{ item.fileprefix }}.CRT
       with_items: certs
 
     - name: make-sslkey | Each certificate should be validated
