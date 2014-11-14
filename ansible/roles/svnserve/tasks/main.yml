@@ -7,6 +7,7 @@
 - include: install-pkg.yml
 - include: create-user.yml
 - include: make-config.yml
+- include: boot-script.yml
 
 - name: Start svnserve
   when: svnserve.started == True
