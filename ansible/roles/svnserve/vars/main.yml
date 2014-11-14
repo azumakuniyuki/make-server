@@ -1,0 +1,27 @@
+#                                             __                    
+#  _____   ___ __  ___  ___ _ ____   _____   / /_   ____ _ _ __ ___ 
+# / __\ \ / / '_ \/ __|/ _ \ '__\ \ / / _ \ / /\ \ / / _` | '__/ __|
+# \__ \\ V /| | | \__ \  __/ |   \ V /  __// /  \ V / (_| | |  \__ \
+# |___/ \_/ |_| |_|___/\___|_|    \_/ \___/_/    \_/ \__,_|_|  |___/
+#                                                                   
+svnserve:
+  started: True
+  initscript: svnserve
+  rotatefile: svnserve
+  workingdir: /usr/local/src
+  serverroot: /home/subversion
+  repository:
+    - repo1
+    - repo2
+  user:
+    username: svnroot
+    password: ''
+    uid: 3690
+    gid: 3690
+    group: svnroot
+    shell: /sbin/nolgin
+    comment: "'svn administrator'"
+  conf:
+    svnlogfile: /var/log/svnserve.log
+    listenport: 3690
+

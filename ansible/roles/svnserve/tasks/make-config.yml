@@ -1,0 +1,87 @@
+#                                             ___            _        
+#  _____   ___ __  ___  ___ _ ____   _____   / / |_ __ _ ___| | _____ 
+# / __\ \ / / '_ \/ __|/ _ \ '__\ \ / / _ \ / /| __/ _` / __| |/ / __|
+# \__ \\ V /| | | \__ \  __/ |   \ V /  __// / | || (_| \__ \   <\__ \
+# |___/ \_/ |_| |_|___/\___|_|    \_/ \___/_/   \__\__,_|___/_|\_\___/
+#                                                                     
+# make-config
+- name: make-config | Directory for svnserve should be created
+  file: >
+    path={{ svnserve.serverroot }}
+    owner={{ svnserve.user.username }}
+    group={{ svnserve.user.group }}
+    mode=0755
+    state=directory
+
+- name: make-config | Config directory should be created
+  file: >
+    path={{ svnserve.serverroot }}/conf
+    owner={{ svnserve.user.username }}
+    group={{ svnserve.user.group }}
+    mode=0755
+    state=directory
+
+- name: make-config | Repository should be created
+  file: >
+    path={{ svnserve.serverroot }}/repos
+    owner={{ svnserve.user.username }}
+    group={{ svnserve.user.group }}
+    mode=0755
+    state=directory
+
+- name: make-config | Each repository should be created(1)
+  register: mkdir_reposroot
+  file: >
+    path={{ svnserve.serverroot }}/repos/{{ item }}
+    owner={{ svnserve.user.username }}
+    group={{ svnserve.user.group }}
+    mode=0755
+    state=directory
+  with_items: svnserve.repository
+
+- name: make-config | Each repository should be created(2)
+  when: mkdir_reposroot.changed
+  shell: >
+    chdir={{ svnserve.serverroot }}/repos
+    svnadmin create ./{{ item }}
+    creates={{ item }}/conf
+  with_items: svnserve.repository
+
+- name: make-config | Deploy {{ svnserve.serverroot }}/conf
+  notify: Restart svnserve
+  template: >
+    src=home/subversion/conf/{{ item }}.j2
+    dest={{ svnserve.serverroot }}/conf/{{ item }}
+    owner={{ svnserve.user.username }}
+    group={{ svnserve.user.group }}
+    mode=0644
+    backup=yes
+  with_items:
+    - svnserve.conf
+    - authz
+
+- name: make-config | Deploy {{ svnserve.serverroot }}/conf/passwd
+  notify: Restart svnserve
+  template: >
+    src=home/subversion/conf/passwd.j2
+    dest={{ svnserve.serverroot }}/conf/passwd
+    owner={{ svnserve.user.username }}
+    group={{ svnserve.user.group }}
+    mode=0600
+    backup=yes
+
+- name: make-config | Deploy /etc/sysconfig/svnserve
+  when: ansible_os_family == "RedHat"
+  notify: Restart svnserve
+  template: >
+    src=etc/sysconfig/svnserve.j2
+    dest=/etc/sysconfig/svnserve
+    backup=yes
+
+- name: make-config | Deploy log rotation script
+  when: ansible_system == "Linux"
+  template: >
+    src=etc/logrotate.d/svnserve.j2
+    dest=/etc/logrotate.d/{{ svnserve.rotatefile }}
+    backup=yes
+

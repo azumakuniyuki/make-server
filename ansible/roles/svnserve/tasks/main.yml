@@ -1,0 +1,19 @@
+#                                             ___            _        
+#  _____   ___ __  ___  ___ _ ____   _____   / / |_ __ _ ___| | _____ 
+# / __\ \ / / '_ \/ __|/ _ \ '__\ \ / / _ \ / /| __/ _` / __| |/ / __|
+# \__ \\ V /| | | \__ \  __/ |   \ V /  __// / | || (_| \__ \   <\__ \
+# |___/ \_/ |_| |_|___/\___|_|    \_/ \___/_/   \__\__,_|___/_|\_\___/
+#                                                                     
+- include: install-pkg.yml
+- include: create-user.yml
+- include: make-config.yml
+
+- name: Start svnserve
+  when: svnserve.started == True
+  service: name={{ svnserve.initscript }} state=started
+
+- name: Stop svnserve
+  when: svnserve.started == False
+  service: name={{ svnserve.initscript }} state=stopped
+
+

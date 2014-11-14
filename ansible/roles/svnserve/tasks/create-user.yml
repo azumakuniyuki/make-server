@@ -1,0 +1,24 @@
+#                                             ___            _        
+#  _____   ___ __  ___  ___ _ ____   _____   / / |_ __ _ ___| | _____ 
+# / __\ \ / / '_ \/ __|/ _ \ '__\ \ / / _ \ / /| __/ _` / __| |/ / __|
+# \__ \\ V /| | | \__ \  __/ |   \ V /  __// / | || (_| \__ \   <\__ \
+# |___/ \_/ |_| |_|___/\___|_|    \_/ \___/_/   \__\__,_|___/_|\_\___/
+#                                                                     
+# create-user
+- name: create-user | Group {{ svnserve.user.group }}({{ svnserve.user.gid }}) should be created
+  group: >
+    name={{ svnserve.user.group }}
+    gid={{ svnserve.user.gid }}
+    state=present
+
+- name: create-user | User {{ svnserve.user.username }}({{ svnserve.user.uid }}) should be created
+  user: >
+    name={{ svnserve.user.username }} 
+    uid={{ svnserve.user.uid }}
+    group={{ svnserve.user.group }} 
+    shell={{ svnserve.user.shell }}
+    home={{ svnserve.serverroot }}
+    comment={{ svnserve.user.comment }}
+    createhome=no
+    state=present
+

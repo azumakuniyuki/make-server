@@ -1,0 +1,14 @@
+{{ svnserve.conf.svnlogfile }}
+{
+    daily
+    rotate 64
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+        service svnserve restart
+    endscript
+}
+
+
