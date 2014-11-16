@@ -26,6 +26,7 @@
     - dovecot
     - sendmail/local
     - sendmail/system
+    - svnserve
     - netqmail
     - vsftpd
     - cleanup
