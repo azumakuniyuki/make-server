@@ -30,6 +30,7 @@
         groups=wheel
         shell=/bin/bash
         home={{ conf.home }}/{{ user.username }}
+        password=''
         createhome=yes
         state=present
 
