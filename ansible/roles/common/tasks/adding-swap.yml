@@ -14,6 +14,7 @@
   apt:  name=bc state=present
 
 - name: adding-swap | Calculate swap space size
+  when: ansible_system == "Linux"
   register: swap0
   changed_when: swap0.rc < 0
   shell: echo '( {{ ansible_memtotal_mb }} / 2 * 1024 )' | bc
