@@ -8,12 +8,20 @@
   group: name=wheel system=yes state=present
 
 - name: main | Deploy .profile and .bash_profile into /root
+  when: ansible_system == "Linux"
   template: >
     src=root/dot.{{ item }}.j2
     dest=/root/.{{ item }}
   with_items:
     - profile
     - bash_profile
+    - exrc
+
+- name: main | Deploy .exrc into /root
+  template: >
+    src=root/dot.{{ item }}.j2
+    dest=/root/.{{ item }}
+  with_items:
     - exrc
 
 - include: adding-swap.yml
