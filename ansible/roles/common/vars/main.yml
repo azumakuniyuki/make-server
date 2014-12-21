@@ -22,7 +22,7 @@ local:
 unixusers:
   - username: admin
     password: $1$HakataNo$9.s0dLxBeUTgTarKe3uU//
-    shell: /bin/bash
+    shell: /bin/sh
     group: admin
     groups: wheel
     home: /home/admin
