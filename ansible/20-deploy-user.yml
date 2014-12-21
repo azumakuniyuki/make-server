@@ -28,7 +28,7 @@
         uid={{ user.uid }}
         group={{ user.group }}
         groups=wheel
-        shell=/bin/bash
+        shell=/bin/sh
         home={{ conf.home }}/{{ user.username }}
         password=''
         createhome=yes
