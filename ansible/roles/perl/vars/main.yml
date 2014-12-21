@@ -6,7 +6,7 @@
 # |_|                                         
 perl:
   rebuild: False
-  version: 5.16.3
+  version: 5.20.1
   install: /usr/local
   workingdir: /usr/local/src
 
