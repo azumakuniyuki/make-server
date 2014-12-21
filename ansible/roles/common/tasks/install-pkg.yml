@@ -40,7 +40,7 @@
   with_items:
     - bash
     - wget
-    - nkf
+    - ja-nkf
 
 - name: install-pkg | RedHat | Each package for development should be installed
   when: ansible_os_family == "RedHat"
