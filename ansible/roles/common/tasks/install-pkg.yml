@@ -5,6 +5,43 @@
 #  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/   \__\__,_|___/_|\_\___/
 #
 # install-pkg
+- name: install-pkg | FreeBSD | Each package for development should be installed
+  when: ansible_os_family == "FreeBSD"
+  pkgng: name={{ item }} state=present
+  with_items:
+    - autoconf
+    - automake
+    - gcc
+    - gettext
+    - git
+    - ncurses
+    - openssl
+    - patch
+    - pcre
+    - readline
+
+- name: install-pkg | FreeBSD | Each package for archive should be installed
+  when: ansible_os_family == "FreeBSD"
+  pkgng: name={{ item }} state=present
+  with_items: 
+    - bzip2
+    - zip
+
+- name: install-pkg | RedHat | Each package for Python should be installed
+  when: ansible_os_family == "RedHat"
+  pkgng: name={{ item }} state=present
+  with_items:
+    - py27-pip
+    - py27-virtualenv
+
+- name: install-pkg | FreeBSD | Each tool should be installed
+  when: ansible_os_family == "FreeBSD"
+  pkgng: name={{ item }} state=present
+  with_items:
+    - bash
+    - wget
+    - nkf
+
 - name: install-pkg | RedHat | Each package for development should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
@@ -57,7 +94,7 @@
   when: ansible_os_family == "Debian"
   apt: pkg={{ item }} state=present
   with_items:
-    - autotools-devel
+    - autotools-dev
     - autoconf2.59
     - automake1.11
     - gcc
