@@ -19,6 +19,7 @@
     - munin/node
     - munin/httpd
     - mysql/5.5
+    - opensmtpd
     - postgresql
     - php/5.3
     - php/5.5
