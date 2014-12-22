@@ -5,20 +5,30 @@
 #  \___/| .__/ \___|_| |_|____/|_|  |_| |_| |_|   |____/_/   \__\__,_|___/_|\_\___/
 #       |_|                                                                        
 # boot-script
-- name: 'boot-script | RedHat | Deploy /etc/init.d/opensmtpd'
+- name: boot-script | RedHat | Deploy /etc/init.d/{{ opensmtpd.initscript }}
   when: ansible_os_family == "RedHat"
   template: >
     src=etc/init.d/opensmtpd.RedHat.j2
-    dest=/etc/init.d/opensmtpd
+    dest=/etc/init.d/{{ opensmtpd.initscript }}
     mode=0755
     owner=root
     group=root
 
-- name: 'boot-script | RedHat | Install /etc/rc.d/init.d/opensmtpd'
+- name: boot-script | RedHat | Install /etc/rc.d/init.d/{{ opensmtpd.initscript }}
   when: ansible_os_family == "RedHat"
   shell: >
-    /sbin/chkconfig --add opensmtpd
-    creates=/etc/rc.d/rc0.d/K30opensmtpd
+    /sbin/chkconfig --add {{ opensmtpd.initscript }}
+    creates=/etc/rc.d/rc0.d/K30{{ opensmtpd.initscript }}
 
-- name: 'boot-script | Turn on init script'
-  service: name=opensmtpd enabled=yes
+- name: boot-script | FreBSD | Deploy /usr/local/etc/rc.d/{{ opensmtpd.initscript }}
+  when: ansible_os_family == "FreeBSD"
+  template: >
+    src=etc/init.d/opensmtpd.FreeBSD.j2
+    dest=/usr/local/etc/rc.d/{{ opensmtpd.initscript }}
+    mode=0755
+    owner=root
+    group=wheel
+
+- name: boot-script | Turn on init script
+  service: name={{ opensmtpd.initscript }} enabled=yes
+

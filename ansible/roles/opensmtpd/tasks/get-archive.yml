@@ -14,12 +14,12 @@
   get_url: >
     url=https://www.opensmtpd.org/archives/opensmtpd-{{ opensmtpd.version }}.tar.gz
     validate_certs=no
-    dest={{ local.src }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
+    dest={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
 
-- name: get-archive | Extract {{ local.src }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
+- name: get-archive | Extract {{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
   unarchive: >
-    src={{ local.src }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
-    dest={{ local.src }}
+    src={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
+    dest={{ opensmtpd.workingdir }}
     copy=no
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -27,13 +27,13 @@
 # ||__|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-- name: get-archive | Download maildrop {{ maildrop.version }} at {{ local.src }}
+- name: get-archive | Download maildrop {{ maildrop.version }} at {{ opensmtpd.workingdir }}
   get_url: >
     url=http://cznic.dl.sourceforge.net/project/courier/maildrop/{{ maildrop.version }}/maildrop-{{ maildrop.version }}.tar.bz2
-    dest={{ local.src }}/maildrop-{{ maildrop.version }}.tar.bz2
+    dest={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
 
-- name: get-archive | Extract {{ local.src }}/maildrop-{{ maildrop.version }}.tar.bz2
+- name: get-archive | Extract {{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
   unarchive: >
-    src={{ local.src }}/maildrop-{{ maildrop.version }}.tar.bz2
-    dest={{ local.src }}
+    src={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
+    dest={{ opensmtpd.workingdir }}
     copy=no

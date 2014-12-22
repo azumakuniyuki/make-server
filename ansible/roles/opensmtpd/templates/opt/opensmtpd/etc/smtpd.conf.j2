@@ -6,7 +6,7 @@ myname = "{{ ansible_fqdn }}"
 # To accept external mail, replace with: listen on all
 # listen on interface [port port] [tls | smtps] [certificate name] [enable auth]
 listen on 127.0.0.1 hostname "localhost"
-listen on {{ ansible_eth0.ipv4.address }} hostname $myname
+listen on {{ ansible_default_ipv4.address }} hostname $myname
 
 table aliases db:{{ opensmtpd.serverroot }}/etc/aliases.db
 table authinfo db:{{ opensmtpd.serverroot }}/etc/authinfo.db

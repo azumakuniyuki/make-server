@@ -13,28 +13,39 @@
 - name: compile-src | bootstrap script should have been executed
   shell: >
     chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
-    ./bootstrap
     creates=configure
+    ./bootstrap
 
 - name: compile-src | OpenSMTPD should have been configured
+  when: ansible_system == "Linux"
   shell: >
     chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
+    creates=Makefile
     /bin/sh configure
     --prefix={{ opensmtpd.serverroot }}
+
+- name: compile-src | OpenSMTPD should have been configured
+  when: ansible_os_family == "FreeBSD"
+  shell: >
+    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
     creates=Makefile
+    CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+    /bin/sh configure
+    --prefix={{ opensmtpd.serverroot }}
+    --with-libevent-dir=/usr/local
 
 - name: compile-src | REBUILD | make clean
   when: opensmtpd.rebuild == True
   shell: >
-    make clean
     chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}/
+    make clean
 
 - name: compile-src | OpenSMTPD should have been made
   register: make_opensmtpd_binary
   shell: >
     chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
-    make
     creates=./mk/smtpd/smtpd
+    make
 
 - name: compile-src | OpenSMTPD files should have been installed
   when: make_opensmtpd_binary.changed
@@ -50,13 +61,15 @@
 - name: compile-src | maildrop | REBUILD | make clean
   when: maildrop.rebuild == True
   shell: >
-    make clean
     chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}/
     removes=maildrop/maildrop
+    make clean
 
 - name: compile-src | maildrop | maildrop should have been configured
   shell: >
     chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}
+    creates=Makefile
+    CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
     /bin/sh ./configure
     --prefix={{ maildrop.install }}
     --bindir={{ maildrop.install }}/bin
@@ -66,20 +79,19 @@
     --enable-keep-fromline=1
     --enable-unicode
     --with-etcdir={{ maildrop.install }}/etc
-    creates=Makefile
 
 - name: compile-src | maildrop | Build maildrop {{ maildrop.version }}
   register: make_maildrop_binary
   shell: >
-    make
     chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}
     creates=maildrop/maildrop
+    make
 
 - name: compile-src | maildrop | Install maildrop {{ maildrop.version }}
   when: make_maildrop_binary.changed
   shell: >
-    make install-strip
     chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}
+    make install-strip
 
 - name: compile-src | maildrop | Change owner each binary
   when: make_maildrop_binary.changed

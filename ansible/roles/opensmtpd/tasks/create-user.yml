@@ -6,6 +6,7 @@
 #       |_|                                                                        
 # create-user.yml
 - name: create-user | /var/empty should be created
+  when: ansible_system == "Linux"
   file: >
     path=/var/empty
     mode=0755

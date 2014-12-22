@@ -6,7 +6,7 @@
 #       |_|                                                                      
 #
 opensmtpd:
-  started: False
+  started: True
   rebuild: False
   version: 5.4.2p1
   initscript: opensmtpd

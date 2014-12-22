@@ -5,6 +5,24 @@
 #  \___/| .__/ \___|_| |_|____/|_|  |_| |_| |_|   |____/_/   \__\__,_|___/_|\_\___/
 #       |_|                                                                        
 # install-pkg
+- name: install-pkg | FreeBSD | Packages required by OpenSMTPD should be installed
+  when: ansible_os_family == "FreeBSD"
+  pkgng: name={{ item }} state=present
+  with_items:
+    - autoconf
+    - automake
+    - bison
+    - byacc
+    - cyrus-sasl
+    - cyrus-sasl-gssapi
+    - cyrus-sasl-saslauthd
+    - db48
+    - gcc
+    - libevent2
+    - libtool
+    - openssl
+    - pcre
+
 - name: install-pkg | RedHat | Packages required by OpenSMTPD should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present

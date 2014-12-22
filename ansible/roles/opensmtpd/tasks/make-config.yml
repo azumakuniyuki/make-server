@@ -9,11 +9,13 @@
   template: >
     src=opt/opensmtpd/etc/smtpd.conf.j2
     dest={{ opensmtpd.serverroot }}/etc/smtpd.conf
+    backup=yes
 
 - name: make-config | create map files in {{ opensmtpd.serverroot }}/etc
   template: >
     src=opt/opensmtpd/etc/{{ item }}.j2
     dest={{ opensmtpd.serverroot }}/etc/{{ item }}
+    backup=yes
   with_items:
     - aliases
     - authinfo
@@ -24,8 +26,8 @@
 - name: make-config | makemap db maps in {{ opensmtpd.serverroot }}/etc
   shell: >
     chdir={{ opensmtpd.serverroot }}
-    ./sbin/makemap etc/{{ item }}
     creates={{ item }}.db
+    ./sbin/makemap etc/{{ item }}
   with_items:
     - aliases
     - authinfo
