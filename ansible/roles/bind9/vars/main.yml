@@ -7,7 +7,8 @@
 bind:
   started: True
   rebuild: False
-  version: 9.10.1
+  version: 9.10.1-P2
+  updateonly: False
   changeroot: /opt/named
   serverroot: /opt/named
   openssldir: /opt/openssl
