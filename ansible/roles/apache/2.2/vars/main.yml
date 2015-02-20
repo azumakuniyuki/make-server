@@ -8,6 +8,7 @@ apache:
   started: False
   rebuild: False
   version: 2.2.29
+  updateonly: False
   initscript: apache
   rotatefile: apache
   serverroot: /opt/httpd
