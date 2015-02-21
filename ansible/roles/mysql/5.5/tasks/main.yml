@@ -5,12 +5,13 @@
 # |_|  |_|\__, |____/ \__\_\_____|   |____(_)____/_/   \__\__,_|___/_|\_\___/
 #         |___/                                                              
 - include: install-pkg.yml
+  when: mysql.updateonly == False
 - include: create-user.yml
-  when: mysql.daemon == True
+  when: mysql.daemon == True and mysql.updateonly == False
 - include: get-archive.yml
 - include: compile-src.yml
 - include: make-config.yml
-  when: mysql.daemon == True
+  when: mysql.daemon == True and mysql.updateonly == False
 - include: boot-script.yml
   when: mysql.daemon == True
 

@@ -8,6 +8,7 @@ mysql:
   started: True
   rebuild: False
   version: 5.5.39
+  updateonly: False
   initscript: mysql
   rotatefile: mysql
   serverroot: /opt/mysql
