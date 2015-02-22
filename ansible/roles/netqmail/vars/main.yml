@@ -8,6 +8,7 @@ qmail:
   started: False
   rebuild: False
   version: 1.06
+  updateonly: False
   initscript: qmail
   serverroot: /var/qmail
   workingdir: /usr/local/src
