@@ -8,6 +8,7 @@ nginx:
   started: False
   rebuild: False
   version: 1.6.1
+  updateonly: False
   initscript: nginx
   rotatefile: nginx
   serverroot: /opt/nginx

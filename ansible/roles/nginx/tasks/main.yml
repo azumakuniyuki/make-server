@@ -6,10 +6,13 @@
 #        |___/                                          
 #
 - include: install-pkg.yml
+  when: nginx.updateonly == False
 - include: create-user.yml
+  when: nginx.updateonly == False
 - include: get-archive.yml
 - include: compile-src.yml
 - include: make-config.yml
+  when: nginx.updateonly == False
 - include: boot-script.yml
 
 - name: Start nginx httpd
