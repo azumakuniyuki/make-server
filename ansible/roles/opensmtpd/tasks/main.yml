@@ -6,10 +6,13 @@
 #       |_|                                                                        
 #
 - include: install-pkg.yml
+  when: opensmtpd.updateonly == False
 - include: create-user.yml
+  when: opensmtpd.updateonly == False
 - include: get-archive.yml
 - include: compile-src.yml
 - include: make-config.yml
+  when: opensmtpd.updateonly == False
 - include: boot-script.yml
 
 - name: Start OpenSMTPD
