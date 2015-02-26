@@ -8,6 +8,7 @@ sendmail:
   started: True
   rebuild: False
   version: 8.15.1
+  updateonly: False
   initscript: sendmail
   configroot: /etc/mail
   workingdir: /usr/local/src
