@@ -5,10 +5,13 @@
 # |____/ \___|_| |_|\__,_|_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
 #                                                                        
 - include: install-pkg.yml
+  when: sendmail.updateonly == False
 - include: create-user.yml
+  when: sendmail.updateonly == False
 - include: get-archive.yml
 - include: compile-src.yml
 - include: make-config.yml
+  when: sendmail.updateonly == False
 - include: boot-script.yml
 
 - name: Start Sendmail

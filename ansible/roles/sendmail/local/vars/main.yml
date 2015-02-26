@@ -8,6 +8,7 @@ sendmail:
   started: False
   rebuild: False
   version: 8.15.1
+  udpateonly: False
   serverroot: /opt/sendmail
   workingdir: /usr/local/src
   initscript: sendmail
