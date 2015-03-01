@@ -8,6 +8,7 @@ vsftpd:
   started: True
   rebuild: False
   version: 3.0.2
+  updateonly: False
   initscript: vsftpd
   rotatefile: vsftpd
   serverroot: /opt/vsftpd

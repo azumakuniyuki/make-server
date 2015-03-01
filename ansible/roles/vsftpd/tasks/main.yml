@@ -5,12 +5,16 @@
 #   \_/ |___/_|  \__| .__/ \__,_/_/   \__\__,_|___/_|\_\___/
 #                   |_|                                     
 - include: install-pkg.yml
+  when: vsftpd.updateonly == False
 - include: create-user.yml
+  when: vsftpd.updateonly == False
 - include: get-archive.yml
 - include: compile-src.yml
 - include: make-config.yml
+  when: vsftpd.updateonly == False
 - include: boot-script.yml
 - include: load-module.yml
+  when: vsftpd.updateonly == False
 
 - name: Start vsftpd Server
   when: vsftpd.started == True
