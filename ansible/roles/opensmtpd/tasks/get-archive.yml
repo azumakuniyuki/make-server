@@ -20,6 +20,7 @@
   unarchive: >
     src={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
     dest={{ opensmtpd.workingdir }}
+    creates={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}/Makefile
     copy=no
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -36,4 +37,6 @@
   unarchive: >
     src={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
     dest={{ opensmtpd.workingdir }}
+    creates={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}/Makefile
     copy=no
+
