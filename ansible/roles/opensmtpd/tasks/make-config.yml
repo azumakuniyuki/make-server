@@ -26,7 +26,7 @@
 - name: make-config | makemap db maps in {{ opensmtpd.serverroot }}/etc
   shell: >
     chdir={{ opensmtpd.serverroot }}
-    creates={{ item }}.db
+    creates=etc/{{ item }}.db
     ./sbin/makemap etc/{{ item }}
   with_items:
     - aliases
