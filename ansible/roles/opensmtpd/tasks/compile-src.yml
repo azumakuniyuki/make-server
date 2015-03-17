@@ -16,7 +16,7 @@
     creates=configure
     ./bootstrap
 
-- name: compile-src | OpenSMTPD should have been configured
+- name: compile-src | Linux | OpenSMTPD should have been configured
   when: ansible_system == "Linux"
   shell: >
     chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
@@ -24,7 +24,7 @@
     /bin/sh configure
     --prefix={{ opensmtpd.serverroot }}
 
-- name: compile-src | OpenSMTPD should have been configured
+- name: compile-src | FreeBSD | OpenSMTPD should have been configured
   when: ansible_os_family == "FreeBSD"
   shell: >
     chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
@@ -62,7 +62,7 @@
   when: maildrop.rebuild == True
   shell: >
     chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}/
-    removes=maildrop/maildrop
+    removes=libs/maildrop/maildrop
     make clean
 
 - name: compile-src | maildrop | maildrop should have been configured
@@ -84,7 +84,7 @@
   register: make_maildrop_binary
   shell: >
     chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}
-    creates=maildrop/maildrop
+    creates=libs/maildrop/maildrop
     make
 
 - name: compile-src | maildrop | Install maildrop {{ maildrop.version }}
