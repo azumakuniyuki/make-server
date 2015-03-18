@@ -168,6 +168,11 @@ down: vagrant
 restart: vagrant
 	vagrant reload
 
+push:
+	for G in `grep -E '^[[]remote' .git/config | cut -d' ' -f2 | tr -d '"]'`; do \
+		git push --tags $$G master; \
+	done
+
 clean:
 	for V in `/bin/ls -1 ~/*.retry 2> /dev/null`; do rm -f $$V; done
 
