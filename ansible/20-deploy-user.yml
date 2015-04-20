@@ -5,16 +5,16 @@
 #  \__,_|\___| .__/|_|\___/ \__, |      \__,_|___/\___|_|   
 #            |_|            |___/                           
 - hosts: all
-  user:  root
-  sudo:  True
+  user: root
+  sudo: True
   vars:
     conf:
       home: /home
     user:
       username: deploy
       group: deploy
-      uid:  1000
-      gid:  1000
+      uid: 1000
+      gid: 1000
   tasks:
     - name: deploy-user | Group for deployment should be created
       group: >
