@@ -1,0 +1,13 @@
+{{ apache.serverroot }}/logs/*_log
+{
+    daily
+    rotate 64
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+	{{ apache.serverroot }}/bin/apachectl restart > /dev/null 2> /dev/null || true
+    endscript
+}
+

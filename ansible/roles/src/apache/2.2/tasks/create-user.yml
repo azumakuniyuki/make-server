@@ -1,0 +1,32 @@
+#     _                     _             ___            _        
+#    / \   _ __   __ _  ___| |__   ___   / / |_ __ _ ___| | _____ 
+#   / _ \ | '_ \ / _` |/ __| '_ \ / _ \ / /| __/ _` / __| |/ / __|
+#  / ___ \| |_) | (_| | (__| | | |  __// / | || (_| \__ \   <\__ \
+# /_/   \_\ .__/ \__,_|\___|_| |_|\___/_/   \__\__,_|___/_|\_\___/
+#         |_|                                                     
+# create-user                                                        
+- name: create-user | Group {{ apache.user.group }}({{ apache.user.gid }}) should be created
+  group: >
+    name={{ apache.user.group }}
+    gid={{ apache.user.gid }}
+    state=present
+
+- name: create-user | Other groups should exist
+  group: >
+    name={{ item.name }}
+    gid={{ item.gid }}
+    state=present
+  with_items: apache.user.groups
+
+- name: create-user | User {{ apache.user.username }}({{ apache.user.uid }}) should be created
+  user: >
+    name={{ apache.user.username }} 
+    uid={{ apache.user.uid }}
+    group={{ apache.user.group }} 
+    groups={{ apache.user.groups[0].name }} 
+    shell={{ apache.user.shell }}
+    home={{ apache.serverroot }}
+    comment={{ apache.user.comment }}
+    createhome=no
+    state=present
+

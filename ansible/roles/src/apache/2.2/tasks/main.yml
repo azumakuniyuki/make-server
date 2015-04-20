@@ -1,0 +1,25 @@
+#     _                     _             ___            _        
+#    / \   _ __   __ _  ___| |__   ___   / / |_ __ _ ___| | _____ 
+#   / _ \ | '_ \ / _` |/ __| '_ \ / _ \ / /| __/ _` / __| |/ / __|
+#  / ___ \| |_) | (_| | (__| | | |  __// / | || (_| \__ \   <\__ \
+# /_/   \_\ .__/ \__,_|\___|_| |_|\___/_/   \__\__,_|___/_|\_\___/
+#         |_|                                                     
+#
+- include: install-pkg.yml
+  when: apache.updateonly == False
+- include: create-user.yml
+  when: apache.updateonly == False
+- include: get-archive.yml
+- include: compile-src.yml
+- include: make-config.yml
+  when: apache.updateonly == False
+- include: boot-script.yml
+
+- name: Start Apache httpd
+  when: apache.started == True
+  service: name={{ apache.initscript }} state=started
+
+- name: Stop apache httpd
+  when: apache.started == False
+  service: name={{ apache.initscript }} state=stopped
+

@@ -1,0 +1,49 @@
+#     _                     _             ___            _        
+#    / \   _ __   __ _  ___| |__   ___   / / |_ __ _ ___| | _____ 
+#   / _ \ | '_ \ / _` |/ __| '_ \ / _ \ / /| __/ _` / __| |/ / __|
+#  / ___ \| |_) | (_| | (__| | | |  __// / | || (_| \__ \   <\__ \
+# /_/   \_\ .__/ \__,_|\___|_| |_|\___/_/   \__\__,_|___/_|\_\___/
+#         |_|                                                     
+# make-config
+- name: make-config | Deploy {{ apache.serverroot }}/conf/httpd.conf
+  notify: Restart Apache
+  template: >
+    src=opt/apache/conf/httpd.conf.j2
+    dest={{ apache.serverroot }}/conf/httpd.conf
+    backup=yes
+
+- name: make-config | Deploy {{ apache.serverroot }}/conf/extra
+  notify: Restart Apache
+  template: >
+    src=opt/apache/conf/extra/httpd-{{ item }}.conf.j2
+    dest={{ apache.serverroot }}/conf/extra/httpd-{{ item }}.conf
+    backup=yes
+  with_items:
+    - info
+    - mpm
+    - vhosts
+
+- name: make-config | Enable PHP5 module(0)
+  register: libphp5
+  changed_when: libphp5.rc < 0
+  ignore_errors: True
+  shell: >
+    chdir={{ apache.serverroot }}/modules
+    test -e libphp5.so
+
+- name: make-config | Enable PHP5 module(1)
+  when: libphp5|success
+  replace: >
+    backup=yes
+    dest={{ apache.serverroot }}/conf/httpd.conf
+    regexp='^# LoadModule php5_module.*$'
+    replace='LoadModule php5_module modules/libphp5.so'
+    validate='{{ apache.serverroot }}/bin/apachectl -f %s -t'
+
+- name: make-config | Deploy log rotation script
+  when: ansible_system == "Linux"
+  template: >
+    src=etc/logrotate.d/apache.j2
+    dest=/etc/logrotate.d/{{ apache.rotatefile }}
+    backup=no
+
