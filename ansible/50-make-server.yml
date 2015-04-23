@@ -8,26 +8,26 @@
   sudo:  True
   roles:
     - common
-    - firewall
-    - openssl
-    - perl
-    - cpanm
-    - bind9
-    - apache/2.2
-    - nginx
-    - munin/cron
-    - munin/node
-    - munin/httpd
-    - mysql/5.5
-    - opensmtpd
-    - postgresql
-    - php/5.3
-    - php/5.5
-    - phpmyadmin
-    - dovecot
-    - sendmail/local
-    - sendmail/system
-    - svnserve
-    - netqmail
-    - vsftpd
+    - src/firewall
+    - src/openssl
+    - src/perl
+    - src/cpanm
+    - src/bind9
+    - src/apache/2.2
+    - src/nginx
+    - pkg/munin/cron
+    - pkg/munin/node
+    - pkg/munin/httpd
+    - src/mysql/5.5
+    - src/opensmtpd
+    - src/postgresql
+    - src/php/5.3
+    - src/php/5.5
+    - src/phpmyadmin
+    - src/dovecot
+    - src/sendmail/local
+    - src/sendmail/system
+    - pkg/svnserve
+    - src/netqmail
+    - src/vsftpd
     - cleanup
