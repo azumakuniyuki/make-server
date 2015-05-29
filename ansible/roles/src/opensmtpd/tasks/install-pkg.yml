@@ -18,6 +18,7 @@
     - cyrus-sasl-saslauthd
     - db48
     - gcc
+    - libasr
     - libevent2
     - libtool
     - openssl
