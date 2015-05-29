@@ -51,7 +51,7 @@
   when: make_opensmtpd_binary.changed
   shell: >
     chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
-    make install
+    LN_S='ln -fs' make install
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||m |||a |||i |||l |||d |||r |||o |||p ||
