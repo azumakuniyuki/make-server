@@ -8,7 +8,7 @@
 opensmtpd:
   started: True
   rebuild: False
-  version: 5.4.2p1
+  version: 5.4.5
   updateonly: False
   initscript: opensmtpd
   serverroot: /opt/opensmtpd
