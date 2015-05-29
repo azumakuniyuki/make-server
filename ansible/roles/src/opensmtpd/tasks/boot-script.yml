@@ -32,3 +32,9 @@
 - name: boot-script | Turn on init script
   service: name={{ opensmtpd.initscript }} enabled=yes
 
+- name: boot-script | Stop sendmail
+  service: name=sendmail state=stopped
+
+- name: boot-script | Turn off sendmail
+  service: name=sendmail enabled=no
+
