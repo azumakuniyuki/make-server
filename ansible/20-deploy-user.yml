@@ -12,6 +12,7 @@
       home: /home
     user:
       username: deploy
+      password: $5$cNynTWN1$UFS1hSpKKOHcArUeHwypn9SQKz19oC7DOVCwUTEzUFB
       group: deploy
       uid: 1000
       gid: 1000
@@ -30,7 +31,7 @@
         groups=wheel
         shell=/bin/sh
         home={{ conf.home }}/{{ user.username }}
-        password=''
+        password={{ user.password }}
         createhome=yes
         state=present
 
