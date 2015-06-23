@@ -141,7 +141,7 @@ start()
     RETVAL=$?
     if [ $RETVAL -eq 0 ]; then
       rm -f /var/run/{named,named-sdb}.pid;
-      ln -s $ROOTDIR/var/run/named/"$named".pid /var/run/"$named".pid;
+      ln -s $ROOTDIR/var/run/"$named".pid /var/run/"$named".pid;
     fi;
 
     if [ -n "`/sbin/pidof -o %PPID "$named"`" ]; then
