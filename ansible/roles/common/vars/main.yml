@@ -28,5 +28,4 @@ unixusers:
     home: /home/admin
     uid: 1001
     gid: 1001
-    adduser: True
 
