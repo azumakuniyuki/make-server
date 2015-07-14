@@ -20,7 +20,7 @@ PLAYBOOKS  = 10-build-stage.yml 20-deploy-user.yml 21-enable-epel.yml \
 			 30-update-sshd.yml 49-make-sslkey.yml 50-make-server.yml
 SERVERSPEC = ./spec
 VAGRANTNET = 172.25
-VAGRANTSSH = ~/.vagrant.d/insecure_private_key
+VAGRANTSSH = .vagrant/machines/default/virtualbox/private_key
 VAGRANTFILE= Vagrantfile
 DEPLOYKEY  = ./.ssh/id2-deploy-rsa
 
