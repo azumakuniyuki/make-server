@@ -36,6 +36,26 @@
         replace='DEVICE={{ item.device }}'
       with_items: interfaces
 
+    - name: add-network | RedHat | Remove comment(IPADDR) for the next task
+      when: ansible_os_family == "RedHat"
+      notify: Restart Network
+      replace:
+        backup=yes
+        dest=/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}
+        regexp='^#IPADDR=(.*)$'
+        replace='IPADDR=\1'
+      with_items: interfaces
+
+    - name: add-network | RedHat | Remove comment(NETMASK) for the next task
+      when: ansible_os_family == "RedHat"
+      notify: Restart Network
+      replace:
+        backup=yes
+        dest=/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}
+        regexp='^#NETMASK=(.*)$'
+        replace='NETMASK=\1'
+      with_items: interfaces
+
     - name: add-network | RedHat | Rewrite each network config file(IPADDR)
       when: ansible_os_family == "RedHat"
       notify: Restart Network
