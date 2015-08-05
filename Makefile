@@ -158,6 +158,7 @@ destroy: vagrant
 
 init-vm: vagrant
 	make destroy && make up
+	ansible/10-build-stage.yml ansible/20-deploy-user.yml
 
 help:
 	vagrant --help
