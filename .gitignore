@@ -1,4 +1,4 @@
-ansible/log
+make/log
 ansible.cfg
 .vagrant
 *.un~
