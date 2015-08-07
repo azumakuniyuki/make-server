@@ -12,22 +12,22 @@
     - src/openssl
     - src/perl
     - src/cpanm
-    - src/bind9
-    - src/apache/2.2
+    - src/bind-9
+    - src/apache-2.2
     - src/nginx
-    - pkg/munin/cron
-    - pkg/munin/node
+    - rpm/munin-cron
+    - rpm/munin-node
     - pkg/munin/httpd
-    - src/mysql/5.5
+    - src/mysql-5.5
     - src/opensmtpd
     - src/postgresql
-    - src/php/5.3
-    - src/php/5.5
+    - src/php-5.3
+    - src/php-5.5
     - src/phpmyadmin
     - src/dovecot
-    - src/sendmail/local
-    - src/sendmail/system
-    - pkg/svnserve
+    - src/sendmail-local
+    - src/sendmail-system
+    - rpm/svnserve
     - src/netqmail
     - src/vsftpd
     - cleanup
