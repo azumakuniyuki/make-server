@@ -15,12 +15,12 @@
       ignore_errors: True
       raw: which python 2> /dev/null
 
-    - name: build-stage | Linux | Python 2.7 should have been installed(1)
+    - name: build-stage | RedHat | Python 2.7 should have been installed(1)
       register: install_python
       when: python27|failed and ansible_os_family == "RedHat"
       raw:  /usr/bin/yum -y install python
 
-    - name: build-stage | Linux | Python 2.7 should have been installed(1)
+    - name: build-stage | Debian | Python 2.7 should have been installed(1)
       register: install_python
       when: python27|failed and ansible_os_family == "Debian"
       raw:  /usr/bin/aptitude -y install python2.7
@@ -44,7 +44,7 @@
       register: python
       raw: which python 2> /dev/null
 
-    - name: build-stage | FreeBSD,OpenBSD | Python 2.7 should have been installed(2)
+    - name: build-stage | BSD | Python 2.7 should have been installed(2)
       when: ansible_os_family in [ "FreeBSD", "OpenBSD" ]
       register: python
       raw: test -x /usr/local/bin/python
@@ -64,10 +64,10 @@
 
 
     - name: build-stage | wheel group should be created
-      ignore_errors: True
-      changed_when: wheel.rc > 0
       register: wheel
-      shell: grep '^wheel' /etc/group 2> /dev/null
+      changed_when: wheel.rc > 0
+      ignore_errors: True
+      shell: grep '^wheel:' /etc/group 2> /dev/null
 
     - name: build-stage | wheel group should be created
       when: wheel|failed
