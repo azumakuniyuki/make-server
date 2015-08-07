@@ -5,8 +5,8 @@
 # ansible.cfg in the current working directory or
 # /etc/ansible/ansible.cfg, whichever it finds first
 [defaults]
-hostfile       = ./ansible/vagrant
-inventry       = ./ansible/vagrant
+hostfile       = ./make/vagrant
+inventry       = ./make/vagrant
 library        = /usr/share/ansible
 remote_tmp     = /tmp
 pattern        = *
@@ -19,7 +19,7 @@ transport      = smart
 remote_port    = 22
 
 # additional paths to search for roles in, colon seperated
-roles_path     = ./ansible/roles
+roles_path     = ./make/roles
 
 # uncomment this to disable SSH key host checking
 host_key_checking = False
@@ -39,7 +39,7 @@ timeout = 300
 
 # logging is off by default unless this path is defined
 # if so defined, consider logrotate
-log_path = ./ansible/log
+log_path = ./make/log
 
 # default module name for /usr/bin/ansible
 #module_name = command
