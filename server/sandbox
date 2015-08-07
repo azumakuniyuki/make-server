@@ -4,13 +4,14 @@
 # \__ \ (_| | | | | (_| | |_) | (_) >  < 
 # |___/\__,_|_| |_|\__,_|_.__/ \___/_/\_\
 #                                        
-# Ansible inventory file for sandbox: Vagrant/VirtualBox machines
+# Ansible inventory file for sandbox machines
 #
 [sandbox]
-vm ansible_ssh_host=__IPV4ADDRESS__
+192.0.2.2
 
 [sandbox:vars]
-ansible_ssh_port=__SSHPORT__
-ansible_ssh_user=vagrant
-ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
-ansible_python_interpreter=/usr/bin/python
+ansible_ssh_port=2022
+ansible_ssh_user=deploy
+ansible_ssh_private_key_file=.ssh/id2-deploy-rsa
+# ansible_python_interpreter=/usr/local/bin/python2.7
+# ansible_connection=paramiko
