@@ -5,7 +5,8 @@
 # ansible.cfg in the current working directory or
 # /etc/ansible/ansible.cfg, whichever it finds first
 [defaults]
-hostfile       = ./ansible/hosts
+hostfile       = ./ansible/vagrant
+inventry       = ./ansible/vagrant
 library        = /usr/share/ansible
 remote_tmp     = /tmp
 pattern        = *
