@@ -5,10 +5,6 @@
 #  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/   \__\__,_|___/_|\_\___/
 #
 # make-config
-- name: make-config | Disable seLinux
-  when: config.selinux == False and ansible_os_family in [ 'RedHat', 'Debian' ]
-  selinux: state=disabled
-
 - name: make-config | {{ local.src }} directory should be created
   file: >
     path={{ local.src }}

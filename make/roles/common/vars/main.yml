@@ -5,7 +5,6 @@
 #  \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_/_/    \_/ \__,_|_|  |___/
 #
 config:
-  selinux: False
   adduser: True
   useswap: 512
 local:
