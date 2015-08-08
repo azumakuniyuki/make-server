@@ -13,4 +13,26 @@ munin:
       htmldir: /var/www/html/munin
       logdir:  /var/log/munin
       rundir:  /var/run/munin
+  httpd:
+    enabled: True
+    started: True
+    rebuild: False
+    version: 1.6.1
+    serverroot: /opt/munin/httpd
+    initscript: munin-httpd
+    workingdir: /usr/local/src
+    user:
+      username: nginx
+      password: ''
+      uid: 8192
+      gid: 8192
+      group: nginx
+      groups: 
+        - { name: httpd, gid: 8001 }
+      shell: /sbin/nolgin
+      comment: "'nginx httpd server'"
+    conf:
+      listen: 3384
+      servername: 127.0.0.1
+      documentroot: /opt/munin/httpd/html
 

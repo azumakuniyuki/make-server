@@ -1,0 +1,158 @@
+#                        _                                     ___            _        
+#  _ __ ___  _   _ _ __ (_)_ __         ___ _ __ ___  _ __    / / |_ __ _ ___| | _____ 
+# | '_ ` _ \| | | | '_ \| | '_ \ _____ / __| '__/ _ \| '_ \  / /| __/ _` / __| |/ / __|
+# | | | | | | |_| | | | | | | | |_____| (__| | | (_) | | | |/ / | || (_| \__ \   <\__ \
+# |_| |_| |_|\__,_|_| |_|_|_| |_|      \___|_|  \___/|_| |_/_/   \__\__,_|___/_|\_\___/
+#                                                                                      
+# setup-httpd
+- name: setup-httpd | RedHat | Each package for nginx should be installed
+  when: ansible_os_family == "RedHat"
+  yum:  name={{ item }} state=present
+  with_items:
+    - pcre
+    - pcre-devel
+
+- name: setup-httpd | Debian | Each package for nginx should be installed
+  when: ansible_os_family == "Debian"
+  apt: pkg={{ item }} state=present
+  with_items:
+    - libpcre3
+    - libpcre3-dev
+
+
+- name: setup-httpd | Group for httpd should be created
+  group: >
+    name={{ munin.httpd.user.group }}
+    gid={{ munin.httpd.user.gid }}
+    state=present
+
+- name: setup-httpd | Other groups should exist
+  group: >
+    name={{ item.name }}
+    gid={{ item.gid }}
+    state=present
+  with_items: munin.httpd.user.groups
+
+- name: setup-httpd | User for httpd should be created
+  user: >
+    name={{ munin.httpd.user.username }} 
+    uid={{ munin.httpd.user.uid }}
+    group={{ munin.httpd.user.group }} 
+    groups={{ munin.httpd.user.groups[0].name }} 
+    shell={{ munin.httpd.user.shell }}
+    home={{ munin.httpd.serverroot }}
+    comment={{ munin.httpd.user.comment }}
+    createhome=no
+    state=present
+
+
+- name: setup-httpd | Download nginx at {{ buildroot }}
+  get_url: >
+    url=http://nginx.org/download/nginx-{{ munin.httpd.version }}.tar.gz
+    dest={{ buildroot }}/nginx-{{ munin.httpd.version }}.tar.gz
+
+- name: setup-httpd | Extract {{ buildroot }}/nginx-{{ munin.httpd.version }}
+  unarchive: >
+    src={{ buildroot }}/nginx-{{ munin.httpd.version }}.tar.gz
+    dest={{ buildroot }}
+    creates={{ buildroot }}/nginx-{{ munin.httpd.version }}
+    copy=no
+
+
+- name: setup-httpd | REBUILD | make clean
+  command: >
+    chdir={{ buildroot }}/nginx-{{ munin.httpd.version }}/
+    removes=Makefile
+    make clean
+  when: nginx.rebuild == True
+
+- name: setup-httpd | nginx should be configured
+  notify: Restart nginx
+  command: >
+    chdir={{ buildroot }}/nginx-{{ munin.httpd.version }}/
+    creates=Makefile
+    /bin/sh configure
+    --prefix={{ munin.httpd.serverroot }}
+    --with-ld-opt=-L/usr/local/lib
+    --with-http_ssl_module
+    --with-http_gzip_static_module
+    --without-http_ssi_module
+    --without-http_autoindex_module
+    --without-http_geo_module
+    --without-http_fastcgi_module
+    --without-http_uwsgi_module
+    --without-http_memcached_module
+    --without-mail_pop3_module
+    --without-mail_imap_module
+    --without-mail_smtp_module
+    --with-http_stub_status_module
+
+- name: setup-httpd | make nginx {{ munin.httpd.version }}
+  notify: Restart nginx
+  command: >
+    chdir={{ buildroot }}/nginx-{{ munin.httpd.version }}/
+    creates=objs/nginx
+    make
+  register: make_nginx_binary
+
+- name: setup-httpd | nginx {{ munin.httpd.version }} should be installed
+  when: make_nginx_binary.changed
+  notify: Restart nginx
+  command: >
+    chdir={{ buildroot }}/nginx-{{ munin.httpd.version }}/
+    make install
+
+
+- name: setup-httpd | Each directory for nginx should be created
+  file: >
+    path={{ munin.httpd.serverroot }}/{{ item }}
+    mode=0755
+    state=directory
+    owner=root
+    group=root
+  with_items:
+    - conf/virthosts
+    - keys
+
+- name: setup-httpd | Deploy {{ munin.httpd.serverroot }}/conf/nginx.conf
+  notify: Restart nginx
+  template: >
+    src=opt/nginx/conf/nginx.conf.j2
+    dest={{ munin.httpd.serverroot }}/conf/nginx.conf
+    backup=yes
+
+- name: setup-httpd | Deploy log rotation script
+  when: ansible_system == "Linux"
+  template: >
+    src=etc/logrotate.d/nginx.j2
+    dest=/etc/logrotate.d/munin-httpd
+    backup=yes
+
+
+- name: setup-httpd | RedHat | Deploy /etc/init.d/{{ munin.httpd.initscript }}
+  when: ansible_os_family == "RedHat"
+  template: >
+    src=etc/init.d/nginx.RedHat.j2
+    dest=/etc/init.d/{{ munin.httpd.initscript }}
+    mode=0755
+    owner=root
+    group=root
+
+- name: setup-httpd | RedHat | Install /etc/rc.d/init.d/{{ munin.httpd.initscript }}
+  when: ansible_os_family == "RedHat"
+  shell: >
+    creates=/etc/rc.d/rc0.d/K15{{ munin.httpd.initscript }}
+    /sbin/chkconfig --add {{ munin.httpd.initscript }}
+
+- name: setup-httpd | Turn on init script
+  service: name={{ munin.httpd.initscript }} enabled=yes
+
+
+- name: setup-httpd | Start nginx httpd for munin
+  when: nginx.started == True
+  service: name={{ munin.httpd.initscript }} state=started
+
+- name: setup-httpd | Stop nginx httpd for munin
+  when: nginx.started == False
+  service: name={{ munin.httpd.initscript }} state=stopped
+
