@@ -8,7 +8,7 @@
 - name: compile-src | REBUILD | make clean
   when: vsftpd.rebuild == True
   command: >
-    chdir={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}/
+    chdir={{ buildroot }}/vsftpd-{{ vsftpd.version }}/
     removes=vsftpd
     make clean
 
@@ -16,12 +16,12 @@
   with_items: vsftpd.patches
   template: >
     src=usr/local/src/{{ item }}.j2
-    dest={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}/{{ item }}
+    dest={{ buildroot }}/vsftpd-{{ vsftpd.version }}/{{ item }}
 
 - name: compile-src | Patches should have been applied
   with_items: vsftpd.patches
   shell: >
-    chdir={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}/
+    chdir={{ buildroot }}/vsftpd-{{ vsftpd.version }}/
     creates={{ item }}.ok
     patch -p0 < {{ item }}
 
@@ -29,7 +29,7 @@
   notify: Restart vsftpd
   register: make_vsftpd_binary
   command: >
-    chdir={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}/
+    chdir={{ buildroot }}/vsftpd-{{ vsftpd.version }}/
     creates=vsftpd
     make
 
@@ -37,6 +37,6 @@
   when: make_vsftpd_binary.changed
   notify: Restart vsftpd
   command: >
-    chdir={{ vsftpd.workingdir }}/vsftpd-{{ vsftpd.version }}/
+    chdir={{ buildroot }}/vsftpd-{{ vsftpd.version }}/
     make install
 

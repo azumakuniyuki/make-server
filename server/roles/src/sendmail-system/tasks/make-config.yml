@@ -159,7 +159,7 @@
 
 - name: make-config | Link source code directory tree
   file: >
-    src={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/
+    src={{ buildroot }}/sendmail-{{ sendmail.version }}/
     dest={{ sendmail.configroot }}/src
     force=yes
     owner=root

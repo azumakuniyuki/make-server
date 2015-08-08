@@ -8,12 +8,12 @@
 - name: get-archive | Download OpenSSL archive
   get_url: >
     url=http://www.openssl.org/source/openssl-{{ openssl.version }}.tar.gz
-    dest={{ openssl.workingdir }}/openssl-{{ openssl.version }}.tar.gz
+    dest={{ buildroot }}/openssl-{{ openssl.version }}.tar.gz
 
-- name: get-archive | Extract {{ openssl.workingdir }}/openssl-{{ openssl.version }}.tar.gz
+- name: get-archive | Extract {{ buildroot }}/openssl-{{ openssl.version }}.tar.gz
   unarchive: >
-    src={{ openssl.workingdir }}/openssl-{{ openssl.version }}.tar.gz
-    dest={{ openssl.workingdir }}
-    creates={{ openssl.workingdir }}/openssl-{{ openssl.version }}
+    src={{ buildroot }}/openssl-{{ openssl.version }}.tar.gz
+    dest={{ buildroot }}
+    creates={{ buildroot }}/openssl-{{ openssl.version }}
     copy=no
 

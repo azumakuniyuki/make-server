@@ -14,13 +14,13 @@
   get_url: >
     url=https://www.opensmtpd.org/archives/opensmtpd-{{ opensmtpd.version }}.tar.gz
     validate_certs=no
-    dest={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
+    dest={{ buildroot }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
 
-- name: get-archive | Extract {{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
+- name: get-archive | Extract {{ buildroot }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
   unarchive: >
-    src={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
-    dest={{ opensmtpd.workingdir }}
-    creates={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}/Makefile
+    src={{ buildroot }}/opensmtpd-{{ opensmtpd.version }}.tar.gz
+    dest={{ buildroot }}
+    creates={{ buildroot }}/opensmtpd-{{ opensmtpd.version }}/Makefile
     copy=no
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -28,15 +28,15 @@
 # ||__|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-- name: get-archive | Download maildrop {{ maildrop.version }} at {{ opensmtpd.workingdir }}
+- name: get-archive | Download maildrop {{ maildrop.version }} at {{ buildroot }}
   get_url: >
     url=http://cznic.dl.sourceforge.net/project/courier/maildrop/{{ maildrop.version }}/maildrop-{{ maildrop.version }}.tar.bz2
-    dest={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
+    dest={{ buildroot }}/maildrop-{{ maildrop.version }}.tar.bz2
 
-- name: get-archive | Extract {{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
+- name: get-archive | Extract {{ buildroot }}/maildrop-{{ maildrop.version }}.tar.bz2
   unarchive: >
-    src={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}.tar.bz2
-    dest={{ opensmtpd.workingdir }}
-    creates={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}/Makefile
+    src={{ buildroot }}/maildrop-{{ maildrop.version }}.tar.bz2
+    dest={{ buildroot }}
+    creates={{ buildroot }}/maildrop-{{ maildrop.version }}/Makefile
     copy=no
 

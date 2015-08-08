@@ -7,7 +7,7 @@
 # compile-src
 - name: compile-src | REBUILD | make clean
   command: >
-    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
+    chdir={{ buildroot }}/nginx-{{ nginx.version }}/
     removes=Makefile
     make clean
   when: nginx.rebuild == True
@@ -15,7 +15,7 @@
 - name: compile-src | nginx {{ nginx.version }} should be configured
   notify: Restart nginx
   command: >
-    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
+    chdir={{ buildroot }}/nginx-{{ nginx.version }}/
     creates=Makefile
     /bin/sh configure
     --prefix={{ nginx.serverroot }}
@@ -36,7 +36,7 @@
 - name: compile-src | make nginx {{ nginx.version }}
   notify: Restart nginx
   command: >
-    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
+    chdir={{ buildroot }}/nginx-{{ nginx.version }}/
     creates=objs/nginx
     make
   register: make_nginx_binary
@@ -45,6 +45,6 @@
   when: make_nginx_binary.changed
   notify: Restart nginx
   command: >
-    chdir={{ nginx.workingdir }}/nginx-{{ nginx.version }}/
+    chdir={{ buildroot }}/nginx-{{ nginx.version }}/
     make install
 

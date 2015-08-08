@@ -8,22 +8,22 @@
 - name: compile-src | REBUILD | Remove CMakeCache.txt
   when: mysql.rebuild == True
   command: >
-    chdir={{ mysql.workingdir }}/mysql-{{ mysql.version }}/
+    chdir={{ buildroot }}/mysql-{{ mysql.version }}/
     removes=CMakeCache.txt
     rm CMakeCache.txt
 
 - name: compile-src | REBUILD | make clean
   when: mysql.rebuild == True
   command: >
-    chdir={{ mysql.workingdir }}/mysql-{{ mysql.version }}/
+    chdir={{ buildroot }}/mysql-{{ mysql.version }}/
     removes=CMakeCache.txt
     make clean
 
 - name: compile-src | cmake MySQL {{ mysql.version }}
   notify: Restart MySQL
   command: >
-    chdir={{ mysql.workingdir }}/mysql-{{ mysql.version }}
-    creates={{ mysql.workingdir }}/mysql-{{ mysql.version }}/CMakeCache.txt
+    chdir={{ buildroot }}/mysql-{{ mysql.version }}
+    creates={{ buildroot }}/mysql-{{ mysql.version }}/CMakeCache.txt
     cmake . 
       -DCMAKE_INSTALL_PREFIX={{ mysql.serverroot }} 
       -DMYSQL_DATADIR={{ mysql.datadirectory }}
@@ -36,7 +36,7 @@
   notify: Restart MySQL
   register: make_mysql_binary
   command: >
-    chdir={{ mysql.workingdir }}/mysql-{{ mysql.version }}
+    chdir={{ buildroot }}/mysql-{{ mysql.version }}
     creates=client/mysql
     make
 
@@ -44,6 +44,6 @@
   when: make_mysql_binary.changed
   notify: Restart MySQL
   command: >
-    chdir={{ mysql.workingdir }}/mysql-{{ mysql.version }}
+    chdir={{ buildroot }}/mysql-{{ mysql.version }}
     make install
 

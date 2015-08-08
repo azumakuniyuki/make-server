@@ -114,28 +114,28 @@
 - name: make-config | Deploy submit.mc file
   template: >
     src=usr/local/src/submit.mc.j2
-    dest={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf/submit.mc
+    dest={{ buildroot }}/sendmail-{{ sendmail.version }}/cf/cf/submit.mc
 
 - name: make-config | Install submit.cf
   shell: >
-    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf
-    {{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/devtools/bin/install.sh 
+    chdir={{ buildroot }}/sendmail-{{ sendmail.version }}/cf/cf
+    {{ buildroot }}/sendmail-{{ sendmail.version }}/devtools/bin/install.sh 
     -c -o root -g bin -m 0444 submit.cf {{ sendmail.serverroot }}/etc/submit.cf
 
 - name: make-config | Deploy sendmail.mc file
   when: ansible_system == "Linux"
   template: >
     src=usr/local/src/sendmail.mc.{{ ansible_system }}.j2
-    dest={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf/sendmail.mc
+    dest={{ buildroot }}/sendmail-{{ sendmail.version }}/cf/cf/sendmail.mc
 
 - name: make-config | Deploy virtmail.m4 file
   template: >
     src=usr/local/src/virtmail.m4.j2
-    dest={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/mailer/virtmail.m4
+    dest={{ buildroot }}/sendmail-{{ sendmail.version }}/cf/mailer/virtmail.m4
 
 - name: make-config | Build sendmail.cf and submit.cf
   shell: >
-    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf
+    chdir={{ buildroot }}/sendmail-{{ sendmail.version }}/cf/cf
     make {{ item }}.cf
   with_items:
     - sendmail
@@ -143,13 +143,13 @@
 
 - name: make-config | Install sendmail.cf
   shell: >
-    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/cf/cf
-    {{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/devtools/bin/install.sh 
+    chdir={{ buildroot }}/sendmail-{{ sendmail.version }}/cf/cf
+    {{ buildroot }}/sendmail-{{ sendmail.version }}/devtools/bin/install.sh 
     -c -o root -g bin -m 0444 sendmail.cf {{ sendmail.serverroot }}/etc/sendmail.cf
 
 - name: make-config | Copy cf directory
   shell: >
-    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/
+    chdir={{ buildroot }}/sendmail-{{ sendmail.version }}/
     creates={{ sendmail.serverroot }}/etc/cf
     /bin/cp -Rp ./cf {{ sendmail.serverroot }}/etc/
 

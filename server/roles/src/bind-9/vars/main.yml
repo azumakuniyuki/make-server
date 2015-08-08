@@ -7,7 +7,7 @@
 bind:
   started: True
   rebuild: False
-  version: 9.10.1-P2
+  version: 9.10.2-P3
   updateonly: False
   changeroot: /opt/named
   serverroot: /opt/named
@@ -23,3 +23,4 @@ bind:
     comment: "'DNS BIND9'"
   zone:
    subdirs: [ a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z ]
+

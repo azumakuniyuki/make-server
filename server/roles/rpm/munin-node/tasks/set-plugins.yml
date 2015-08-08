@@ -133,13 +133,13 @@
   register: munin_pgpool
   git: >
     repo=git://github.com/azumakuniyuki/pgpool-plugins-for-munin.git
-    dest={{ munin.node.workingdir }}/pgpool-plugins-for-munin
+    dest={{ buildroot }}/pgpool-plugins-for-munin
     accept_hostkey=yes
 
 - name: set-plugins | Install munin-plugins(pgpool)
   when: munin_pgpool.changed
   shell: >
-    chdir={{ munin.node.workingdir }}/pgpool-plugins-for-munin
+    chdir={{ buildroot }}/pgpool-plugins-for-munin
     creates=/usr/share/munin/plugins/pgpool2_connections
     install -o root -m 0755 pgpool2_connections /usr/share/munin/plugins/
 

@@ -5,16 +5,16 @@
 # |_.__/|_|_| |_|\__,_|  /_/_/   \__\__,_|___/_|\_\___/
 #                                                      
 # get-archive
-- name: get-archive | Download bind {{ bind.version }} at {{ bind.workingdir }}
+- name: get-archive | Download bind {{ bind.version }} at {{ buildroot }}
   get_url: >
     url=ftp://ftp.isc.org/isc/bind9/{{ bind.version }}/bind-{{ bind.version }}.tar.gz
-    dest={{ bind.workingdir }}/bind-{{ bind.version }}.tar.gz
+    dest={{ buildroot }}/bind-{{ bind.version }}.tar.gz
 
 - name: get-archive | Extract {{ bind.bulidat }}/bind-{{ bind.version }}
   unarchive: >
-    src={{ bind.workingdir }}/bind-{{ bind.version }}.tar.gz
-    dest={{ bind.workingdir }}
-    creates={{ bind.workingdir }}/bind-{{ bind.version }}
+    src={{ buildroot }}/bind-{{ bind.version }}.tar.gz
+    dest={{ buildroot }}
+    creates={{ buildroot }}/bind-{{ bind.version }}
     copy=no
 
 

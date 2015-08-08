@@ -5,14 +5,14 @@
 # |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/   \__\__,_|___/_|\_\___/
 #                    |___/                                                       
 # get-archive
-- name: get-archive | Download PostgreSQL {{ postgresql.version }} at {{ postgresql.workingdir }}
+- name: get-archive | Download PostgreSQL {{ postgresql.version }} at {{ buildroot }}
   get_url: >
     url=http://ftp.postgresql.org/pub/source/v{{ postgresql.version }}/postgresql-{{ postgresql.version }}.tar.gz
-    dest={{ postgresql.workingdir }}/postgresql-{{ postgresql.version }}.tar.gz
+    dest={{ buildroot }}/postgresql-{{ postgresql.version }}.tar.gz
 
-- name: get-archive | Extract {{ postgresql.workingdir }}/postgresql-{{ postgresql.version }}.tar.gz
+- name: get-archive | Extract {{ buildroot }}/postgresql-{{ postgresql.version }}.tar.gz
   unarchive: >
-    src={{ postgresql.workingdir }}/postgresql-{{ postgresql.version }}.tar.gz
-    dest={{ postgresql.workingdir }}
+    src={{ buildroot }}/postgresql-{{ postgresql.version }}.tar.gz
+    dest={{ buildroot }}
     copy=no
 

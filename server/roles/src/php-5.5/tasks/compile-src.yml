@@ -8,13 +8,13 @@
 - name: compile-src | REBUILD | make clean
   when: php.rebuild == True
   command: >
-    chdir={{ php.workingdir }}/php-{{ php.version }}/
+    chdir={{ buildroot }}/php-{{ php.version }}/
     removes=Makefile
     make clean
 
 - name: compile-src | PHP-{{ php.version }} should be configured
   command: >
-    chdir={{ php.workingdir }}/php-{{ php.version }}
+    chdir={{ buildroot }}/php-{{ php.version }}
     creates=Makefile
     /bin/sh configure 
     --prefix={{ php.install }} 
@@ -80,13 +80,13 @@
 - name: compile-src | make PHP {{ php.version }}
   register: make_php_binary
   command: >
-    chdir={{ php.workingdir }}/php-{{ php.version }}
+    chdir={{ buildroot }}/php-{{ php.version }}
     creates=libs/libphp5.so
     make
 
 - name: compile-src | make install PHP {{ php.version }}
   when: make_php_binary.changed
   command: >
-    chdir={{ php.workingdir }}/php-{{ php.version }}
+    chdir={{ buildroot }}/php-{{ php.version }}
     make install 
 

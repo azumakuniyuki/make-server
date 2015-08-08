@@ -18,6 +18,7 @@ local:
 #
 # See also
 #   http://docs.ansible.com/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
+# 
 unixusers:
   - username: admin
     password: $1$HakataNo$9.s0dLxBeUTgTarKe3uU//

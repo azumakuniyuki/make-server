@@ -13,14 +13,14 @@
 - name: compile-src | procmail | Deploy patch files
   template: >
     src=usr/local/src/{{ item }}.j2
-    dest={{ sendmail.workingdir }}/procmail-{{ procmail.version }}/{{ item }}
+    dest={{ buildroot }}/procmail-{{ procmail.version }}/{{ item }}
   with_items:
     - procmail-conflict-types-for-getline.patch
     - procmail-localconfig.patch
 
 - name: compile-src | procmail | Apply patches
   shell: >
-    chdir={{ sendmail.workingdir }}/procmail-{{ procmail.version }}
+    chdir={{ buildroot }}/procmail-{{ procmail.version }}
     creates={{ item }}.ok
     patch -p0 < ./{{ item }}
   with_items:
@@ -30,21 +30,21 @@
 - name: compile-src | procmail | REBUILD | make clean
   when: procmail.rebuild == True
   shell: >
-    chdir={{ sendmail.workingdir }}/procmail-{{ procmail.version }}/
+    chdir={{ buildroot }}/procmail-{{ procmail.version }}/
     removes=src/procmail
     make clean
 
 - name: compile-src | procmail | Build procmail {{ procmail.version }}
   register: make_procmail_binary
   shell: >
-    chdir={{ sendmail.workingdir }}/procmail-{{ procmail.version }}
+    chdir={{ buildroot }}/procmail-{{ procmail.version }}
     creates=src/procmail
     echo | make
 
 - name: compile-src | procmail | Install procmail {{ procmail.version }}
   when: make_procmail_binary.changed
   shell: >
-    chdir={{ sendmail.workingdir }}/procmail-{{ procmail.version }}
+    chdir={{ buildroot }}/procmail-{{ procmail.version }}
     make install
 
 - name: compile-src | procmail | strip binaries
@@ -65,13 +65,13 @@
 - name: compile-src | maildrop | REBUILD | make clean
   when: maildrop.rebuild == True
   shell: >
-    chdir={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}/
+    chdir={{ buildroot }}/maildrop-{{ maildrop.version }}/
     removes=maildrop/maildrop
     make clean
 
 - name: compile-src | maildrop | maildrop should be configured
   shell: >
-    chdir={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}
+    chdir={{ buildroot }}/maildrop-{{ maildrop.version }}
     creates=Makefile
     /bin/sh ./configure
     --prefix={{ maildrop.install }}
@@ -86,14 +86,14 @@
 - name: compile-src | maildrop | Build maildrop {{ maildrop.version }}
   register: make_maildrop_binary
   shell: >
-    chdir={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}
+    chdir={{ buildroot }}/maildrop-{{ maildrop.version }}
     creates=libs/maildrop/maildrop
     make
 
 - name: compile-src | maildrop | Install maildrop {{ maildrop.version }}
   when: make_maildrop_binary.changed
   shell: >
-    chdir={{ sendmail.workingdir }}/maildrop-{{ maildrop.version }}
+    chdir={{ buildroot }}/maildrop-{{ maildrop.version }}
     make install-strip
 
 - name: compile-src | maildrop | Change owner each binary
@@ -122,19 +122,19 @@
 - name: compile-src | REBUILD | make clean
   when: sendmail.rebuild == 1
   shell: >
-    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/
+    chdir={{ buildroot }}/sendmail-{{ sendmail.version }}/
     removes={{ sendmail_object_directory.stdout }}/sendmail/sendmail
     make clean
 
 - name: compile-src | Deploy site.config.m4
   template: >
     src=usr/local/src/site.config.m4.j2
-    dest={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/devtools/Site/site.config.m4
+    dest={{ buildroot }}/sendmail-{{ sendmail.version }}/devtools/Site/site.config.m4
 
 - name: compile-src | Build sendmail {{ sendmail.version }}
   register: make_sendmail_binary
   shell: > 
-    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}
+    chdir={{ buildroot }}/sendmail-{{ sendmail.version }}
     creates={{ sendmail_object_directory.stdout }}/sendmail/sendmail
     /bin/sh ./Build -c
 
@@ -152,7 +152,7 @@
 - name: compile-src | Install Sendmail
   when: make_sendmail_binary.changed
   shell: >
-    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}
+    chdir={{ buildroot }}/sendmail-{{ sendmail.version }}
     /bin/sh ./Build install
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -164,13 +164,13 @@
   when: make_sendmail_binary.changed
   register: make_libmilter_binary
   shell: >
-    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/libmilter
+    chdir={{ buildroot }}/sendmail-{{ sendmail.version }}/libmilter
     creates={{ sendmail_object_directory.stdout }}/libmilter/libmilter.a
     /bin/sh ./Build -c
 
 - name: compile-src | Install libmilter
   when: make_libmilter_binary.changed
   shell: >
-    chdir={{ sendmail.workingdir }}/sendmail-{{ sendmail.version }}/libmilter
+    chdir={{ buildroot }}/sendmail-{{ sendmail.version }}/libmilter
     /bin/sh ./Build install
 

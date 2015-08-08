@@ -7,7 +7,7 @@
 # compile-src
 - name: compile-src | REBUILD | make clean
   command: >
-    chdir={{ apache.workingdir }}/httpd-{{ apache.version }}/
+    chdir={{ buildroot }}/httpd-{{ apache.version }}/
     removes=Makefile
     make clean
   when: apache.rebuild == True
@@ -22,7 +22,7 @@
 - name: compile-src | configure apache {{ apache.version }}
   notify: Restart Apache
   command: >
-    chdir={{ apache.workingdir }}/httpd-{{ apache.version }}/
+    chdir={{ buildroot }}/httpd-{{ apache.version }}/
     creates=Makefile
     /bin/sh configure
     --prefix={{ apache.serverroot }}
@@ -42,7 +42,7 @@
   notify: Restart Apache
   register: make_apache_binary
   command: >
-    chdir={{ apache.workingdir }}/httpd-{{ apache.version }}/
+    chdir={{ buildroot }}/httpd-{{ apache.version }}/
     creates=httpd
     make
 
@@ -50,6 +50,6 @@
   when: make_apache_binary.changed
   notify: Restart Apache
   command: >
-    chdir={{ apache.workingdir }}/httpd-{{ apache.version }}/
+    chdir={{ buildroot }}/httpd-{{ apache.version }}/
     make install
 

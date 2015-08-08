@@ -5,27 +5,27 @@
 #  \__, |_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
 #     |_|                                               
 # get-archive
-- name: get-archive | Download qmail {{ qmail.version }} at {{ qmail.workingdir }}
+- name: get-archive | Download qmail {{ qmail.version }} at {{ buildroot }}
   get_url: >
     url=http://www.qmail.org/netqmail-{{ qmail.version }}.tar.gz
-    dest={{ qmail.workingdir }}/netqmail-{{ qmail.version }}.tar.gz
+    dest={{ buildroot }}/netqmail-{{ qmail.version }}.tar.gz
 
-- name: get-archive | Extract {{ qmail.workingdir }}/qmail-{{ qmail.version }}
+- name: get-archive | Extract {{ buildroot }}/qmail-{{ qmail.version }}
   unarchive: >
-    src={{ qmail.workingdir }}/netqmail-{{ qmail.version }}.tar.gz
-    dest={{ qmail.workingdir }}
-    creates={{ qmail.workingdir }}/netqmail-{{ qmail.version }}
+    src={{ buildroot }}/netqmail-{{ qmail.version }}.tar.gz
+    dest={{ buildroot }}
+    creates={{ buildroot }}/netqmail-{{ qmail.version }}
     copy=no
 
-- name: get-archive | Download tcp server at {{ qmail.workingdir }}
+- name: get-archive | Download tcp server at {{ buildroot }}
   get_url: >
     url=http://cr.yp.to/ucspi-tcp/ucspi-tcp-0.88.tar.gz
-    dest={{ qmail.workingdir }}/ucspi-tcp-0.88.tar.gz
+    dest={{ buildroot }}/ucspi-tcp-0.88.tar.gz
 
-- name: get-archive | Extract {{ qmail.workingdir }}/ucspi-tcp-0.88.tar.gz
+- name: get-archive | Extract {{ buildroot }}/ucspi-tcp-0.88.tar.gz
   unarchive: >
-    src={{ qmail.workingdir }}/ucspi-tcp-0.88.tar.gz
-    dest={{ qmail.workingdir }}
-    creates={{ qmail.workingdir }}/ucspi-tcp-0.88
+    src={{ buildroot }}/ucspi-tcp-0.88.tar.gz
+    dest={{ buildroot }}
+    creates={{ buildroot }}/ucspi-tcp-0.88
     copy=no
 

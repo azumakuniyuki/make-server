@@ -5,9 +5,9 @@
 # |_| |_|_|  \___| \_/\_/ \__,_|_|_/_/   \__\__,_|___/_|\_\___/
 #                                                              
 # get-archive
-- name: get-archive | Clone firewall-scripts
+- name: get-archive | Execute git clone firewall-scripts
   git:  >
     repo='https://github.com/azumakuniyuki/firewall-scripts.git'
-    dest={{ firewall.workingdir }}/firewall-scripts
+    dest={{ buildroot }}/firewall-scripts
     accept_hostkey=yes
 

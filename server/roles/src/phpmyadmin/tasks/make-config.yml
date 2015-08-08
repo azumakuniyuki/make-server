@@ -16,7 +16,7 @@
 
 - name: make-config | Install phpMyAdmin {{ phpmyadmin.version }}
   shell: >
-    chdir={{ phpmyadmin.workingdir }}
+    chdir={{ buildroot }}
     creates={{ phpmyadmin.install }}/phpMyAdmin
     cp -r phpMyAdmin-{{ phpmyadmin.version }}-all-languages {{ phpmyadmin.install }}/phpMyAdmin
 

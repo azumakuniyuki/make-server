@@ -7,7 +7,7 @@
 # compile-src
 - name: compile-src | REBUILD | make clean
   command: >
-    chdir={{ postgresql.workingdir }}/postgresql-{{ postgresql.version }}/
+    chdir={{ buildroot }}/postgresql-{{ postgresql.version }}/
     removes=GNUmakefile
     make clean
   when: postgresql.rebuild == True
@@ -16,14 +16,14 @@
   notify: Restart PostgreSQL
   command: >
     creates=GNUmakefile
-    chdir={{ postgresql.workingdir }}/postgresql-{{ postgresql.version }}/
+    chdir={{ buildroot }}/postgresql-{{ postgresql.version }}/
     /bin/sh configure
     --prefix={{ postgresql.serverroot }}
 
 - name: compile-src | make PostgreSQL {{ postgresql.version }}
   notify: Restart PostgreSQL
   command: >
-    chdir={{ postgresql.workingdir }}/postgresql-{{ postgresql.version }}/
+    chdir={{ buildroot }}/postgresql-{{ postgresql.version }}/
     creates=src/bin/pg_ctl/pg_ctl
     make
   register: make_postgresql_binary
@@ -32,6 +32,6 @@
   when: make_postgresql_binary.changed
   notify: Restart PostgreSQL
   command: >
-    chdir={{ postgresql.workingdir }}/postgresql-{{ postgresql.version }}/
+    chdir={{ buildroot }}/postgresql-{{ postgresql.version }}/
     make install
 

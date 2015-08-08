@@ -6,15 +6,15 @@
 #        |___/                                          
 # get-archive
 #
-- name: get-archive | Download nginx {{ nginx.version }} at {{ nginx.workingdir }}
+- name: get-archive | Download nginx {{ nginx.version }} at {{ buildroot }}
   get_url: >
     url=http://nginx.org/download/nginx-{{ nginx.version }}.tar.gz
-    dest={{ nginx.workingdir }}/nginx-{{ nginx.version }}.tar.gz
+    dest={{ buildroot }}/nginx-{{ nginx.version }}.tar.gz
 
-- name: get-archive | Extract {{ nginx.workingdir }}/nginx-{{ nginx.version }}
+- name: get-archive | Extract {{ buildroot }}/nginx-{{ nginx.version }}
   unarchive: >
-    src={{ nginx.workingdir }}/nginx-{{ nginx.version }}.tar.gz
-    dest={{ nginx.workingdir }}
-    creates={{ nginx.workingdir }}/nginx-{{ nginx.version }}
+    src={{ buildroot }}/nginx-{{ nginx.version }}.tar.gz
+    dest={{ buildroot }}
+    creates={{ buildroot }}/nginx-{{ nginx.version }}
     copy=no
 

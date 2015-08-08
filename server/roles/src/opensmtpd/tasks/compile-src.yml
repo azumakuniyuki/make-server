@@ -12,14 +12,14 @@
 #
 - name: compile-src | bootstrap script should have been executed
   shell: >
-    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
+    chdir={{ buildroot }}/opensmtpd-{{ opensmtpd.version }}
     creates=configure
     ./bootstrap
 
 - name: compile-src | Linux | OpenSMTPD should have been configured
   when: ansible_system == "Linux"
   shell: >
-    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
+    chdir={{ buildroot }}/opensmtpd-{{ opensmtpd.version }}
     creates=Makefile
     /bin/sh configure
     --prefix={{ opensmtpd.serverroot }}
@@ -27,7 +27,7 @@
 - name: compile-src | FreeBSD | OpenSMTPD should have been configured
   when: ansible_os_family == "FreeBSD"
   shell: >
-    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
+    chdir={{ buildroot }}/opensmtpd-{{ opensmtpd.version }}
     creates=Makefile
     CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
     /bin/sh configure
@@ -37,20 +37,20 @@
 - name: compile-src | REBUILD | make clean
   when: opensmtpd.rebuild == True
   shell: >
-    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}/
+    chdir={{ buildroot }}/opensmtpd-{{ opensmtpd.version }}/
     make clean
 
 - name: compile-src | OpenSMTPD should have been made
   register: make_opensmtpd_binary
   shell: >
-    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
+    chdir={{ buildroot }}/opensmtpd-{{ opensmtpd.version }}
     creates=./mk/smtpd/smtpd
     make
 
 - name: compile-src | OpenSMTPD files should have been installed
   when: make_opensmtpd_binary.changed
   shell: >
-    chdir={{ opensmtpd.workingdir }}/opensmtpd-{{ opensmtpd.version }}
+    chdir={{ buildroot }}/opensmtpd-{{ opensmtpd.version }}
     LN_S='ln -fs' make install
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -61,13 +61,13 @@
 - name: compile-src | maildrop | REBUILD | make clean
   when: maildrop.rebuild == True
   shell: >
-    chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}/
+    chdir={{ buildroot }}/maildrop-{{ maildrop.version }}/
     removes=libs/maildrop/maildrop
     make clean
 
 - name: compile-src | maildrop | maildrop should have been configured
   shell: >
-    chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}
+    chdir={{ buildroot }}/maildrop-{{ maildrop.version }}
     creates=Makefile
     CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
     /bin/sh ./configure
@@ -83,14 +83,14 @@
 - name: compile-src | maildrop | Build maildrop {{ maildrop.version }}
   register: make_maildrop_binary
   shell: >
-    chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}
+    chdir={{ buildroot }}/maildrop-{{ maildrop.version }}
     creates=libs/maildrop/maildrop
     make
 
 - name: compile-src | maildrop | Install maildrop {{ maildrop.version }}
   when: make_maildrop_binary.changed
   shell: >
-    chdir={{ opensmtpd.workingdir }}/maildrop-{{ maildrop.version }}
+    chdir={{ buildroot }}/maildrop-{{ maildrop.version }}
     make install-strip
 
 - name: compile-src | maildrop | Change owner each binary

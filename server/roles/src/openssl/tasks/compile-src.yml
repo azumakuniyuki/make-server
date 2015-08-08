@@ -8,26 +8,26 @@
 - name: compile-src | REBUILD | make clean
   when: openssl.rebuild == True
   command: >
-    chdir={{ openssl.workingdir }}/openssl-{{ openssl.version }}/
+    chdir={{ buildroot }}/openssl-{{ openssl.version }}/
     removes=./crypto/opensslconf.h.bak
     make clean
 
 - name: compile-src | OpenSSL {{ openssl.version }} should be configured
   shell: >
     creates=./crypto/opensslconf.h.bak
-    chdir={{ openssl.workingdir }}/openssl-{{ openssl.version }}/
+    chdir={{ buildroot }}/openssl-{{ openssl.version }}/
     /bin/sh ./config --prefix={{ openssl.install }}
 
 - name: compile-src | OpenSSL {{ openssl.version }} should be made
   register: make_openssl_binary
   command: >
-    chdir={{ openssl.workingdir }}/openssl-{{ openssl.version }}/
+    chdir={{ buildroot }}/openssl-{{ openssl.version }}/
     creates=libcrypto.a
     make
 
 - name: compile-src | OpenSSL {{ openssl.version }} should be installed
   when: make_openssl_binary.changed
   command: >
-    chdir={{ openssl.workingdir }}/openssl-{{ openssl.version }}/
+    chdir={{ buildroot }}/openssl-{{ openssl.version }}/
     make install
 

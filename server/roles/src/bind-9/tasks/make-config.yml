@@ -91,7 +91,7 @@
 
 - name: make-config | {{ bind.changeroot }}/etc/rootzone-dnssec-keys should be deployed
   shell: >
-    chdir={{ bind.workingdir }}/bind-{{ bind.version }}
+    chdir={{ buildroot }}/bind-{{ bind.version }}
     creates={{ bind.changeroot }}/etc/rootzone-dnssec-keys
     /bin/cp bind.keys {{ bind.changeroot }}/etc/rootzone-dnssec-keys
 

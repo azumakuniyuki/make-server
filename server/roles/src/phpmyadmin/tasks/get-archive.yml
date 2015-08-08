@@ -9,12 +9,12 @@
 - name: get-archive | Download phpMyAdmin {{ phpmyadmin.version }}
   get_url: >
     url=http://jaist.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/{{ phpmyadmin.version }}/phpMyAdmin-{{ phpmyadmin.version }}-all-languages.zip
-    dest={{ phpmyadmin.workingdir }}/phpMyAdmin-{{ phpmyadmin.version }}-all-languages.zip
+    dest={{ buildroot }}/phpMyAdmin-{{ phpmyadmin.version }}-all-languages.zip
 
 - name: get-archive | Extract phpMyAdmin {{ phpmyadmin.version }}
   unarchive: >
-    src={{ phpmyadmin.workingdir }}/phpMyAdmin-{{ phpmyadmin.version }}-all-languages.zip
-    dest={{ phpmyadmin.workingdir }}/
-    creates={{ phpmyadmin.workingdir }}/phpMyAdmin-{{ phpmyadmin.version }}-all-languages
+    src={{ buildroot }}/phpMyAdmin-{{ phpmyadmin.version }}-all-languages.zip
+    dest={{ buildroot }}/
+    creates={{ buildroot }}/phpMyAdmin-{{ phpmyadmin.version }}-all-languages
     copy=no
   

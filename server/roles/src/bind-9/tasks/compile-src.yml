@@ -8,14 +8,14 @@
 - name: compile-src | REBUILD | make clean
   when: bind.rebuild == True
   command: >
-    chdir={{ bind.workingdir }}/bind-{{ bind.version }}/
+    chdir={{ buildroot }}/bind-{{ bind.version }}/
     removes=Makefile
     make clean
 
 - name: compile-src | bind {{ bind.version }} should be configured
   notify: Restart BIND
   shell: >
-    chdir={{ bind.workingdir }}/bind-{{ bind.version }}/
+    chdir={{ buildroot }}/bind-{{ bind.version }}/
     creates=Makefile
     /bin/sh configure
     --prefix={{ bind.serverroot }}
@@ -27,7 +27,7 @@
   notify: Restart BIND
   register: make_bind_binary
   command: >
-    chdir={{ bind.workingdir }}/bind-{{ bind.version }}/
+    chdir={{ buildroot }}/bind-{{ bind.version }}/
     creates=bin/named/named
     make
 
@@ -35,6 +35,6 @@
   when: make_bind_binary.changed
   notify: Restart BIND
   command: >
-    chdir={{ bind.workingdir }}/bind-{{ bind.version }}/
+    chdir={{ buildroot }}/bind-{{ bind.version }}/
     make install
 
