@@ -5,8 +5,9 @@
 # |___/\___|_|_|_| |_|\__,_/_/\_\     \___/|_| |_|  
 #                                                   
 - hosts: all
-  user:  root
-  sudo:  True
+  become: True
+  become_user: root
+  remote_user: root
   tasks:
     - name: selinux-off | RedHat | libselinux-python should be installed
       when: ansible_os_family == "RedHat"

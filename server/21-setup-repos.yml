@@ -7,7 +7,7 @@
 - hosts: vm
   become: True
   become_user: root
-  remote_user: root
+  remote_user: deploy
   vars:
     epelserver: 'http://ftp-srv2.kddilabs.jp/Linux/distributions/fedora/epel'
     remiserver: 'http://rpms.famillecollet.com/enterprise'

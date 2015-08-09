@@ -5,8 +5,9 @@
 #  \__,_|\__,_|\__,_|     |_| |_|\___|\__| \_/\_/ \___/|_|  |_|\_\
 #                                                                 
 - hosts: all
-  user:  root
-  sudo:  True
+  become: True
+  become_user: root
+  remote_user: deploy
   vars:
     interfaces:
       - device: eth1

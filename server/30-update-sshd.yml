@@ -5,28 +5,50 @@
 #  \__,_| .__/ \__,_|\__,_|\__\___|     |___/___/_| |_|\__,_|
 #       |_|                                                  
 - hosts: all
-  user:  root
-  sudo:  True
+  become: True
+  become_user: root
+  remote_user: deploy
   vars:
     sshd:
-      port: 2222
+      port: __SSHDPORT__
       rootlogin: 'no'
   tasks:
-    - name: update-sshd | Rewrite the value of Port({{ sshd.port }})
+    - name: update-sshd | Enable Port setting in /etc/ssh/sshd_config
       notify: Restart SSHD
       replace:
         backup=yes
         dest=/etc/ssh/sshd_config
-        regexp='^#Port 22'
+        regexp='^#Port (.+)'
+        replace='Port \1'
+        validate='sshd -t -f %s'
+
+    - name: update-sshd | Change sshd port setting
+      when: sshd.port > 0 and sshd.port < 65535
+      notify: Restart SSHD
+      register: rewrite_sshd_config
+      replace:
+        backup=yes
+        dest=/etc/ssh/sshd_config
+        regexp='^Port .+$'
         replace='Port {{ sshd.port }}'
         validate='sshd -t -f %s'
 
-    - name: update-sshd | PermitRootLogin {{ sshd.rootlogin }}
+    - name: update-sshd | Enable PermitRootLogin settings in /etc/ssh/sshd_config
       notify: Restart SSHD
       replace:
         backup=yes
         dest=/etc/ssh/sshd_config
-        regexp='^#PermitRootLogin yes'
+        regexp='^#PermitRootLogin (.+)'
+        replace='PermitRootLogin \1'
+        validate='sshd -t -f %s'
+
+    - name: update-sshd | Change PermitRootLogin setting
+      when: rewrite_sshd_config|changed
+      notify: Restart SSHD
+      replace:
+        backup=yes
+        dest=/etc/ssh/sshd_config
+        regexp='^PermitRootLogin .+$'
         replace='PermitRootLogin {{ sshd.rootlogin }}'
         validate='sshd -t -f %s'
 
