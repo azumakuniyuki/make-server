@@ -5,7 +5,7 @@
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 # ---------------------------------------------------------------------------
-VERSION    = '2.0.0'
+VERSION    = '2.0.1'
 HEREIAM    = $(shell pwd)
 ANSIBLE    = $(shell which ansible)
 PWDNAME    = $(shell echo $(HEREIAM) | xargs basename)
@@ -22,7 +22,7 @@ ANSIBLECFG = $(ROOTDIR)/ansible-config
 INVENTORY  = $(ROOTDIR)/vagrant
 INVENTORIES= sandbox install develop staging product vagrant
 PLAYBOOKS  = 10-build-stage.yml 11-selinux-off.yml \
-			 20-deploy-user.yml 21-enable-epel.yml \
+			 20-deploy-user.yml 21-setup-repos.yml \
 			 30-update-sshd.yml 49-make-sslkey.yml 50-make-server.yml
 VAGRANTNET = 172.25
 VAGRANTKEY = .vagrant/machines/default/virtualbox/private_key
@@ -59,13 +59,13 @@ update-makefile:
 
 # Ansible related targets
 ping:
-	$(ANSIBLE) all -i ./$(INVENTORY) -m ping
+	$(ANSIBLE) all -i $(INVENTORY) -m ping
 
 vars:
-	$(ANSIBLE) all -i ./$(INVENTORY) -m setup
+	$(ANSIBLE) all -i $(INVENTORY) -m setup
 
 node:
-	$(ANSIBLE) all -i ./$(INVENTORY) -m raw -a 'hostname'
+	$(ANSIBLE) all -i $(INVENTORY) -m raw -a 'hostname'
 
 server:
 	$(MAKEDIR) ./$(ROOTDIR)
@@ -126,6 +126,10 @@ role-index:
 			-e 's|/tasks/main.yml||g' \
 			-e 's|^.*/$(ROOTDIR)/roles/||g' 
 
+init-server: server key-pair
+	ansible-playbook -i $(INVENTORY) \
+		$(ROOTDIR)/10-build-stage.yml $(ROOTDIR)/11-selinux-off.yml $(ROOTDIR)/20-deploy-user.yml
+
 # serverspec related targets
 serverspec:
 	serverspec-init
@@ -176,8 +180,7 @@ destroy: vagrant
 
 init-vm: vagrant
 	$(MAKE) destroy && $(MAKE) up
-	ansible-playbook -i $(INVENTORY) \
-		$(ROOTDIR)/10-build-stage.yml $(ROOTDIR)/11-selinux-off.yml $(ROOTDIR)/20-deploy-user.yml
+	$(MAKE) init-server
 
 help:
 	vagrant --help
