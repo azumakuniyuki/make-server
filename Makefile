@@ -194,7 +194,7 @@ restart: vagrant
 
 # Targets for make-server authors
 push:
-	for G in `grep -E '^[[]remote' .git/config | cut -d' ' -f2 | tr -d '"]'`; do \
+	for G in `git remote show -n`; do \
 		git push --tags $$G master; \
 	done
 
