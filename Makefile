@@ -5,28 +5,28 @@
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 # ---------------------------------------------------------------------------
-VERSION    = '2.0.1'
-HEREIAM    = $(shell pwd)
-ANSIBLE    = $(shell which ansible)
-PWDNAME    = $(shell echo $(HEREIAM) | xargs basename)
-ROOTDIR    = server
-SUBDIRS    = server
-MAKEDIR    = mkdir -p
+VERSION := '2.1.0'
+HEREIAM := $(shell pwd)
+ANSIBLE := $(shell which ansible)
+PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
+ROOTDIR := server
+SUBDIRS := server
+MAKEDIR := mkdir -p
 
-PROTOTYPE  = ~/var/rhosts/make-server
-SCRIPTDIR  = bin
-DEPLOYKEY  = ./.ssh/id2-deploy-rsa
-DEPLOYUSER = deploy
-ANSIBLELOG = $(ROOTDIR)/log
-ANSIBLECFG = $(ROOTDIR)/ansible-config
-INVENTORY  = $(ROOTDIR)/vagrant
-INVENTORIES= sandbox install develop staging product vagrant
-PLAYBOOKS  = 10-build-stage.yml 11-selinux-off.yml \
-			 20-deploy-user.yml 21-setup-repos.yml \
-			 30-update-sshd.yml 49-make-sslkey.yml 50-make-server.yml
-VAGRANTNET = 172.25
-VAGRANTKEY = .vagrant/machines/default/virtualbox/private_key
-VAGRANTCFG = Vagrantfile
+PROTOTYPE   := ~/var/rhosts/make-server
+SCRIPTDIR   := bin
+DEPLOYKEY    = ./.ssh/id2-deploy-rsa
+DEPLOYUSER  := deploy
+ANSIBLELOG  := $(ROOTDIR)/log
+ANSIBLECFG  := $(ROOTDIR)/ansible-config
+INVENTORY    = $(ROOTDIR)/vagrant
+INVENTORIES := sandbox install develop staging product vagrant
+PLAYBOOKS   := 10-build-stage.yml 11-selinux-off.yml \
+			   20-deploy-user.yml 21-setup-repos.yml \
+			   30-update-sshd.yml 49-make-sslkey.yml 50-make-server.yml
+VAGRANTNET  := 172.25
+VAGRANTKEY  := .vagrant/machines/default/virtualbox/private_key
+VAGRANTCFG  := Vagrantfile
 
 .PHONY: clean
 login:
@@ -107,6 +107,7 @@ server:
 				fi ;\
 			fi ;\
 		done ;\
+		$(MAKEDIR) ./$(ROOTDIR)/roles/$*/spec ;\
 	else \
 		$(MAKEDIR) ./$(ROOTDIR)/roles ;\
 		if [ ! -d "./$(ROOTDIR)/roles/$*" ]; then \
@@ -131,8 +132,8 @@ init-server: server key-pair
 		$(ROOTDIR)/10-build-stage.yml $(ROOTDIR)/11-selinux-off.yml $(ROOTDIR)/20-deploy-user.yml
 
 # serverspec related targets
-serverspec:
-	serverspec-init
+install-serverspec:
+	sudo gem install serverspec
 
 test:
 	rake spec
