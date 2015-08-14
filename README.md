@@ -12,10 +12,10 @@ Files for making servers with Ansible, Vagrant and serverspec.
     $ git clone https://github.com/azumakuniyuki/make-server.git
     ...
 
-If you want to use other directory, edit Makefile and change the value of EXAMPLE
+If you want to use other directory, edit Makefile and change the value of "ROOTDIR"
 macro.
 
-~/var/rhosts以外のディレクトリを使う場合はMakefileのEXAMPLEマクロを直してください。
+~/var/rhosts以外のディレクトリを使う場合はMakefileの"ROOTDIR"マクロを直してください。
 
 ## Make node
 In this file, you build some web servers and a mail server of example.jp domain.
@@ -39,6 +39,8 @@ In this file, you build some web servers and a mail server of example.jp domain.
 
 ## Prepare Vagrant vm as a sandbox
 
+"make list" command shows the list of available vagrant boxes.
+
     $ cd ~/var/rhosts/example.jp
     $ make list
     vagrant box list
@@ -52,7 +54,7 @@ In this file, you build some web servers and a mail server of example.jp domain.
     if [ ! -f "./Vagrantfile" ]; then \
         ...
     `vagrantup.com` for more information on using Vagrant.
-    mkdir -p ./ansible
+    mkdir -p ./server
     make common-role
     ...
     $ make up
@@ -63,7 +65,7 @@ In this file, you build some web servers and a mail server of example.jp domain.
 ## Copy roles
 
     $ cd ~/var/rhosts/example.jp
-    $ make nginx-role sendmail/system-role mysql-5.5-role
+    $ make src/nginx-role src/sendmail-system-role src/mysql-5.5-role
     ...
 
 When `make apache-role` executed, roles/apache will be copied from
@@ -83,21 +85,22 @@ tree will be created in ./ansible/roles directory followed Best Practices.
 | Makefile          | Shortcuts for ansible and vagrant command |
 | README.md         | This file                                 |
 | Vagrantfile       | Template file for sandbox vm              |
-| ansible/          | Files for ansible                         |
+| make/             | Files for ansible and serverspec          |
 |   hosts           | Inventory file for sandbox(Vagrant VM)    |
 |   install         | Inventory file for initializing as root   |
 |   develop         | Inventory file for development            |
 |   staging         | Inventory file for staging servers        |
 |   product         | Inventory file for production servers     |
+|   vagrant         | Inventory file for Vagrant VM             |
 |   10-build-stage  | Playbook for installing Python 2.7        |
 |   20-deploy-user  | Playbook for creating user "deploy"       |
 |   21-enable-epel  | Playbook to enable EPEL repository        |
 |   30-update-sshd  | Playbook for changing sshd port           |
 |   49-make-sslkey  | Playbook for generating key,csr,and crt   |
 |   50-make-server  | Playbook for making servers               |
-|   config          | Ansible configuration file for this node  |
+|   ansible-config  | Ansible configuration file for this node  |
 |   log             | Log file specified in ansible/config file |
-|   role/           | Ansible roles                             |
+|   roles/          | Ansible roles                             |
 
 REPOSITORY
 ----------
