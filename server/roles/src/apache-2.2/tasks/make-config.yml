@@ -27,9 +27,7 @@
   register: libphp5
   changed_when: libphp5.rc < 0
   ignore_errors: True
-  shell: >
-    chdir={{ apache.serverroot }}/modules
-    test -e libphp5.so
+  stat: path={{ apache.serverroot }}/modules/libphp5.so
 
 - name: make-config | Enable PHP5 module(1)
   when: libphp5|success
