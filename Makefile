@@ -5,7 +5,7 @@
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 # ---------------------------------------------------------------------------
-VERSION := '2.1.0'
+VERSION := '2.1.1'
 HEREIAM := $(shell pwd)
 ANSIBLE := $(shell which ansible)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
@@ -71,6 +71,10 @@ server:
 	$(MAKEDIR) ./$(ROOTDIR)
 	$(MAKEDIR) ./tmp
 	$(MAKEDIR) ./$(SCRIPTDIR)
+	$(MAKEDIR) ./spec
+	for V in Rakefile .rspec spec/spec_helper.rb; do \
+		test -e $(PROTOTYPE)/$$V || cp -vp $(PROTOTYPE)/$$V ./$$V ;\
+	done
 	cp -vRp $(PROTOTYPE)/$(SCRIPTDIR)/* ./$(SCRIPTDIR)/
 	$(MAKE) common-role
 	if [ "`basename $(HEREIAM)`" = "`basename $(PROTOTYPE)`" ]; then \
@@ -134,6 +138,13 @@ init-server: server key-pair
 # serverspec related targets
 install-serverspec:
 	sudo gem install serverspec
+
+update-serverspec-files:
+	if [ "$(PWDNAME)" != "`basename $(PROTOTYPE)`" ]; then \
+		cp -vp $(PROTOTYPE)/Rakefile ./ ;\
+		cp -vp $(PROTOTYPE)/.rspec ./ ;\
+		cp -vp $(PROTOTYPE)/spec/spec_helper.rb ./spec/ ;\
+	fi
 
 test:
 	rake spec
