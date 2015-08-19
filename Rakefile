@@ -1,11 +1,12 @@
 require 'rake'
 require 'rspec/core/rake_task'
+require 'yaml'
 
 task :spec    => 'spec:all'
 task :default => :spec
 
 RolesDir = './server/roles'
-RSpecDir = './spec'
+RSpecDir = './serer/spec'
 
 namespace :spec do
   # Serverspec related targets
@@ -162,8 +163,8 @@ namespace :spec do
 
       desc sprintf( "Run serverspec tests to %s(%s)", hostname, role )
       RSpec::Core::RakeTask.new(thistask) do |task|
-
         task.pattern = sprintf( "%s/%s/spec/*.rb", RolesDir, role )
+        task.verbose = true
       end
 
     end # End of rolespecs.each_key
