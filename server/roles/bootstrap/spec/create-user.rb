@@ -5,3 +5,13 @@
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/ |___/ .__/ \___|\___|
 #                                         |_|          |_|              
 # create-user
+unixusers = %w|admin|
+
+unixusers.each do |v|
+  # Test each user
+  describe user(v) do
+    it { should exist }
+    it { should have_home_directory('/home/' + v ) }
+  end
+end
+
