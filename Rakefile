@@ -79,12 +79,12 @@ namespace :spec do
             hosttable[line]['group'] = currentgn
             currenthn = line
 
-          end
+          end # End of line.match(2)
           currenthn = ''
 
-        end
+        end # End of line.match(1)
 
-      end
+      end # End of f.each_line
 
       hosttable.each_key do |e|
         # Fill values in hosttable with groupvars
@@ -100,10 +100,13 @@ namespace :spec do
         hosttable[e]['sshdport'] ||= 22
         hosttable[e]['username'] ||= 'root'
         hosttable[e]['identity'] ||= '~/.ssh/id_rsa'
-      end
-    end
+
+      end # End of hosttable.each_key
+
+    end # End of File.open(inventory)
 
     return hosttable
+
   end
 
   def make_roleindex
@@ -120,7 +123,7 @@ namespace :spec do
         role = role.gsub( RolesDir + '/', '' )
         roleindex << role
       end
-    end
+    end # End of medialist.each
 
     return roleindex
   end
@@ -140,7 +143,8 @@ namespace :spec do
       rolespecs[role] ||= []
       rolespecs[role]  << File.basename(file)
     end
-  end
+
+  end # End of roleindex.each
 
   hosttable.each_key do |v|
     # Build environment variable for spec_helper.rb
@@ -184,5 +188,5 @@ namespace :spec do
   task :all     => tasknames
   task :default => ':all'
 
-end
+end # End of namespace :spec
 
