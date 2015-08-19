@@ -76,7 +76,7 @@ server:
 		test -e $(PROTOTYPE)/$$V || cp -vp $(PROTOTYPE)/$$V ./$$V ;\
 	done
 	cp -vRp $(PROTOTYPE)/$(SCRIPTDIR)/* ./$(SCRIPTDIR)/
-	$(MAKE) common-role
+	$(MAKE) bootstrap-role
 	if [ "`basename $(HEREIAM)`" = "`basename $(PROTOTYPE)`" ]; then \
 		for V in hosts $(INVENTORIES); do \
 			test -f ./$(ROOTDIR)/$$V || touch ./$(ROOTDIR)/$$V ;\

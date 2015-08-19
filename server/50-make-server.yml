@@ -9,7 +9,7 @@
   become_user: root
   remote_user: deploy
   roles:
-    - common
+    - bootstrap
     - src/firewall
     - src/openssl
     - src/perl

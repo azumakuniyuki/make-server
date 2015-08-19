@@ -5,6 +5,7 @@ task :spec    => 'spec:all'
 task :default => :spec
 
 RolesDir = './server/roles'
+RSpecDir = './spec'
 
 namespace :spec do
   # Serverspec related targets
@@ -125,7 +126,7 @@ namespace :spec do
 
   hosttable  = make_hosttable
   roleindex  = make_roleindex
-  roleindex << 'common'
+  roleindex << 'bootstrap'
   rolespecs  = {}
   tasknames  = []
 
