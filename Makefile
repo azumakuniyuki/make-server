@@ -11,6 +11,7 @@ ANSIBLE := $(shell which ansible)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
 ROOTDIR := server
 SUBDIRS := server
+SPECDIR := spec
 MAKEDIR := mkdir -p
 
 PROTOTYPE   := ~/var/rhosts/make-server
@@ -71,10 +72,11 @@ server:
 	$(MAKEDIR) ./$(ROOTDIR)
 	$(MAKEDIR) ./tmp
 	$(MAKEDIR) ./$(SCRIPTDIR)
-	$(MAKEDIR) ./spec
-	for V in Rakefile .rspec spec/spec_helper.rb; do \
+	$(MAKEDIR) ./$(SPECDIR)
+	for V in Rakefile .rspec; do \
 		test -e $(PROTOTYPE)/$$V || cp -vp $(PROTOTYPE)/$$V ./$$V ;\
 	done
+	test -e ./$(SPECDIR) || cp -vRp $(PROTOTYPE)/$(SPECDIR)/* ./$(SPECDIR)/*
 	cp -vRp $(PROTOTYPE)/$(SCRIPTDIR)/* ./$(SCRIPTDIR)/
 	$(MAKE) bootstrap-role
 	if [ "`basename $(HEREIAM)`" = "`basename $(PROTOTYPE)`" ]; then \
@@ -143,7 +145,7 @@ update-serverspec-files:
 	if [ "$(PWDNAME)" != "`basename $(PROTOTYPE)`" ]; then \
 		cp -vp $(PROTOTYPE)/Rakefile ./ ;\
 		cp -vp $(PROTOTYPE)/.rspec ./ ;\
-		cp -vp $(PROTOTYPE)/spec/spec_helper.rb ./spec/ ;\
+		cp -vRp $(PROTOTYPE)/$(SPECDIR)/*.rb ./$(SPECDIR)/ ;\
 	fi
 
 test:

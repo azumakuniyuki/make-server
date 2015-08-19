@@ -126,9 +126,9 @@ namespace :spec do
 
   hosttable  = make_hosttable
   roleindex  = make_roleindex
-  roleindex << 'bootstrap'
   rolespecs  = {}
   tasknames  = []
+  roleindex.unshift('bootstrap')
 
   roleindex.each do |role|
     # Find *.rb files in spec directory from all the roles
@@ -146,6 +146,15 @@ namespace :spec do
     hostname  = hosttable[v]['hostname']
     tasknames = []
 
+    ENV['SPEC_HOSTNAME'] = hostname
+    ENV['SPEC_USERNAME'] = hosttable[v]['username']
+    ENV['SPEC_SSHDPORT'] = hosttable[v]['sshdport']
+    ENV['SPEC_IDENTITY'] = hosttable[v]['identity']
+
+    if hosttable[v]['password'] then
+      ENV['SPEC_PASSWORD'] = hosttable[v]['password']
+    end
+
     rolespecs.each_key do |role|
       # Build each target and task
       thistask   = sprintf("%s:%s", hostname, role )
@@ -153,24 +162,23 @@ namespace :spec do
 
       desc sprintf( "Run serverspec tests to %s(%s)", hostname, role )
       RSpec::Core::RakeTask.new(thistask) do |task|
-        ENV['SPEC_HOSTNAME'] = hostname
-        ENV['SPEC_USERNAME'] = hosttable[v]['username']
-        ENV['SPEC_SSHDPORT'] = hosttable[v]['sshdport']
-        ENV['SPEC_IDENTITY'] = hosttable[v]['identity']
-
-        if hosttable[v]['password'] then
-          ENV['SPEC_PASSWORD'] = hosttable[v]['password']
-        end
 
         task.pattern = sprintf( "%s/%s/spec/*.rb", RolesDir, role )
       end
 
+    end # End of rolespecs.each_key
+
+    desc 'Run tests for Ansible environment'
+    RSpec::Core::RakeTask.new(hostname + ':ansible-env') do |task|
+      task.pattern = RSpecDir + '/[0-9][0-9]-*.rb'
     end
 
+    tasknames.unshift( hostname + ':ansible-env' )
+    # tasknames << hostname + ':ansible-env'
     desc sprintf( "Run all the serverspec tests to %s", hostname )
     task hostname + ':all' => tasknames
 
-  end
+  end # End of hosttable.each_key
 
   task :all     => tasknames
   task :default => ':all'
