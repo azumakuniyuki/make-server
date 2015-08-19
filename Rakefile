@@ -142,7 +142,8 @@ namespace :spec do
 
   hosttable.each_key do |v|
     # Build environment variable for spec_helper.rb
-    hostname = hosttable[v]['hostname']
+    hostname  = hosttable[v]['hostname']
+    tasknames = []
 
     rolespecs.each_key do |role|
       # Build each target and task
@@ -164,6 +165,10 @@ namespace :spec do
       end
 
     end
+
+    desc sprintf( "Run all the serverspec tests to %s", hostname )
+    task hostname + ':all' => tasknames
+
   end
 
   task :all     => tasknames
