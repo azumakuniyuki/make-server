@@ -11,10 +11,11 @@ ANSIBLE := $(shell which ansible)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
 ROOTDIR := server
 SUBDIRS := server
-SPECDIR := spec
+SPECDIR := $(ROOTDIR)/spec
 MAKEDIR := mkdir -p
 
-PROTOTYPE   := ~/var/rhosts/make-server
+MAKESERVERD := ~/var/rhosts/make-server
+LIBRARYDIR  := lib
 SCRIPTDIR   := bin
 DEPLOYKEY    = ./.ssh/id2-deploy-rsa
 DEPLOYUSER  := deploy
@@ -49,11 +50,11 @@ here:
 	@echo $(PWDNAME)
 
 update-makefile:
-	if [ "$(PWDNAME)" != "`basename $(PROTOTYPE)`" ]; then \
-		cp $(PROTOTYPE)/Makefile ./ ;\
+	if [ "$(PWDNAME)" != "`basename $(MAKESERVERD)`" ]; then \
+		cp $(MAKESERVERD)/Makefile ./ ;\
 		if [ -d "./$(ROOTDIR)" ]; then \
 			for V in $(PLAYBOOKS); do \
-				test -f ./$(ROOTDIR)/$$V || cp $(PROTOTYPE)/$(ROOTDIR)/$$V ./$(ROOTDIR)/ ;\
+				test -f ./$(ROOTDIR)/$$V || cp $(MAKESERVERD)/$(ROOTDIR)/$$V ./$(ROOTDIR)/ ;\
 			done ;\
 		fi ;\
 	fi
@@ -74,33 +75,33 @@ server:
 	$(MAKEDIR) ./$(SCRIPTDIR)
 	$(MAKEDIR) ./$(SPECDIR)
 	for V in Rakefile .rspec; do \
-		test -e $(PROTOTYPE)/$$V || cp -vp $(PROTOTYPE)/$$V ./$$V ;\
+		test -e $(MAKESERVERD)/$$V || cp -vp $(MAKESERVERD)/$$V ./$$V ;\
 	done
-	test -e ./$(SPECDIR) || cp -vRp $(PROTOTYPE)/$(SPECDIR)/* ./$(SPECDIR)/*
-	cp -vRp $(PROTOTYPE)/$(SCRIPTDIR)/* ./$(SCRIPTDIR)/
+	test -e ./$(SPECDIR) || cp -vRp $(MAKESERVERD)/$(SPECDIR)/* ./$(SPECDIR)/*
+	cp -vRp $(MAKESERVERD)/$(SCRIPTDIR)/* ./$(SCRIPTDIR)/
 	$(MAKE) bootstrap-role
-	if [ "`basename $(HEREIAM)`" = "`basename $(PROTOTYPE)`" ]; then \
+	if [ "`basename $(HEREIAM)`" = "`basename $(MAKESERVERD)`" ]; then \
 		for V in hosts $(INVENTORIES); do \
 			test -f ./$(ROOTDIR)/$$V || touch ./$(ROOTDIR)/$$V ;\
 		done ;\
 	else \
 		for V in $(INVENTORIES) $(PLAYBOOKS); do \
-			test -f ./$(ROOTDIR)/$$V || cp -vp $(PROTOTYPE)/$(ROOTDIR)/$$V ./$(ROOTDIR)/ ;\
+			test -f ./$(ROOTDIR)/$$V || cp -vp $(MAKESERVERD)/$(ROOTDIR)/$$V ./$(ROOTDIR)/ ;\
 		done ;\
 		$(MAKE) vm-inventory ;\
 		for V in group_vars; do \
 			test -d ./$(ROOTDIR)/$$V || ( \
 				$(MAKEDIR) ./$(ROOTDIR)/$$V ;\
-				cp -vRp $(PROTOTYPE)/$(ROOTDIR)/$$V/* $(ROOTDIR)/$$V/ ) ;\
+				cp -vRp $(MAKESERVERD)/$(ROOTDIR)/$$V/* $(ROOTDIR)/$$V/ ) ;\
 		done ;\
 	fi
 	if [ ! -f "./$(ANSIBLECFG)" ]; then \
-		cp $(PROTOTYPE)/$(ANSIBLECFG) ./$(ANSIBLECFG) ;\
+		cp $(MAKESERVERD)/$(ANSIBLECFG) ./$(ANSIBLECFG) ;\
 		ln -fs ./$(ANSIBLECFG) ./ansible.cfg ;\
 	fi
 
 %-role: server
-	if [ ! -d $(PROTOTYPE)/$(ROOTDIR)/roles/$* -o "`basename $(HEREIAM)`" = "`basename $(PROTOTYPE)`" ]; then \
+	if [ ! -d $(MAKESERVERD)/$(ROOTDIR)/roles/$* -o "`basename $(HEREIAM)`" = "`basename $(MAKESERVERD)`" ]; then \
 		for V in files handlers tasks templates vars defaults meta; do \
 			$(MAKEDIR) ./$(ROOTDIR)/roles/`echo $*`/$$V ;\
 		done ;\
@@ -118,16 +119,16 @@ server:
 		$(MAKEDIR) ./$(ROOTDIR)/roles ;\
 		if [ ! -d "./$(ROOTDIR)/roles/$*" ]; then \
 			$(MAKEDIR) ./$(ROOTDIR)/roles/$*/ ;\
-			cp -Rvp $(PROTOTYPE)/$(ROOTDIR)/roles/$*/* ./$(ROOTDIR)/roles/$*/ ;\
+			cp -Rvp $(MAKESERVERD)/$(ROOTDIR)/roles/$*/* ./$(ROOTDIR)/roles/$*/ ;\
 			echo ;\
 		else \
-			cp -Rip $(PROTOTYPE)/$(ROOTDIR)/roles/$*/* ./$(ROOTDIR)/roles/$*/ ;\
+			cp -Rip $(MAKESERVERD)/$(ROOTDIR)/roles/$*/* ./$(ROOTDIR)/roles/$*/ ;\
 			echo ;\
 		fi ;\
 	fi
 
 role-index:
-	@find $(PROTOTYPE)/$(ROOTDIR)/roles -type f -name 'main.yml' \
+	@find $(MAKESERVERD)/$(ROOTDIR)/roles -type f -name 'main.yml' \
 		| grep '/tasks/main.yml' \
 		| sed \
 			-e 's|/tasks/main.yml||g' \
@@ -142,10 +143,10 @@ install-serverspec:
 	sudo gem install serverspec
 
 update-serverspec-files:
-	if [ "$(PWDNAME)" != "`basename $(PROTOTYPE)`" ]; then \
-		cp -vp $(PROTOTYPE)/Rakefile ./ ;\
-		cp -vp $(PROTOTYPE)/.rspec ./ ;\
-		cp -vRp $(PROTOTYPE)/$(SPECDIR)/*.rb ./$(SPECDIR)/ ;\
+	if [ "$(PWDNAME)" != "`basename $(MAKESERVERD)`" ]; then \
+		cp -vp $(MAKESERVERD)/Rakefile ./ ;\
+		cp -vp $(MAKESERVERD)/.rspec ./ ;\
+		cp -vRp $(MAKESERVERD)/$(SPECDIR)/*.rb ./$(SPECDIR)/ ;\
 	fi
 
 test:
@@ -158,7 +159,7 @@ vagrant:
 vm-inventory:
 	if [ -f "./$(VAGRANTCFG)" ]; then \
 		X="`$(MAKE) addr`" ;\
-		cat $(PROTOTYPE)/$(INVENTORY) | sed \
+		cat $(MAKESERVERD)/$(INVENTORY) | sed \
 			-e "s/__IPV4ADDRESS__/$$X/g" \
 			-e 's/__OPENSSHPORT__/22/g' \
 		> ./$(INVENTORY) ;\
@@ -169,7 +170,7 @@ vm-inventory:
 		vagrant init $* ;\
 		X="`perl -lE 'print int(rand(250)) + 2'`" ;\
 		Y="`perl -lE 'print int(rand(250)) + 2'`" ;\
-		cat $(PROTOTYPE)/$(VAGRANTCFG) | sed \
+		cat $(MAKESERVERD)/$(VAGRANTCFG) | sed \
 			-e 's/__HOSTNAME__/vm.$(PWDNAME)/g' \
 			-e "s/__IPV4ADDRESS__/$(VAGRANTNET).$$X.$$Y/g" \
 			-e 's/__VIRTUALBOX__/$*/g' > ./$(VAGRANTCFG) ;\
