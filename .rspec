@@ -1,3 +1,4 @@
---require spec_helper.rb
+--require spec_helper
+--require ansible_helper
 --color
 --format documentation
