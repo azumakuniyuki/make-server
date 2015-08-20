@@ -24,8 +24,8 @@ describe 'bootstrap/install-pkg' do
       |,
   }
 
-  installpkg[ os[:family].to_sym ].each do |p|
-    describe package(p) do
+  installpkg[ os[:family].to_sym ].each do |e|
+    describe package(e) do
       it { should be_installed }
     end
   end
