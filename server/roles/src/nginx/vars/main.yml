@@ -6,6 +6,7 @@
 #        |___/                                        
 nginx:
   started: False
+  enabled: True
   rebuild: False
   version: 1.6.1
   updateonly: False

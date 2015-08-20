@@ -22,5 +22,9 @@
     /sbin/chkconfig --add {{ nginx.initscript }}
 
 - name: boot-script | Turn on init script
+  when: nginx.enabled == True
   service: name={{ nginx.initscript }} enabled=yes
 
+- name: boot-script | Turn off init script
+  when: nginx.enabled == False
+  service: name={{ nginx.initscript }} enabled=no
