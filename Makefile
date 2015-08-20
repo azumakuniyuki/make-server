@@ -74,6 +74,7 @@ server:
 	$(MAKEDIR) ./tmp
 	$(MAKEDIR) ./$(SCRIPTDIR)
 	$(MAKEDIR) ./$(SPECDIR)
+	$(MAKEDIR) ./$(LIBRARYDIR)
 	for V in Rakefile .rspec; do \
 		test -e $(MAKESERVERD)/$$V || cp -vp $(MAKESERVERD)/$$V ./$$V ;\
 	done
@@ -147,6 +148,7 @@ update-serverspec-files:
 		cp -vp $(MAKESERVERD)/Rakefile ./ ;\
 		cp -vp $(MAKESERVERD)/.rspec ./ ;\
 		cp -vRp $(MAKESERVERD)/$(SPECDIR)/*.rb ./$(SPECDIR)/ ;\
+		cp -vRp $(MAKESERVERD)/$(LIBRARYDIR)/*.rb ./$(LIBRARYDIR)/ ;\
 	fi
 
 test:
