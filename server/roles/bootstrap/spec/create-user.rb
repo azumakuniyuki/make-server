@@ -7,15 +7,15 @@
 # create-user
 ansiblevars = MakeServer::Ansible.load_variables
 
-ansiblevars['role']['unixusers'].each do |v|
+ansiblevars['role']['unixusers'].each do |e|
   # Test each user
-  describe user(v['username']) do
+  describe user(e['username']) do
     it { should exist }
-    it { should belong_to_group v['group'] }
-    it { should belong_to_group v['groups'] } if v['groups'].length > 0
-    it { should have_uid v['uid'] }
-    it { should have_home_directory v['home'] }
-    it { should have_login_shell v['shell'] }
+    it { should belong_to_group e['group'] }
+    it { should belong_to_group e['groups'] } if e['groups'].length > 0
+    it { should have_uid e['uid'] }
+    it { should have_home_directory e['home'] }
+    it { should have_login_shell e['shell'] }
   end
 end
 
