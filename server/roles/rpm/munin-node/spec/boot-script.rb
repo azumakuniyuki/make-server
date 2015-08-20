@@ -10,11 +10,15 @@ describe 'rpm/munin-node/boot-script' do
 
   describe service('munin-node') do
     if v['started'] then
-      it { should be_enabled }
       it { should be_running }
     else
-      it { should_not be_enabled }
       it { should_not be_running }
+    end
+
+    if v['enabled'] then
+      it { should be_enabled }
+    else
+      it { should_not be_enabled }
     end
   end
 end
