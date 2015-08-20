@@ -8,11 +8,21 @@ describe 'src/nginx/boot-script' do
   ansiblevars = MakeServer::Ansible.load_variables
   v = ansiblevars['role']['nginx']
 
-  describe service(v['initscript']) do
-    it { should be_enabled }     if     v['enabled']
-    it { should_not be_enabled } unless v['enabled']
-    it { should be_running }     if     v['started']
-    it { should_not be_running } unless v['started']
+  describe 'nginx service status' do
+    describe service(v['initscript']) do
+      it { should be_enabled }     if     v['enabled']
+      it { should_not be_enabled } unless v['enabled']
+      it { should be_running }     if     v['started']
+      it { should_not be_running } unless v['started']
+    end
+  end
+
+  describe 'nginx process status' do
+    if v['started'] then
+      describe process('nginx') do
+        its(:user) { should eq v['user']['username'] }
+      end
+    end
   end
 end
 
