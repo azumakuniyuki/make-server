@@ -5,13 +5,11 @@
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/ |___/ .__/ \___|\___|
 #                                         |_|          |_|              
 # python-pkgs
-if false then
+xdescribe 'python-pkgs' do
   pythonpkgs = [ 'urllib2', 'urlparse' ]
-
   pythonpkgs.each do |p|
     describe package(p) do
       it { should be_installed.by('pip') }
     end
   end
 end
-

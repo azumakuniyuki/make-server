@@ -5,17 +5,19 @@
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/ |___/ .__/ \___|\___|
 #                                         |_|          |_|              
 # create-user
-ansiblevars = MakeServer::Ansible.load_variables
+describe 'create-user' do
 
-ansiblevars['role']['unixusers'].each do |e|
-  # Test each user
-  describe user(e['username']) do
-    it { should exist }
-    it { should belong_to_group e['group'] }
-    it { should belong_to_group e['groups'] } if e['groups'].length > 0
-    it { should have_uid e['uid'] }
-    it { should have_home_directory e['home'] }
-    it { should have_login_shell e['shell'] }
+  ansiblevars = MakeServer::Ansible.load_variables
+  ansiblevars['role']['unixusers'].each do |e|
+    # Test each user
+    describe user(e['username']) do
+      it { should exist }
+      it { should belong_to_group e['group'] }
+      it { should belong_to_group e['groups'] } if e['groups'].length > 0
+      it { should have_uid e['uid'] }
+      it { should have_home_directory e['home'] }
+      it { should have_login_shell e['shell'] }
+    end
   end
-end
 
+end

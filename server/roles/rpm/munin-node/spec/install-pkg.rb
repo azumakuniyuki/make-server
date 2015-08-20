@@ -5,16 +5,20 @@
 # |_| |_| |_|\__,_|_| |_|_|_| |_|     |_| |_|\___/ \__,_|\___/_/ |___/ .__/ \___|\___|
 #                                                                    |_|              
 # install-pkg
-describe package('munin-node') do
-  it { should be_installed }
-end
-
-if false then
-  # these tests fail...
-  modules = %w|LWP::UserAgent IPC::Cmd JSON::Syck Net::CIDR|
-  modules.each do |e|
-    describe package(e) do
+describe 'install-pkg' do
+  describe 'RPM package' do
+    describe package('munin-node') do
       it { should be_installed }
+    end
+  end
+
+  describe 'Perl modules' do
+    modules = %w|LWP::UserAgent IPC::Cmd JSON::Syck Net::CIDR|
+    modules.each do |e|
+      describe package(e) do
+        pending 'These tests fail...'
+        # it { should be_installed.by('cpan') }
+      end
     end
   end
 end

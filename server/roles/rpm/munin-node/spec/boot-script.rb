@@ -5,15 +5,18 @@
 # |_| |_| |_|\__,_|_| |_|_|_| |_|     |_| |_|\___/ \__,_|\___/_/ |___/ .__/ \___|\___|
 #                                                                    |_|              
 # boot-script
-ansiblevars = MakeServer::Ansible.load_variables
-v = ansiblevars['role']['munin']['node']
-describe service('munin-node') do
+describe 'boot-script' do
 
-  if v['started'] then
-    it { should be_enabled }
-    it { should be_running }
-  else
-    it { should_not be_enabled }
-    it { should_not be_running }
+  ansiblevars = MakeServer::Ansible.load_variables
+  v = ansiblevars['role']['munin']['node']
+
+  describe service('munin-node') do
+    if v['started'] then
+      it { should be_enabled }
+      it { should be_running }
+    else
+      it { should_not be_enabled }
+      it { should_not be_running }
+    end
   end
 end

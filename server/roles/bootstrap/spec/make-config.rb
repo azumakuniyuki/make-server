@@ -5,17 +5,19 @@
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/ |___/ .__/ \___|\___|
 #                                         |_|          |_|              
 # make-config
-ansiblevars = MakeServer::Ansible.load_variables
+describe 'make-config' do
 
-if defined?( ansiblevars['all'] ) then
-  v = ansiblevars['all']['buildroot']
+  ansiblevars = MakeServer::Ansible.load_variables
 
-  describe file(v) do
-    it { should be_directory }
-    it { should be_owned_by 'root' }
-    it { should be_readable }
-    it { should be_writable }
-    it { should be_executable }
+  if defined?( ansiblevars['all'] ) then
+    v = ansiblevars['all']['buildroot']
+
+    describe file(v) do
+      it { should be_directory }
+      it { should be_owned_by 'root' }
+      it { should be_readable }
+      it { should be_writable }
+      it { should be_executable }
+    end
   end
 end
-
