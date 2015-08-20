@@ -5,27 +5,32 @@
 # |___/ .__/ \___|\___/_/ \__,_|\___| .__/|_|\___/ \__, |      \__,_|___/\___|_|   
 #     |_|                           |_|            |___/                           
 # Test code for server/20-deploy-user.yml
-describe group('deploy') do
-  it { should exist }
-end
+describe '20-deploy-user' do
+  describe 'Users and groups' do
+    describe group('deploy') do
+      it { should exist }
+    end
 
-describe user('deploy') do
-  it { should exist }
-end
-
-if os[:family] == 'freebsd' then
-  # FreeBSD
-  describe file('/usr/local/etc/sudoers.d/deploy') do
-    it { should exist }
-    it { should be_mode('440') }
-    its(:content) { should match(/^%deploy/) }
+    describe user('deploy') do
+      it { should exist }
+    end
   end
-else
-  # Redhat, Debian, OpenBSD
-  describe file('/etc/sudoers.d/deploy') do
-    it { should exist }
-    it { should be_mode('440') }
-    its(:content) { should match(/^%deploy/) }
+
+  describe 'sudo file to be included' do
+    if os[:family] == 'freebsd' then
+      # FreeBSD
+      describe file('/usr/local/etc/sudoers.d/deploy') do
+        it { should exist }
+        it { should be_mode('440') }
+        its(:content) { should match(/^%deploy/) }
+      end
+    else
+      # Redhat, Debian, OpenBSD
+      describe file('/etc/sudoers.d/deploy') do
+        it { should exist }
+        it { should be_mode('440') }
+        its(:content) { should match(/^%deploy/) }
+      end
+    end
   end
 end
-

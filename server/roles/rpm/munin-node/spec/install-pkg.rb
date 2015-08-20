@@ -4,8 +4,7 @@
 # | | | | | | |_| | | | | | | | |_____| | | | (_) | (_| |  __// /\__ \ |_) |  __/ (__ 
 # |_| |_| |_|\__,_|_| |_|_|_| |_|     |_| |_|\___/ \__,_|\___/_/ |___/ .__/ \___|\___|
 #                                                                    |_|              
-# install-pkg
-describe 'install-pkg' do
+describe 'rpm/munin-node/install-pkg' do
   describe 'RPM package' do
     describe package('munin-node') do
       it { should be_installed }

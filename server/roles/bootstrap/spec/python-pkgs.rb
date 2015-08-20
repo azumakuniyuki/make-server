@@ -4,8 +4,7 @@
 # | |_) | (_) | (_) | |_\__ \ |_| | | (_| | |_) / /\__ \ |_) |  __/ (__ 
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/ |___/ .__/ \___|\___|
 #                                         |_|          |_|              
-# python-pkgs
-xdescribe 'python-pkgs' do
+xdescribe 'bootstrap/python-pkgs' do
   pythonpkgs = [ 'urllib2', 'urlparse' ]
   pythonpkgs.each do |p|
     describe package(p) do

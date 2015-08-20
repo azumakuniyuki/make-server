@@ -4,8 +4,7 @@
 # | |_) | (_) | (_) | |_\__ \ |_| | | (_| | |_) / /\__ \ |_) |  __/ (__ 
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/ |___/ .__/ \___|\___|
 #                                         |_|          |_|              
-# install-pkg
-describe 'install-pkg' do
+describe 'bootstrap/install-pkg' do
   installpkg = {
     :redhat => %w|
       autoconf automake gcc gcc-c++ gettext gettext-devel git ncurses 

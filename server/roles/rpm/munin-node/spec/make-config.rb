@@ -4,12 +4,11 @@
 # | | | | | | |_| | | | | | | | |_____| | | | (_) | (_| |  __// /\__ \ |_) |  __/ (__ 
 # |_| |_| |_|\__,_|_| |_|_|_| |_|     |_| |_|\___/ \__,_|\___/_/ |___/ .__/ \___|\___|
 #                                                                    |_|              
-# make-config
-ansiblevars = MakeServer::Ansible.load_variables
-configfiles = %w|/etc/munin/munin-node.conf /etc/logrotate.d/munin-node|
-v = ansiblevars['role']['munin']['node']
+describe 'rpm/munin-node/make-config' do
+  ansiblevars = MakeServer::Ansible.load_variables
+  configfiles = %w|/etc/munin/munin-node.conf /etc/logrotate.d/munin-node|
+  v = ansiblevars['role']['munin']['node']
 
-describe 'make-config' do
   describe 'Configuration files' do
     configfiles.each do |e|
       describe file(e) do

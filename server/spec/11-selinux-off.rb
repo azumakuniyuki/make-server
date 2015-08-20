@@ -5,7 +5,9 @@
 # |___/ .__/ \___|\___/_/ |___/\___|_|_|_| |_|\__,_/_/\_\     \___/|_| |_|  
 #     |_|                                                                   
 # Test code for server/11-selinux-off.yml
-describe selinux do
-  it { should be_disabled }
+describe '11-selinux-off' do
+  describe selinux do
+    it { should be_disabled }
+  end
 end
 

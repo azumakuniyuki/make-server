@@ -4,9 +4,7 @@
 # | | | | | | |_| | | | | | | | |_____| | | | (_) | (_| |  __// /\__ \ |_) |  __/ (__ 
 # |_| |_| |_|\__,_|_| |_|_|_| |_|     |_| |_|\___/ \__,_|\___/_/ |___/ .__/ \___|\___|
 #                                                                    |_|              
-# boot-script
-describe 'boot-script' do
-
+describe 'rpm/munin-node/boot-script' do
   ansiblevars = MakeServer::Ansible.load_variables
   v = ansiblevars['role']['munin']['node']
 

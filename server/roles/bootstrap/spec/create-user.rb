@@ -4,10 +4,9 @@
 # | |_) | (_) | (_) | |_\__ \ |_| | | (_| | |_) / /\__ \ |_) |  __/ (__ 
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/ |___/ .__/ \___|\___|
 #                                         |_|          |_|              
-# create-user
-describe 'create-user' do
-
+describe 'bootstrap/create-user' do
   ansiblevars = MakeServer::Ansible.load_variables
+
   ansiblevars['role']['unixusers'].each do |e|
     # Test each user
     describe user(e['username']) do
@@ -19,5 +18,4 @@ describe 'create-user' do
       it { should have_login_shell e['shell'] }
     end
   end
-
 end
