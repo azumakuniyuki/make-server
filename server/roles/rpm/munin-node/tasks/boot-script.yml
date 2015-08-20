@@ -4,8 +4,12 @@
 # | | | | | | |_| | | | | | | | |_____| | | | (_) | (_| |  __// / | || (_| \__ \   <\__ \
 # |_| |_| |_|\__,_|_| |_|_|_| |_|     |_| |_|\___/ \__,_|\___/_/   \__\__,_|___/_|\_\___/
 #                                                                                        
-- include: install-pkg.yml
-- include: make-config.yml
-- include: set-plugins.yml
-- include: boot-script.yml
+# boot-script
+- name: boot-script | Start munin-node
+  when: munin.node.started == True
+  service: name=munin-node state=started enabled=yes
+
+- name: boot-script | Stop munin-node
+  when: munin.node.started == False
+  service: name=munin-node state=stopped enabled=no
 
