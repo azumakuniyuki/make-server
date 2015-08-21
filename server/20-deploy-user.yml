@@ -36,6 +36,12 @@
         createhome=yes
         state=present
 
+    - name: deploy-user | Vagrant | vagrant should belong to deploy group
+      when: ansible_product_name == "VirtualBox" and
+            ( ansible_env.SUDO_USER == "vagrant" or ansible_user_id == "vagrant" )
+      user: name=vagrant groups="wheel,{{ user.group}}" state=present
+
+
     - name: deploy-user | Linux | sudoers.d/deploy has been created
       when: ansible_system == "Linux"
       shell: >
