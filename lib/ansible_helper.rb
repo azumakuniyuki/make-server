@@ -101,7 +101,7 @@ module MakeServer
 
       def make_roleindex
         # Find roles from ./server/role directory
-        medialist = [ 'src', 'rpm', 'deb', 'pkg' ]
+        medialist = [ 'src', 'rpm', 'deb', 'pkg', 'env' ]
         roleindex = []
 
         medialist.each do |e|
