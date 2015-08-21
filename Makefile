@@ -160,11 +160,13 @@ vagrant:
 
 vm-inventory:
 	if [ -f "./$(VAGRANTCFG)" ]; then \
-		X="`$(MAKE) addr`" ;\
-		cat $(MAKESERVERD)/$(INVENTORY) | sed \
-			-e "s/__IPV4ADDRESS__/$$X/g" \
-			-e 's/__OPENSSHPORT__/22/g' \
-		> ./$(INVENTORY) ;\
+		if [ ! -f "$(INVENTORY)" ]; then \
+			X="`$(MAKE) addr`" ;\
+			cat $(MAKESERVERD)/$(INVENTORY) | sed \
+				-e "s/__IPV4ADDRESS__/$$X/g" \
+				-e 's/__OPENSSHPORT__/22/g' \
+			> ./$(INVENTORY) ;\
+		fi ;\
 	fi
 
 %-box:
@@ -187,7 +189,7 @@ addr:
 list:
 	vagrant box list
 
-up: vagrant
+up: vagrant vm-inventory
 	ssh-keygen -R `$(MAKE) addr`
 	vagrant up
 
@@ -195,7 +197,7 @@ destroy: vagrant
 	vagrant destroy
 	ssh-keygen -R `$(MAKE) addr`
 
-init-vm: vagrant
+init-vm: vagrant vm-inventory
 	$(MAKE) destroy && $(MAKE) up
 	$(MAKE) init-server
 
