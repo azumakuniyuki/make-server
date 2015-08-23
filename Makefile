@@ -5,7 +5,7 @@
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 # ---------------------------------------------------------------------------
-VERSION := '2.1.1'
+VERSION := '2.2.0'
 HEREIAM := $(shell pwd)
 ANSIBLE := $(shell which ansible)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
@@ -29,6 +29,7 @@ PLAYBOOKS   := 10-build-stage.yml 11-selinux-off.yml \
 VAGRANTNET  := 172.25
 VAGRANTKEY  := .vagrant/machines/default/virtualbox/private_key
 VAGRANTCFG  := Vagrantfile
+VAGRANTBIN  := script
 
 .PHONY: clean
 login:
@@ -169,6 +170,12 @@ vm-inventory:
 		fi ;\
 	fi
 
+vm-script:
+	if [ "`basename $(HEREIAM)`" != "`basename $(MAKESERVERD)`" ]; then \
+		$(MAKEDIR) ./$(VAGRANTBIN) ;\
+		cp -Rvp $(MAKESERVERD)/$(VAGRANTBIN)/* ./$(VAGRANTBIN)/ ;\
+	fi
+
 %-box:
 	if [ ! -f "./$(VAGRANTCFG)" ]; then \
 		vagrant init $* ;\
@@ -189,7 +196,7 @@ addr:
 list:
 	vagrant box list
 
-up: vagrant vm-inventory
+up: vagrant vm-script vm-inventory
 	ssh-keygen -R `$(MAKE) addr`
 	vagrant up
 
