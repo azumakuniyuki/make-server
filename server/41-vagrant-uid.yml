@@ -1,0 +1,72 @@
+#                                   _              _     _ 
+# __   ____ _  __ _ _ __ __ _ _ __ | |_      _   _(_) __| |
+# \ \ / / _` |/ _` | '__/ _` | '_ \| __|____| | | | |/ _` |
+#  \ V / (_| | (_| | | | (_| | | | | ||_____| |_| | | (_| |
+#   \_/ \__,_|\__, |_|  \__,_|_| |_|\__|     \__,_|_|\__,_|
+#             |___/                                        
+- hosts: all
+  become: True
+  become_user: root
+  remote_user: deploy
+  tasks:
+    - name: vagrant-uid | Check vagrant uid
+      when: ansible_product_name == "VirtualBox" and
+            ( ansible_env.SUDO_USER == "vagrant" or ansible_user_id == "vagrant" )
+      register: check_vagrant_ids
+      changed_when: check_vagrant_ids.rc < 1
+      ignore_errors: True
+      shell: id vagrant | grep 'uid=500' | grep 'gid=500'
+
+    - name: vagrant-uid | Deploy script for changing vagrant ids
+      when: check_vagrant_ids|changed
+      register: deploy_script_for_vagrant_ids
+      copy: >
+        src=../script/41-vagrant-uid.sh
+        dest=/root/change-vagrant-ids
+        mode=0755
+
+    - name: vagrant-uid | Change vagrant gid and uid
+      when: check_vagrant_ids|success and deploy_script_for_vagrant_ids|changed
+      register: change_vagrant_ids
+      command: /root/change-vagrant-ids
+
+
+    - name: vagrant-uid | Change vagrant gid
+      when: false and ansible_product_name == "VirtualBox" and
+            ( ansible_env.SUDO_USER == "vagrant" or ansible_user_id == "vagrant" )
+      register: change_vagrant_gid
+      replace:
+        backup=yes
+        dest=/etc/group
+        regexp='^(vagrant:x):500:'
+        replace='\1:401:'
+    
+    - name: vagrant-uid | Change vagrant gid
+      when: false and change_vagrant_gid|changed and
+            ansible_product_name == "VirtualBox" and
+            ( ansible_env.SUDO_USER == "vagrant" or ansible_user_id == "vagrant" )
+      register: change_vagrant_uid
+      replace:
+        backup=yes
+        dest=/etc/passwd
+        regexp='^(vagrant:x):500:500:'
+        replace='\1:401:401:'
+    
+    - name: vagrant-uid | Fix owner of /home/vagrant
+      when: false and change_vagrant_uid|changed
+      file: >
+        path=/home/vagrant
+        owner=vagrant
+        group=vagrant
+        state=directory
+        recurse=yes
+    
+    - name: vagrant-uid | Fix owner of each file
+      when: false and change_vagrant_uid|changed
+      file: >
+        path={{ item }}
+        owner=vagrant
+        state=file
+      with_items:
+        - /var/spool/mail/vagrant
+
