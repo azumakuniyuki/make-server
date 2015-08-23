@@ -55,16 +55,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # View the documentation for the provider you're using for more
   # information on available options.
+  config.vm.provision :shell, :path => "./script/10-vagrant-uid.sh",:privileged   => true
+  config.vm.provision :shell, :path => "./script/12-sudo-config.sh",:privileged   => true
+  config.vm.provision :shell, :path => "./script/15-rewrite-dns.sh",:privileged   => true
+  config.vm.provision :shell, :path => "./script/80-setup-repos.sh",:privileged   => true
+  config.vm.provision :shell, :path => "./script/95-install-pkg.sh",:privileged   => true
+
   config.vm.provision :shell do |shell|
-    shell.inline = "sudo perl -i -ple 's/nameserver .+\z/nameserver 8.8.8.8/' /etc/resolv.conf"
     shell.inline = "sudo hostname " + HOSTNAME
-    if /centos.+/ =~ config.vm.box then
-        shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/elff.repo"
-        shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/prosvc.repo"
-        shell.inline = "sudo perl -i -ple 's/enabled=1/enabled=0/g' /etc/yum.repos.d/puppetlabs.repo"
-        shell.inline = "sudo perl -i -ple 's|secure_path = .+$|secure_path = /usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin/:sbin|' /etc/sudoers"
-        shell.inline = "sudo yum -y install python-simplejson"
-    end
   end
 end
 
