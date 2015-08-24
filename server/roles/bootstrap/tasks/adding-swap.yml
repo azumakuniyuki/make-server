@@ -17,6 +17,7 @@
   when: ansible_system == "Linux"
   register: swap0
   changed_when: swap0.rc < 0
+  always_run: True
   shell: echo '( {{ ansible_memtotal_mb }} / 2 * 1024 )' | bc
 
 - name: adding-swap | /swapfile exists
