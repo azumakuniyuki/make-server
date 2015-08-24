@@ -1,0 +1,15 @@
+#             _              ___            _        
+#  _ __ _   _| |__  _   _   / / |_ __ _ ___| | _____ 
+# | '__| | | | '_ \| | | | / /| __/ _` / __| |/ / __|
+# | |  | |_| | |_) | |_| |/ / | || (_| \__ \   <\__ \
+# |_|   \__,_|_.__/ \__, /_/   \__\__,_|___/_|\_\___/
+#                   |___/                            
+# install-pkg
+- name: install-pkg | RedHat | Install Ruby and relevant tools
+  when: ansible_os_family == "RedHat"
+  yum: name={{ item }} state=present
+  with_items:
+    - ruby
+    - rubygems
+    - ruby-irb
+
