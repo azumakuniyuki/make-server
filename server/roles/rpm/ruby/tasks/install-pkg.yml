@@ -8,8 +8,5 @@
 - name: install-pkg | RedHat | Install Ruby and relevant tools
   when: ansible_os_family == "RedHat"
   yum: name={{ item }} state=present
-  with_items:
-    - ruby
-    - rubygems
-    - ruby-irb
+  with_items: ruby.packages.install
 

@@ -14,6 +14,19 @@ sendmail:
   initscript: sendmail
   mtaqueue: /var/spool/queues
   msaqueue: /var/spool/cqueue
+  packages:
+    redhat:
+      install:
+        - db4
+        - db4-devel
+        - pcre
+        - pcre-devel
+        - openssl-devel
+        - cyrus-sasl-lib
+        - cyrus-sasl-devel
+        - cyrus-sasl-md5
+        - cyrus-sasl-plain
+        - cyrus-sasl-ntlm
   user:
     mta:
       username: sendmail

@@ -8,7 +8,5 @@
 - name: install-pkg | Install dependencies for MySQL {{ mysql.version }}
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items:
-    - cmake
-    - MySQL-python
-      
+  with_items: mysql.packages.redhat.install
+

@@ -13,6 +13,8 @@ munin:
       htmldir: /var/www/html/munin
       logdir:  /var/log/munin
       rundir:  /var/run/munin
+    packages:
+      install: [ 'munin' ]
   httpd:
     enabled: True
     started: True

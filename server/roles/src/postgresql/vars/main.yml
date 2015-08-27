@@ -12,6 +12,9 @@ postgresql:
   serverroot: /opt/postgresql
   workingdir: /usr/local/src
   datadirectory: /opt/postgresql/data
+  packages:
+    redhat:
+      install: [ 'python-psycopg2' ]
   user:
     username: postgres
     uid: 5432

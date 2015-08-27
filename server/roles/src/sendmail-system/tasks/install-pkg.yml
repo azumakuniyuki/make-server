@@ -9,15 +9,5 @@
 - name: install-pkg | Packages required by sendmail should be installed'
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items:
-    - db4
-    - db4-devel
-    - pcre
-    - pcre-devel
-    - openssl-devel
-    - cyrus-sasl-lib
-    - cyrus-sasl-devel
-    - cyrus-sasl-md5
-    - cyrus-sasl-plain
-    - cyrus-sasl-ntlm
+  with_items: sendmail.packages.redhat.install
 

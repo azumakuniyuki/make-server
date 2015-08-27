@@ -24,4 +24,6 @@ svnserve:
   conf:
     svnlogfile: /var/log/svnserve.log
     listenport: 3690
+  packages:
+    install: [ 'subversion' ]
 

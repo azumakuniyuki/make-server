@@ -8,12 +8,10 @@
 - name: install-pkg | RedHat | Install dependencies for vsftpd {{ vsftpd.version }}
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items:
-    - libcap
-    - libcap-devel
+  with_items: vsftpd.packages.redhat.install
 
 - name: install-pkg | Debian | Install dependencies for vsftpd {{ vsftpd.version }}
   when: ansible_os_family == "Debian"
   yum:  name={{ item }} state=present
-  with_items:
-    - libcap-dev
+  with_items: vsftpd.packages.debian.install
+

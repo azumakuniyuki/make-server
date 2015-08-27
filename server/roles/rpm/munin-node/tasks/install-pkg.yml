@@ -7,13 +7,10 @@
 # install-pkg
 - name: install-pkg | Install munin-node
   when: ansible_os_family == "RedHat"
-  yum: name=munin-node state=present
+  yum: name={{ item }} state=present
+  with_items: munin.node.packages.install
 
 - name: install-pkg | Install Perl modules
   cpanm: name={{ item }}
-  with_items:
-    - LWP::UserAgent
-    - IPC::Cmd
-    - JSON::Syck
-    - Net::CIDR
+  with_items: munin.node.modules.perl
 

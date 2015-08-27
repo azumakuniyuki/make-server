@@ -27,4 +27,7 @@ mysql:
     socket: /tmp/mysql.sock
     rootpasswd: ''
     maxconns: 100
+  packages:
+    redhat:
+      install: [ 'cmake', 'MySQL-python' ]
 

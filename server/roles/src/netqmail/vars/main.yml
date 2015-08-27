@@ -12,6 +12,9 @@ qmail:
   initscript: qmail
   serverroot: /var/qmail
   workingdir: /usr/local/src
+  packages:
+    redhat:
+      install: [ 'tcsh' ]
   config:
     queuelife: 86400
     databytes:  8192

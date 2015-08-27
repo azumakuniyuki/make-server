@@ -8,44 +8,10 @@
 - name: install-pkg | FreeBSD | Packages required by OpenSMTPD should be installed
   when: ansible_os_family == "FreeBSD"
   pkgng: name={{ item }} state=present
-  with_items:
-    - autoconf
-    - automake
-    - bison
-    - byacc
-    - cyrus-sasl
-    - cyrus-sasl-gssapi
-    - cyrus-sasl-saslauthd
-    - db48
-    - gcc
-    - libasr
-    - libevent2
-    - libtool
-    - openssl
-    - pcre
+  with_items: opensmtpd.packages.freebsd.install
 
 - name: install-pkg | RedHat | Packages required by OpenSMTPD should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items:
-    - autoconf
-    - automake
-    - bison
-    - byacc
-    - cyrus-sasl-lib
-    - cyrus-sasl-devel
-    - cyrus-sasl-md5
-    - cyrus-sasl-plain
-    - cyrus-sasl-ntlm
-    - db4
-    - db4-devel
-    - db4-utils
-    - gcc
-    - gcc-c++
-    - libevent-devel
-    - libtool
-    - openssl-devel
-    - pcre
-    - pcre-devel
-    - zlib-devel
+  with_items: opensmtpd.packages.freebsd.install
 

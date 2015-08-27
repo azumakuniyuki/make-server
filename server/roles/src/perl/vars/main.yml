@@ -9,4 +9,7 @@ perl:
   version: 5.20.1
   install: /usr/local
   workingdir: /usr/local/src
+  packages:
+    redhat:
+      install: [ 'perl-core' ]
 

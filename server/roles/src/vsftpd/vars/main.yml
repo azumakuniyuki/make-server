@@ -13,6 +13,11 @@ vsftpd:
   rotatefile: vsftpd
   serverroot: /opt/vsftpd
   workingdir: /usr/local/src
+  packages:
+    redhat:
+      install: [ 'libcap', 'libcap-devel' ]
+    debian:
+      install: [ 'libcap-dev' ]
   patches:
     - 'vsftpd-2009-10-19-localconfig.patch'
   user:

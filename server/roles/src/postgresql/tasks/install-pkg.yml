@@ -8,6 +8,5 @@
 - name: install-pkg | Install dependencies for PostgreSQL {{ postgresql.version }}
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items:
-    - python-psycopg2
+  with_items: postgresql.packages.redhat.install
 

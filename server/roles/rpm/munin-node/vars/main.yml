@@ -20,4 +20,8 @@ munin:
       postfix:  False
       postgres: False
       sendmail: False
+    packages:
+      install: [ 'munin-node' ]
+    modules:
+      perl: [ 'LWP::UserAgent', 'IPC::Cmd', 'JSON::Syck', 'Net::CIDR' ]
 

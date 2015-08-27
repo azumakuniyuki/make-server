@@ -6,7 +6,7 @@
 #     |_|                                               
 # install-pkg
 - name: install-pkg | install packages for qmail
+  when: ansible_os_family == "RedHat"
   yum: name={{ item }} state=present
-  with_items: 
-    - tcsh
+  with_items: qmail.packages.redhat.install
 

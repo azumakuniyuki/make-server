@@ -15,6 +15,20 @@ opensmtpd:
   workingdir: /usr/local/src
   mtaqueue: /var/spool/queues
   msaqueue: /var/spool/cqueue 
+  packages:
+    freebsd:
+      install: [
+        'autoconf', 'automake', 'bison', 'byacc', 'cyrus-sasl', 'cyrus-sasl-gssapi',
+        'cyrus-sasl-saslauthd', 'db48', 'gcc', 'libasr', 'libevent2', 'libtool',
+        'openssl', 'pcre'
+      ]
+    redhat:
+      install: [
+        'autoconf', 'automake', 'bison', 'byacc', 'cyrus-sasl-lib', 'cyrus-sasl-devel',
+        'cyrus-sasl-md5', 'cyrus-sasl-plain', 'cyrus-sasl-ntlm', 'db4', 'db4-devel',
+        'db4-utils', 'gcc', 'gcc-c++', 'libevent-devel', 'libtool', 'openssl-devel',
+        'pcre', 'pcre-devel', 'zlib-devel'
+      ]
   user:
     daemon:
       username: _smtpd
@@ -40,3 +54,4 @@ maildrop:
   rebuild: False
   version: 2.7.1
   install: /opt/opensmtpd
+

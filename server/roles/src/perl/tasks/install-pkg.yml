@@ -7,5 +7,6 @@
 # install-pkg
 - name: install-pkg | Install Perl core modules
   when: ansible_os_family == "RedHat"
-  yum:  name=perl-core state=present
+  yum:  name={{ item }} state=present
+  with_items: perl.packages.redhat.install
 

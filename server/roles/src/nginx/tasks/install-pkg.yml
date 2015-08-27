@@ -8,14 +8,10 @@
 - name: install-pkg | RedHat | Each package for nginx {{ nginx.version }} should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items:
-    - pcre
-    - pcre-devel
+  with_items: nginx.packages.redhat.install
 
 - name: install-pkg | Debian | Each package for nginx {{ nginx.version }} should be installed
   when: ansible_os_family == "Debian"
   apt: pkg={{ item }} state=present
-  with_items:
-    - libpcre3
-    - libpcre3-dev
+  with_items: nginx.packages.debian.install
 
