@@ -23,6 +23,11 @@ options[:user] ||= ENV['SPEC_USERNAME']
 options[:port] ||= ENV['SPEC_SSHDPORT']
 options[:keys] ||= ENV['SPEC_IDENTITY']
 
+if ENV['SPEC_USERNAME'] == "vagrant" then
+  # To avoid Net::SSH::HostKeyMismatch exception
+  options[:paranoid] = false
+end
+
 if ENV['SPEC_PASSWORD'] then
   # The value of ENV['SPEC_PASSWORD'] is set in Rakefile
   options[:password] = ENV['SPEC_PASSWORD']
