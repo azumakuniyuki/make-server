@@ -3,128 +3,51 @@
 # | '_ \ / _ \ / _ \| __/ __| __| '__/ _` | '_ \ / /| __/ _` / __| |/ / __|
 # | |_) | (_) | (_) | |_\__ \ |_| | | (_| | |_) / / | || (_| \__ \   <\__ \
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/   \__\__,_|___/_|\_\___/
-#                                         |_|                              
+#  
 # install-pkg
-- name: install-pkg | FreeBSD | Each package for development should be installed
+- name: install-pkg | RedHat | Each package for development should be installed
   when: ansible_os_family == "FreeBSD"
-  pkgng: name={{ item }} state=present
-  with_items:
-    - autoconf
-    - automake
-    - gcc
-    - gettext
-    - git
-    - ncurses
-    - openssl
-    - patch
-    - pcre
-    - readline
+  yum:  name={{ item }} state=present
+  with_items: packages.freebsd.devel
 
-- name: install-pkg | FreeBSD | Each package for archive should be installed
+- name: install-pkg | RedHat | Each package for utils should be installed
   when: ansible_os_family == "FreeBSD"
-  pkgng: name={{ item }} state=present
-  with_items: 
-    - bzip2
-    - zip
+  yum:  name={{ item }} state=present
+  with_items: packages.python.utils
 
-- name: install-pkg | FreeBSD | Each tool should be installed
+- name: install-pkg | RedHat | Each package for Python should be installed
   when: ansible_os_family == "FreeBSD"
-  pkgng: name={{ item }} state=present
-  with_items:
-    - bash
-    - wget
-    - ja-nkf
+  yum:  name={{ item }} state=present
+  with_items: packages.freebsd.python
 
 - name: install-pkg | RedHat | Each package for development should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items: 
-    - autoconf
-    - automake
-    - gcc
-    - gcc-c++
-    - gettext
-    - gettext-devel
-    - git
-    - ncurses
-    - ncurses-devel
-    - openssl-devel
-    - patch
-    - pcre
-    - pcre-devel
-    - perl-core
-    - readline
-    - readline-devel
+  with_items: packages.redhat.devel
 
-- name: install-pkg | RedHat | Each package for archive should be installed
+- name: install-pkg | RedHat | Each package for utils should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items: 
-    - bzip2
-    - zip
-    - zlib
-    - zlib-devel
+  with_items: packages.redhat.utils
 
 - name: install-pkg | RedHat | Each package for Python should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items:
-    - python-pip
-    - libselinux-python
-    - python-virtualenv
-
-- name: install-pkg | RedHat | Each tool should be installed
-  when: ansible_os_family == "RedHat"
-  yum:  name={{ item }} state=present
-  with_items:
-    - bc
-    - wget
-    - telnet
-    - finger
-    - nkf
+  with_items: packages.redhat.python
 
 - name: install-pkg | Debian | Each package for development should be installed
   when: ansible_os_family == "Debian"
   apt: pkg={{ item }} state=present
-  with_items:
-    - autotools-dev
-    - autoconf2.59
-    - automake1.11
-    - gcc
-    - gettext
-    - git
-    - libncurses-dev
-    - libpcre3
-    - libpcre3-dev
-    - libreadline6-dev
-    - libreadline6
-    - ncurses-dev
-    - openssl
-    - patch
+  with_items: packages.redhat.devel
 
-- name: install-pkg | Debian | Each package for archive should be installed
+- name: install-pkg | Debian | Each package for utils should be installed
   when: ansible_os_family == "Debian"
   yum:  name={{ item }} state=present
-  with_items: 
-    - bzip2
-    - zip
-    - zlib1g
-    - zlib1g-dev
+  with_items: packages.redhat.utils
 
 - name: install-pkg | Debian | Each package for Python should be installed
   when: ansible_os_family == "Debian"
   apt:  name={{ item }} state=present
-  with_items:
-    - python-pip
-    - python-selinux
-    - python-virtualenv
+  with_items: packages.redhat.python
 
-- name: install-pkg | Debian | Each tool should be installed
-  when: ansible_os_family == "Debian"
-  apt:  name={{ item }} state=present
-  with_items:
-    - bc
-    - wget
-    - telnet
-    - finger
 

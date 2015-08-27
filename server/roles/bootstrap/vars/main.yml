@@ -10,6 +10,90 @@ config:
 local:
   dir: /usr/local
   src: /usr/local/src
+packages:
+  freebsd:
+    devel:
+      - autoconf
+      - automake
+      - gcc
+      - gettext
+      - git
+      - ncurses
+      - openssl
+      - patch
+      - pcre
+      - readline
+    utils:
+      - bzip2
+      - zip
+      - bash
+      - wget
+      - ja-nkf
+    python:
+      - python27
+      - py27-pip
+      - py27-virtualenv
+  redhat:
+    devel:
+      - autoconf
+      - automake
+      - gcc
+      - gcc-c++
+      - gettext
+      - gettext-devel
+      - git
+      - ncurses
+      - ncurses-devel
+      - openssl-devel
+      - patch
+      - pcre
+      - pcre-devel
+      - perl-core
+      - readline
+      - readline-devel
+    utils:
+      - bzip2
+      - zip
+      - zlib
+      - zlib-devel
+      - bc
+      - wget
+      - telnet
+      - finger
+      - nkf
+    python:
+      - python-pip
+      - libselinux-python
+      - python-virtualenv
+  debian:
+    devel:
+      - autotools-dev
+      - autoconf2.59
+      - automake1.11
+      - gcc
+      - gettext
+      - git
+      - libncurses-dev
+      - libpcre3
+      - libpcre3-dev
+      - libreadline6-dev
+      - libreadline6
+      - ncurses-dev
+      - openssl
+      - patch
+    utils:
+      - bzip2
+      - zip
+      - zlib1g
+      - zlib1g-dev
+      - bc
+      - wget
+      - telnet
+      - finger
+    python:
+      - python-pip
+      - python-selinux
+      - python-virtualenv
 
 # How do I generate crypted passwords for the user module?
 #   $ python -c 'import crypt; print crypt.crypt("password", "$1$Hakata$")'
