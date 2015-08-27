@@ -5,49 +5,66 @@
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/   \__\__,_|___/_|\_\___/
 #  
 # install-pkg
+- name: install-pkg | FreeBSD | Each packages should be removed
+  when: ansible_os_family == "FreeBSD"
+  pkgng: name={{ item }} state=absent
+  with_items: packages.freebsd.removed
+
 - name: install-pkg | RedHat | Each package for development should be installed
   when: ansible_os_family == "FreeBSD"
   yum:  name={{ item }} state=present
-  with_items: packages.freebsd.devel
+  with_items: packages.freebsd.install.devel
 
-- name: install-pkg | RedHat | Each package for utils should be installed
+- name: install-pkg | FreeBSD | Each package for utils should be installed
   when: ansible_os_family == "FreeBSD"
   yum:  name={{ item }} state=present
-  with_items: packages.python.utils
+  with_items: packages.freebsd.install.utils
 
-- name: install-pkg | RedHat | Each package for Python should be installed
+- name: install-pkg | FreeBSD | Each package for Python should be installed
   when: ansible_os_family == "FreeBSD"
   yum:  name={{ item }} state=present
-  with_items: packages.freebsd.python
+  with_items: packages.freebsd.install.python
+
+
+- name: install-pkg | RedHat | Each packages should be removed
+  when: ansible_os_family == "RedHat"
+  pkgng: name={{ item }} state=absent
+  with_items: packages.redhat.removed
 
 - name: install-pkg | RedHat | Each package for development should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items: packages.redhat.devel
+  with_items: packages.redhat.install.devel
 
 - name: install-pkg | RedHat | Each package for utils should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items: packages.redhat.utils
+  with_items: packages.redhat.install.utils
 
 - name: install-pkg | RedHat | Each package for Python should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items: packages.redhat.python
+  with_items: packages.redhat.install.python
+
+
+- name: install-pkg | Debian | Each packages should be removed
+  when: ansible_os_family == "Debian"
+  pkgng: name={{ item }} state=absent
+  with_items: packages.debian.removed
 
 - name: install-pkg | Debian | Each package for development should be installed
   when: ansible_os_family == "Debian"
   apt: pkg={{ item }} state=present
-  with_items: packages.redhat.devel
+  with_items: packages.debian.install.devel
 
 - name: install-pkg | Debian | Each package for utils should be installed
   when: ansible_os_family == "Debian"
   yum:  name={{ item }} state=present
-  with_items: packages.redhat.utils
+  with_items: packages.debian.install.utils
 
 - name: install-pkg | Debian | Each package for Python should be installed
   when: ansible_os_family == "Debian"
   apt:  name={{ item }} state=present
-  with_items: packages.redhat.python
+  with_items: packages.debian.install.python
 
 
