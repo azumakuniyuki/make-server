@@ -5,28 +5,16 @@
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/ |___/ .__/ \___|\___|
 #                                         |_|          |_|              
 describe 'bootstrap/install-pkg' do
-  installpkg = {
-    :redhat => %w|
-      autoconf automake gcc gcc-c++ gettext gettext-devel git ncurses 
-      ncurses-devel openssl-devel patch pcre pcre-devel perl-core readline
-      readline-devel
-      bzip2 zip zlib zlib-devel
-      python-pip libselinux-python python-virtualenv
-      bc wget telnet finger nkf
-      |,
-    :debian => %w|
-      autotools-dev autoconf2.59 automake1.11 gcc gettext git libncurses-dev
-      libpcre3 libpcre3-dev libreadline6-dev libreadline6 ncurses-dev openssl
-      patch
-      bzip2 zip zlib1g zlib1g-dev
-      python-pip python-selinux python-virtualenv
-      bc wget telnet finger
-      |,
-  }
+  ansiblevars = MakeServer::Ansible.load_variables
+  packagelist = ansiblevars['role']['packages']
 
-  installpkg[ os[:family].to_sym ].each do |e|
-    describe package(e) do
-      it { should be_installed }
+  packagelist[ os[:family].to_s ].each_key do |e|
+    p = packagelist[ os[:family].to_s ][e]
+    p.each do |ee|
+      describe package(ee) do
+        it { should be_installed }
+      end
     end
   end
 end
+
