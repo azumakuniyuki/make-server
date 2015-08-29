@@ -5,9 +5,9 @@
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/   \__\__,_|___/_|\_\___/
 #                                         |_|                              
 # make-config
-- name: make-config | {{ local.src }} directory should be created
+- name: make-config | {{ buildroot }} directory should be created
   file: >
-    path={{ local.src }}
+    path={{ buildroot }}
     mode=0775
     owner=root
     group=wheel

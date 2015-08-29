@@ -11,7 +11,7 @@
     url=http://ftp.kddilabs.jp/infosystems/apache/httpd/httpd-{{ apache.version }}.tar.gz
     dest={{ buildroot }}/httpd-{{ apache.version }}.tar.gz
 
-- name: get-archive | Extract {{ local.src }}/httpd-{{ apache.version }}.tar.gz
+- name: get-archive | Extract {{ buildroot }}/httpd-{{ apache.version }}.tar.gz
   unarchive: >
     src={{ buildroot }}/httpd-{{ apache.version }}.tar.gz
     dest={{ buildroot }}

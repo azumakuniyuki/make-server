@@ -10,9 +10,9 @@
     url='http://xrl.us/cpanm';
     dest={{ buildroot }}/cpanm
 
-- name: make-module | Install {{ local.dir }}/bin/cpanm
+- name: make-module | Install {{ localroot }}/bin/cpanm
   shell: >
     chdir={{ buildroot }}
-    creates={{ local.dir }}/bin/cpanm
-    install -o root -m 0755 cpanm {{ local.dir }}/bin
+    creates={{ localroot }}/bin/cpanm
+    install -o root -m 0755 cpanm {{ localroot }}/bin
 
