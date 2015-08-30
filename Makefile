@@ -5,7 +5,7 @@
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 # ---------------------------------------------------------------------------
-VERSION := '2.2.1'
+VERSION := '2.2.2'
 HEREIAM := $(shell pwd)
 ANSIBLE := $(shell which ansible)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
@@ -70,7 +70,7 @@ vars:
 node:
 	$(ANSIBLE) all -i $(INVENTORY) -m raw -a 'hostname'
 
-server:
+server: key-pair
 	$(MAKEDIR) ./$(ROOTDIR)
 	$(MAKEDIR) ./tmp
 	$(MAKEDIR) ./$(SCRIPTDIR)
