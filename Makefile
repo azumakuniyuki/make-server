@@ -5,7 +5,7 @@
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 # ---------------------------------------------------------------------------
-VERSION := '2.2.2'
+VERSION := '2.2.4'
 HEREIAM := $(shell pwd)
 ANSIBLE := $(shell which ansible)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
@@ -102,7 +102,7 @@ server: key-pair
 		ln -fs ./$(ANSIBLECFG) ./ansible.cfg ;\
 	fi
 
-%-role: server
+%-role:
 	if [ ! -d $(MAKESERVERD)/$(ROOTDIR)/roles/$* -o "`basename $(HEREIAM)`" = "`basename $(MAKESERVERD)`" ]; then \
 		for V in files handlers tasks templates vars defaults meta; do \
 			$(MAKEDIR) ./$(ROOTDIR)/roles/`echo $*`/$$V ;\
@@ -142,7 +142,7 @@ init-server: server key-pair
 
 # serverspec related targets
 install-serverspec:
-	sudo gem install serverspec
+	sudo gem install serverspec highline
 
 update-serverspec-files:
 	if [ "$(PWDNAME)" != "`basename $(MAKESERVERD)`" ]; then \
