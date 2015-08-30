@@ -10,25 +10,25 @@
   pkgng: name={{ item }} state=absent
   with_items: packages.freebsd.removed
 
-- name: install-pkg | RedHat | Each package for development should be installed
+- name: install-pkg | FreeBSD | Each package for development should be installed
   when: ansible_os_family == "FreeBSD"
-  yum:  name={{ item }} state=present
+  pkgng:  name={{ item }} state=present
   with_items: packages.freebsd.install.devel
 
 - name: install-pkg | FreeBSD | Each package for utils should be installed
   when: ansible_os_family == "FreeBSD"
-  yum:  name={{ item }} state=present
+  pkgng:  name={{ item }} state=present
   with_items: packages.freebsd.install.utils
 
 - name: install-pkg | FreeBSD | Each package for Python should be installed
   when: ansible_os_family == "FreeBSD"
-  yum:  name={{ item }} state=present
+  pkgng:  name={{ item }} state=present
   with_items: packages.freebsd.install.python
 
 
 - name: install-pkg | RedHat | Each packages should be removed
   when: ansible_os_family == "RedHat"
-  pkgng: name={{ item }} state=absent
+  yum: name={{ item }} state=absent
   with_items: packages.redhat.removed
 
 - name: install-pkg | RedHat | Each package for development should be installed
@@ -49,7 +49,7 @@
 
 - name: install-pkg | Debian | Each packages should be removed
   when: ansible_os_family == "Debian"
-  pkgng: name={{ item }} state=absent
+  apt: name={{ item }} state=absent
   with_items: packages.debian.removed
 
 - name: install-pkg | Debian | Each package for development should be installed
@@ -59,12 +59,13 @@
 
 - name: install-pkg | Debian | Each package for utils should be installed
   when: ansible_os_family == "Debian"
-  yum:  name={{ item }} state=present
+  apt:  name={{ item }} state=present
   with_items: packages.debian.install.utils
 
 - name: install-pkg | Debian | Each package for Python should be installed
   when: ansible_os_family == "Debian"
   apt:  name={{ item }} state=present
   with_items: packages.debian.install.python
+
 
 
