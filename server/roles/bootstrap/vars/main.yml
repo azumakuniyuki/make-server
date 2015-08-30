@@ -5,7 +5,7 @@
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/    \_/ \__,_|_|  |___/
 #                                         |_|                            
 config:
-  adduser: True
+  adduser: False
   useswap: 512
 local:
   dir: /usr/local
@@ -18,7 +18,7 @@ packages:
         'autoconf', 'automake', 'gcc', 'gettext', 'git', 'ncurses', 'openssl',
         'patch', 'pcre', 'readline'
       ]
-      utils: [ 'bzip2', 'zip', 'bash', 'wget', 'ja-nkf' ]
+      utils: [ 'bzip2', 'zip', 'bash', 'wget', 'ja-nkf', 'bash', 'zsh' ]
       python: [ 'python27', 'py27-pip', 'py27-virtualenv' ]
   redhat:
     removed: []
