@@ -29,26 +29,26 @@ module MakeServer
 
           f.each_line do |line|
             # Read each line of inventory
-            next if line.match(/\A#/)
-            next if line.match(/\A\s*\z/)
-            line = line.gsub( /\s\z/, '' )
+            next if line.match %r/\A#/
+            next if line.match %r/\A\s*\z/
+            line = line.gsub %r/\s\z/, ''
 
-            if line.match(/\A\[(.+):vars\]\s*\z/) then
+            if line.match %r/\A\[(.+):vars\]\s*\z/ then
               # Start group variables section, eg) [product:vars]
               currgroupname = $1
 
-            elsif line.match(/\A\[(.+)\]\s*\z/) then
+            elsif line.match %r/\A\[(.+)\]\s*\z/ then
               # Start group section, eg) [product]
               currgroupname = $1
 
             else
               # Each host entry or variable
-              if line.match(/\A[^\s]+\s+[^\s]+\z/) then
+              if line.match %r/\A[^\s]+\s+[^\s]+\z/ then
                 # This line includes 1 or more space character like
                 #   vm ansible_ssh_host=192.0.2.2
                 line.split(' ').each do |e|
                   # Check each token splited by ' '
-                  if e.match(/(.+)=(.+)/) then
+                  if e.match %r/(.+)=(.+)/ then
                     # Variable: ex) ansible_ssh_port=2022
                     hosttable[currhostname][varstable[$1]] = $2
 
@@ -61,7 +61,7 @@ module MakeServer
                   end
                 end
 
-              elsif line.match(/([^\s]+)=([^\s]+)/) then
+              elsif line.match %r/([^\s]+)=([^\s]+)/ then
                 # The line may be in [group:vars] section
                 next unless varstable.key?($1)
                 groupvars[currgroupname] ||= {}
