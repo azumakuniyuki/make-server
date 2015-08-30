@@ -5,8 +5,9 @@
 # |_|_| |_|___/\__\__,_|_|_|
 #                           
 # Ansible inventory file for setting up environment: python, sudo run as a root.
-#   % ansible-playbook -i server/install server/10-build-stage.yml
-#   % ansible-playbook -i server/install server/20-deploy-user.yml
+#   % ansible-playbook -i server/install \
+#       server/10-build-stage.yml server/20-deploy-user.yml \
+#       -bk --ask-become-pass --become-method=su
 #
 [install]
 192.0.2.1
