@@ -19,9 +19,9 @@ end
 sshhost = ENV['SPEC_HOSTNAME']
 options = Net::SSH::Config.for(sshhost)
 
-options[:user] ||= ENV['SPEC_USERNAME']
-options[:port] ||= ENV['SPEC_SSHDPORT']
-options[:keys] ||= ENV['SPEC_IDENTITY']
+options[:user] = ENV['SPEC_USERNAME'] if ENV['SPEC_USERNAME']
+options[:port] = ENV['SPEC_SSHDPORT'] if ENV['SPEC_SSHDPORT']
+options[:keys] = ENV['SPEC_IDENTITY'] if ENV['SPEC_IDENTITY']
 
 if ENV['SPEC_USERNAME'] == "vagrant" then
   # To avoid Net::SSH::HostKeyMismatch exception
@@ -39,4 +39,8 @@ set :disable_sudo,false
 set :env,         :LANG => 'C', :LC_MESSAGES => 'C'
 set :path,        '/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH'
 
+puts '* hostname = ' + sshhost.to_s
+puts '* username = ' + options[:user].to_s
+puts '* sshdport = ' + options[:port].to_s
+puts '* identity = ' + options[:keys].to_s
 
