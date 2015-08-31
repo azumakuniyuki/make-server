@@ -27,8 +27,8 @@
     name={{ item.username }} 
     uid={{ item.uid }}
     group={{ item.group }} 
-    shell=/sbin/nologin
-    home=/var/empty
+    shell={{ item.shell }}
+    home={{ item.home }}
     comment={{ item.comment }}
     createhome=no
     state=present

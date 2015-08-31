@@ -8,13 +8,20 @@
 opensmtpd:
   started: True
   rebuild: False
-  version: 5.4.5p2
+  version: 5.7.1p1
   updateonly: False
   initscript: opensmtpd
   serverroot: /opt/opensmtpd
   workingdir: /usr/local/src
   mtaqueue: /var/spool/queues
   msaqueue: /var/spool/cqueue 
+  files:
+    dbmap:
+      - aliases
+      - authinfo
+      - relayhosts
+      - virtdomains
+      - virtusers
   packages:
     freebsd:
       install: [
@@ -35,12 +42,16 @@ opensmtpd:
       group: _smtpd
       uid: 6309
       gid: 6309
+      home: /var/empty
+      shell: /sbin/nologin
       comment: '"SMTP Daemon"'
     queue:
       username: _smtpq
       group: _smtpq
       uid: 6310
       gid: 6310
+      home: /var/empty
+      shell: /sbin/nologin
       comment: '"SMTP Queue"'
     mda:
       username: virtmail
@@ -52,6 +63,6 @@ opensmtpd:
       comment: "'Virtual Mailbox'"
 maildrop:
   rebuild: False
-  version: 2.7.1
+  version: 2.8.3
   install: /opt/opensmtpd
 

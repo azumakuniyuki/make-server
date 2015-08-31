@@ -16,22 +16,12 @@
     src=opt/opensmtpd/etc/{{ item }}.j2
     dest={{ opensmtpd.serverroot }}/etc/{{ item }}
     backup=yes
-  with_items:
-    - aliases
-    - authinfo
-    - relayhosts
-    - virtdomains
-    - virtusers
+  with_items: opensmtpd.files.dbmap
 
 - name: make-config | makemap db maps in {{ opensmtpd.serverroot }}/etc
   shell: >
     chdir={{ opensmtpd.serverroot }}
     creates=etc/{{ item }}.db
     ./sbin/makemap etc/{{ item }}
-  with_items:
-    - aliases
-    - authinfo
-    - relayhosts
-    - virtdomains
-    - virtusers
+  with_items: opensmtpd.files.dbmap
 
