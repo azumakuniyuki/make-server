@@ -30,7 +30,7 @@
 #
 - name: get-archive | Download maildrop {{ maildrop.version }} at {{ buildroot }}
   get_url: >
-    url=http://cznic.dl.sourceforge.net/project/courier/maildrop/{{ maildrop.version }}/maildrop-{{ maildrop.version }}.tar.bz2
+    url=http://jaist.dl.sourceforge.net/project/courier/maildrop/{{ maildrop.version }}/maildrop-{{ maildrop.version }}.tar.bz2
     dest={{ buildroot }}/maildrop-{{ maildrop.version }}.tar.bz2
 
 - name: get-archive | Extract {{ buildroot }}/maildrop-{{ maildrop.version }}.tar.bz2
