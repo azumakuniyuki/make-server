@@ -55,7 +55,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # View the documentation for the provider you're using for more
   # information on available options.
-  config.vm.provision :shell, :path => "./script/10-vagrant-uid.sh",:privileged   => true
   config.vm.provision :shell, :path => "./script/12-sudo-config.sh",:privileged   => true
   config.vm.provision :shell, :path => "./script/15-rewrite-dns.sh",:privileged   => true
   config.vm.provision :shell, :path => "./script/80-setup-repos.sh",:privileged   => true
