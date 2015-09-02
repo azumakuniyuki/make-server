@@ -36,3 +36,24 @@
     - "{{ opensmtpd.user.daemon }}"
     - "{{ opensmtpd.user.queue }}"
 
+- name: create-user | Mailbox group should be created
+  group: >
+    name={{ item.group }}
+    gid={{ item.gid }}
+    state=present
+  with_items:
+    - "{{ opensmtpd.user.mailbox }}"
+
+- name: create-user | Mailbox user should be created
+  user: >
+    name={{ item.username }} 
+    uid={{ item.uid }}
+    group={{ item.group }} 
+    shell={{ item.shell }}
+    home={{ item.home }}
+    comment={{ item.comment }}
+    createhome=yes
+    state=present
+  with_items:
+    - "{{ opensmtpd.user.mailbox }}"
+

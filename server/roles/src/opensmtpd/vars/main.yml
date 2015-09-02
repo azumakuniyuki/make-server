@@ -8,7 +8,7 @@
 opensmtpd:
   started: True
   rebuild: False
-  version: 5.7.1p1
+  version: 5.4.6p1
   updateonly: False
   initscript: opensmtpd
   serverroot: /opt/opensmtpd
@@ -27,7 +27,7 @@ opensmtpd:
       install: [
         'autoconf', 'automake', 'bison', 'byacc', 'cyrus-sasl', 'cyrus-sasl-gssapi',
         'cyrus-sasl-saslauthd', 'db48', 'gcc', 'libasr', 'libevent2', 'libtool',
-        'openssl', 'pcre', 'courier-unicode'
+        'openssl', 'pcre', 'courier-unicode', 'libasr'
       ]
     redhat:
       install: [
@@ -53,12 +53,12 @@ opensmtpd:
       home: /var/empty
       shell: /sbin/nologin
       comment: '"SMTP Queue"'
-    mda:
+    mailbox:    # Values should be same as dovecot.user.mailbox
       username: virtmail
+      group: virtmail
       uid: 660
       gid: 660
       home: /home/virtmail
-      group: virtmail
       shell: /bin/sh
       comment: "'Virtual Mailbox'"
 maildrop:
