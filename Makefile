@@ -5,7 +5,7 @@
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 # ---------------------------------------------------------------------------
-VERSION := '2.2.4'
+VERSION := '2.2.5'
 HEREIAM := $(shell pwd)
 ANSIBLE := $(shell which ansible)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
@@ -135,6 +135,13 @@ role-index:
 		| sed \
 			-e 's|/tasks/main.yml||g' \
 			-e 's|^.*/$(ROOTDIR)/roles/||g' 
+
+%-diff:
+	@if [ "`basename $(HEREIAM)`" != "`basename $(MAKESERVERD)`" ]; then \
+		if [ -d $(MAKESERVERD)/$(ROOTDIR)/roles/$* -a -d ./$(ROOTDIR)/roles/$* ]; then \
+			diff -ru -b $(MAKESERVERD)/$(ROOTDIR)/roles/$* ./$(ROOTDIR)/roles/$* || true ;\
+		fi ;\
+	fi
 
 init-server: server key-pair
 	ansible-playbook -i $(INVENTORY) \
