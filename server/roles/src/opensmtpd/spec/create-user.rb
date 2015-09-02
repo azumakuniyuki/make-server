@@ -18,10 +18,10 @@ describe 'src/opensmtpd/create-user' do
 
     describe user(u['username']) do
       it { should exist }
-      it { should belong_to_group e['group'] }
-      it { should have_uid e['uid'] }
-      it { should have_home_directory e['home'] }
-      it { should have_login_shell e['shell'] }
+      it { should belong_to_group u['group'] }
+      it { should have_uid u['uid'] }
+      it { should have_home_directory u['home'] }
+      it { should have_login_shell u['shell'] }
     end
   end
 end

@@ -7,13 +7,11 @@
 describe 'src/opensmtpd/install-pkg' do
   ansiblevars = MakeServer::Ansible.load_variables
   opensmtpdcf = ansiblevars['role']['opensmtpd']
+  requiredpkg = opensmtpdcf['packages'][ os[:family].to_s ]['install']
 
-  opensmtpdcf['packages'][ os[:family].to_s ].each_key do |e|
-    p = packagelist[ os[:family].to_s ][e]
-    p.each do |ee|
-      describe package(ee) do
-        it { should be_installed }
-      end
+  requiredpkg.each do |e|
+    describe package(e) do
+      it { should be_installed }
     end
   end
 end
