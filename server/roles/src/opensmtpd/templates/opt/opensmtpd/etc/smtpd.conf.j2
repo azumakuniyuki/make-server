@@ -35,7 +35,7 @@ max-message-size 10000000
 #
 
 accept from any for local alias <aliases> deliver to mbox
-accept from any for domain <virtdomains> virtual <virtusers> deliver to mda "{{ maildrop.install }}/bin/maildrop -d {{ opensmtpd.user.mda.username }} %{rcpt}"
+accept from any for domain <virtdomains> virtual <virtusers> deliver to mda "{{ maildrop.install }}/bin/maildrop -d {{ opensmtpd.user.mailbox.username }} %{rcpt}"
 
 accept for domain "sabatora.example.co.jp" relay via "smtp://cat.example.co.jp" as "@example.jp"
 accept for domain "munchkin.example.net" relay via "tls+auth://sendgrid@smtp.sendgrid.net:587" auth <authinfo>
