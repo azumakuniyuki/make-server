@@ -15,11 +15,3 @@
   when: opensmtpd.updateonly == False
 - include: boot-script.yml
 
-- name: Start OpenSMTPD
-  when: opensmtpd.started == True
-  service: name={{ opensmtpd.initscript }} state=started
-
-- name: Stop OpenSMTPD
-  when: opensmtpd.started == False
-  service: name={{ opensmtpd.initscript }} state=stopped
-
