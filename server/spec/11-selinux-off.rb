@@ -6,8 +6,10 @@
 #     |_|                                                                   
 # Test code for server/11-selinux-off.yml
 describe '11-selinux-off' do
-  describe selinux do
-    it { should be_disabled }
+  if ['debian', 'ubuntu'].include?(os[:family]) then
+    describe selinux do
+      it { should be_disabled }
+    end
   end
 end
 
