@@ -6,11 +6,10 @@
 #                                         |_|          |_|              
 describe 'bootstrap/install-pkg' do
   ansiblevars = MakeServer::Ansible.load_variables
-  packagelist = ansiblevars['role']['packages']
+  packagelist = ansiblevars['role']['packages'][ os[:family].to_s ]['install']
 
-  packagelist[ os[:family].to_s ].each_key do |e|
-    p = packagelist[ os[:family].to_s ][e]
-    p.each do |ee|
+  packagelist.each_key do |e|
+    packagelist[e].each do |ee|
       describe package(ee) do
         it { should be_installed }
       end
