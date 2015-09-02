@@ -33,6 +33,7 @@
     /bin/sh configure
     --prefix={{ opensmtpd.serverroot }}
     --with-libevent-dir=/usr/local
+    --with-asr=/usr/local
 
 - name: compile-src | REBUILD | make clean
   when: opensmtpd.rebuild == True
