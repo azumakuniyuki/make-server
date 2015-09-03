@@ -1,0 +1,17 @@
+#      _                          _      ___            _        
+#   __| | _____   _____  ___ ___ | |_   / / |_ __ _ ___| | _____ 
+#  / _` |/ _ \ \ / / _ \/ __/ _ \| __| / /| __/ _` / __| |/ / __|
+# | (_| | (_) \ V /  __/ (_| (_) | |_ / / | || (_| \__ \   <\__ \
+#  \__,_|\___/ \_/ \___|\___\___/ \__/_/   \__\__,_|___/_|\_\___/
+#                                                                
+# install-pkg
+- name: install-pkg | FreeBSD | Each package for dovecot dovecot.version should be installed
+  when: ansible_os_family == "FreBSD"
+  pkgng:  name={{ item }} state=present
+  with_items: dovecot.packages.freebsd.install
+
+- name: install-pkg | RedHat | Each package for dovecot dovecot.version should be installed
+  when: ansible_os_family == "RedHat"
+  yum:  name={{ item }} state=present
+  with_items: dovecot.packages.redhat.install
+

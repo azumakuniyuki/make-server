@@ -1,0 +1,47 @@
+#      _                          _      ___            _        
+#   __| | _____   _____  ___ ___ | |_   / / |_ __ _ ___| | _____ 
+#  / _` |/ _ \ \ / / _ \/ __/ _ \| __| / /| __/ _` / __| |/ / __|
+# | (_| | (_) \ V /  __/ (_| (_) | |_ / / | || (_| \__ \   <\__ \
+#  \__,_|\___/ \_/ \___|\___\___/ \__/_/   \__\__,_|___/_|\_\___/
+#                                                                
+# make-config
+- name: boot-script | FreeBSD | Deploy /etc/init.d/{{ dovecot.initscript }}
+  when: ansible_os_family == "FreeBSD"
+  template: >
+    src=etc/init.d/dovecot.FreeBSD.j2
+    dest=/usr/local/etc/rc.d/{{ dovecot.initscript }}
+    mode=0755
+    owner=root
+    group=wheel
+
+- name: boot-script | RedHat | Deploy /etc/init.d/{{ dovecot.initscript }}
+  when: ansible_os_family == "RedHat"
+  template: >
+    src=etc/init.d/dovecot.RedHat.j2
+    dest=/etc/init.d/{{ dovecot.initscript }}
+    mode=0755
+    owner=root
+    group=root
+
+- name: boot-script | RedHat | Install /etc/rc.d/init.d/{{ dovecot.initscript }}
+  when: ansible_os_family == "RedHat"
+  shell: >
+    creates=/etc/rc.d/rc0.d/K15{{ dovecot.initscript }}
+    /sbin/chkconfig --add {{ dovecot.initscript }}
+
+- name: boot-script | Turn on init script
+  when: dovecot.enabled == True
+  service: name={{ dovecot.initscript }} enabled=yes
+
+- name: boot-script | Turn off init script
+  when: dovecot.enabled == False
+  service: name={{ dovecot.initscript }} enabled=no
+
+- name: Start dovecot
+  when: dovecot.started == True
+  service: name={{ dovecot.initscript }} state=started
+
+- name: Stop dovecot
+  when: dovecot.started == False
+  service: name={{ dovecot.initscript }} state=stopped
+

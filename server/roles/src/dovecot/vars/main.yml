@@ -1,0 +1,64 @@
+#      _                          _      __                    
+#   __| | _____   _____  ___ ___ | |_   / /_   ____ _ _ __ ___ 
+#  / _` |/ _ \ \ / / _ \/ __/ _ \| __| / /\ \ / / _` | '__/ __|
+# | (_| | (_) \ V /  __/ (_| (_) | |_ / /  \ V / (_| | |  \__ \
+#  \__,_|\___/ \_/ \___|\___\___/ \__/_/    \_/ \__,_|_|  |___/
+#                                                              
+dovecot:
+  started: True
+  enabled: True
+  rebuild: False
+  version: 2.2.18
+  majorver: 2.2
+  updateonly: False
+  initscript: dovecot
+  serverroot: /opt/dovecot
+  user:
+    daemon:
+      username: dovecot
+      group: dovecot
+      uid: 715
+      gid: 715
+      home: /opt/dovecot/var
+      shell: /sbin/nologin
+      comment: '"Dovecot Daemon"'
+    login:
+      username: dovenull
+      group: dovecot
+      uid: 716
+      gid: 715
+      home: /opt/dovecot/var
+      shell: /sbin/nologin
+      comment: '"Dovecot Login"'
+    mailbox:    # Values should be same as opensmtpd.user.mailbox
+      username: virtmail
+      group: virtmail
+      uid: 660
+      gid: 660
+      home: /home/virtmail
+      shell: /bin/sh
+      comment: "'Virtual Mailbox'"
+  config:
+    certificate:
+      country: JP
+      state: Kyoto
+      city: Kyoto
+      organization: Nyaan
+      section: "'Mail Server'"
+      commonname: mail.{{ ansible_domain }}
+      email: postmaster@{{ ansible_domain }}
+  packages:
+    freebsd:
+      install: [ 'db48' ]
+    redhat:
+      install: [ 'db4', 'db4-devel' ]
+procmail:
+  rebuild: False
+  version: 3.22
+  install: /usr/local
+  spool: /var/spool/procmail
+maildrop:
+  rebuild: False
+  version: 2.7.2
+  install: /usr/local
+

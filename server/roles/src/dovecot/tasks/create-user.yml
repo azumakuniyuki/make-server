@@ -1,0 +1,51 @@
+#      _                          _      ___            _        
+#   __| | _____   _____  ___ ___ | |_   / / |_ __ _ ___| | _____ 
+#  / _` |/ _ \ \ / / _ \/ __/ _ \| __| / /| __/ _` / __| |/ / __|
+# | (_| | (_) \ V /  __/ (_| (_) | |_ / / | || (_| \__ \   <\__ \
+#  \__,_|\___/ \_/ \___|\___\___/ \__/_/   \__\__,_|___/_|\_\___/
+# create-user.yml
+- name: create-user | MDA group should be created
+  group: >
+    name={{ dovecot.user.daemon.group }}
+    gid={{ dovecot.user.daemon.gid }}
+    state=present
+
+- name: create-user | MDA user should be created
+  user: >
+    name={{ dovecot.user.daemon.username }} 
+    uid={{ dovecot.user.daemon.uid }}
+    group={{ dovecot.user.daemon.group }} 
+    shell={{ dovecot.user.daemon.shell }}
+    home={{ dovecot.user.daemon.home }}
+    comment={{ dovecot.user.daemon.comment }}
+    createhome=no
+    state=present
+
+- name: create-user | Login user should be created
+  user: >
+    name={{ dovecot.user.login.username }} 
+    uid={{ dovecot.user.login.uid }}
+    group={{ dovecot.user.login.group }} 
+    shell={{ dovecot.user.login.shell }}
+    home={{ dovecot.user.login.home }}
+    comment={{ dovecot.user.login.comment }}
+    createhome=no
+    state=present
+
+- name: create-user | Mailbox group should be created
+  group: >
+    name={{ dovecot.user.mailbox.group }}
+    gid={{ dovecot.user.mailbox.gid }}
+    state=present
+
+- name: create-user | Mailbox user should be created
+  user: >
+    name={{ dovecot.user.mailbox.username }} 
+    uid={{ dovecot.user.mailbox.uid }}
+    group={{ dovecot.user.mailbox.group }} 
+    shell={{ dovecot.user.mailbox.shell }}
+    home={{ dovecot.user.mailbox.home }}
+    comment={{ dovecot.user.mailbox.comment }}
+    createhome=no
+    state=present
+

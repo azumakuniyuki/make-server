@@ -1,0 +1,23 @@
+# $Id: dovecot-virtuser-passwd-example,v 1.1 2010/02/02 11:40:19 ak Exp $
+# See http://wiki.dovecot.org/AuthDatabase/PasswdFile
+#
+#   For a password database it's enough to have only the user and password
+#   fields. For a user database, you need to set also uid, gid and prefer-
+#   ably also home (see VirtualUsers).  (gecos) and (shell) fields are un-
+#   used by Dovecot.
+# 
+# passdb {
+#   driver = passwd-file
+#   args = {{ dovecot.serverroot }}/etc/virtuser-passwd
+# }
+#
+# userdb {
+#   driver = passwd-file
+#   args = {{ dovecot.serverroot }}/etc/virtuser-passwd
+# }
+#
+# user:password:uid:gid:(gecos):home:(shell):extra_fields
+#shironeko@example.jp:<password here>:{{ dovecot.user.mailbox.username }}:{{ dovecot.user.mailbox.group }}::{{ dovecot.user.mailbox.home }}/example.jp/shironeko::
+#kijitora@example.jp:<password here>:{{ dovecot.user.mailbox.username }}:{{ dovecot.user.mailbox.group }}::{{ dovecot.user.mailbox.home }}/example.jp/kijitora::
+#tobimike@example.jp:<password here>:{{ dovecot.user.mailbox.username }}:{{ dovecot.user.mailbox.group }}::{{ dovecot.user.mailbox.home }}/example.jp/tobimike::
+#

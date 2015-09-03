@@ -1,0 +1,60 @@
+#      _                          _      ___            _        
+#   __| | _____   _____  ___ ___ | |_   / / |_ __ _ ___| | _____ 
+#  / _` |/ _ \ \ / / _ \/ __/ _ \| __| / /| __/ _` / __| |/ / __|
+# | (_| | (_) \ V /  __/ (_| (_) | |_ / / | || (_| \__ \   <\__ \
+#  \__,_|\___/ \_/ \___|\___\___/ \__/_/   \__\__,_|___/_|\_\___/
+#                                                                
+# make-config
+- name: make-config | Create sub directories in etc/
+  file: >
+    path={{ dovecot.serverroot }}/{{ item }}
+    mode=0755
+    owner=root
+    state=directory
+  with_items:
+    - etc/tls
+    - etc/conf.d
+
+- name: make-config | Create sub directories in var/
+  file: >
+    path={{ dovecot.serverroot }}/{{ item }}
+    mode=0755
+    owner={{ dovecot.user.daemon.username }}
+    group={{ dovecot.user.daemon.group }}
+    state=directory
+  with_items:
+    - var/log
+    - var/run
+
+- name: make-config | Deploy etc/dovecot.conf
+  notify: Restart dovecot
+  template: >
+    src=opt/dovecot/etc/dovecot.conf.j2
+    dest={{ dovecot.serverroot }}/etc/dovecot.conf
+    mode=0644
+    owner=root
+
+- name: make-config | Deploy config files in etc directory
+  template: >
+    src=opt/dovecot/etc/{{ item }}.j2
+    dest={{ dovecot.serverroot }}/etc/{{ item }}
+    mode=0644
+    owner=root
+  with_items:
+    - openssl.conf
+    - disabled-users
+    - virtuser-passwd
+
+- name: make-config | Deploy sbin/mkcert
+  template: >
+    src=opt/dovecot/sbin/mkcert.j2
+    dest={{ dovecot.serverroot }}/sbin/mkcert
+    mode=0755
+    owner=root
+
+- name: make-config | Generate certificate
+  shell: >
+    chdir={{ dovecot.serverroot }}
+    creates=etc/tls/{{ dovecot.config.certificate.commonname }}.crt
+    ./sbin/mkcert
+

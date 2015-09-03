@@ -1,0 +1,68 @@
+#      _                          _      ___            _        
+#   __| | _____   _____  ___ ___ | |_   / / |_ __ _ ___| | _____ 
+#  / _` |/ _ \ \ / / _ \/ __/ _ \| __| / /| __/ _` / __| |/ / __|
+# | (_| | (_) \ V /  __/ (_| (_) | |_ / / | || (_| \__ \   <\__ \
+#  \__,_|\___/ \_/ \___|\___\___/ \__/_/   \__\__,_|___/_|\_\___/
+#                                                                
+# compile-src
+- name: compile-src | Deploy patch file
+  register: deploy_patch_for_dovecot
+  template: >
+    src=tmp/dovecot-pkgsysconfdir.patch.j2
+    dest={{ buildroot }}/dovecot-{{ dovecot.version }}/pkgsysconfdir.patch
+
+- name: compile-src | Apply the patch file
+  when: deploy_patch_for_dovecot|changed
+  register: apply_patch_for_dovecot
+  shell: >
+    chdir={{ buildroot }}/dovecot-{{ dovecot.version }}
+    patch -p0 < ./pkgsysconfdir.patch
+
+- name: compile-src | Linux | Dovecot should have been configured
+  when: ansible_system == "Linux"
+  shell: >
+    chdir={{ buildroot }}/dovecot-{{ dovecot.version }}
+    creates=Makefile
+    /bin/sh configure
+    --prefix={{ dovecot.serverroot }}
+    --docdir={{ dovecot.serverroot }}/share/doc
+    --mandir={{ dovecot.serverroot }}/share/man
+    --with-ssl=openssl
+    --with-zlib
+    --with-ssldir={{ dovecot.serverroot }}/etc/ssl
+    --with-statedir={{ dovecot.serverroot }}/var/lib
+
+- name: compile-src | FreeBSD | Dovecot should have been configured
+  when: ansible_os_family == "FreeBSD"
+  shell: >
+    chdir={{ buildroot }}/dovecot-{{ dovecot.version }}
+    creates=Makefile
+    CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+    /bin/sh configure
+    --prefix={{ dovecot.serverroot }}
+    --docdir={{ dovecot.serverroot }}/share/doc
+    --mandir={{ dovecot.serverroot }}/share/man
+    --with-ssl=openssl
+    --with-zlib
+    --with-ssldir={{ dovecot.serverroot }}/etc/ssl
+    --with-statedir={{ dovecot.serverroot }}/var/lib
+
+- name: compile-src | REBUILD | make clean
+  when: dovecot.rebuild == True
+  shell: >
+    chdir={{ buildroot }}/dovecot-{{ dovecot.version }}/
+    make clean
+
+- name: compile-src | Dovecot should have been made
+  register: make_dovecot_binary
+  shell: >
+    chdir={{ buildroot }}/dovecot-{{ dovecot.version }}
+    creates=src/master/.libs/dovecot
+    make
+
+- name: compile-src | Dovecot files should have been installed
+  when: make_dovecot_binary.changed
+  shell: >
+    chdir={{ buildroot }}/dovecot-{{ dovecot.version }}
+    make install
+
