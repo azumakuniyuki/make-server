@@ -5,7 +5,7 @@
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 # ---------------------------------------------------------------------------
-VERSION := '2.2.5'
+VERSION := '2.2.6'
 HEREIAM := $(shell pwd)
 ANSIBLE := $(shell which ansible)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
@@ -60,6 +60,7 @@ update-makefile:
 		fi ;\
 	fi
 
+# -----------------------------------------------------------------------------
 # Ansible related targets
 ping:
 	$(ANSIBLE) all -i $(INVENTORY) -m ping
@@ -81,7 +82,6 @@ server: key-pair
 	done
 	test -e ./$(SPECDIR) || cp -vRp $(MAKESERVERD)/$(SPECDIR)/* ./$(SPECDIR)/*
 	cp -vRp $(MAKESERVERD)/$(SCRIPTDIR)/* ./$(SCRIPTDIR)/
-	$(MAKE) bootstrap-role
 	if [ "`basename $(HEREIAM)`" = "`basename $(MAKESERVERD)`" ]; then \
 		for V in hosts $(INVENTORIES); do \
 			test -f ./$(ROOTDIR)/$$V || touch ./$(ROOTDIR)/$$V ;\
@@ -96,6 +96,8 @@ server: key-pair
 				$(MAKEDIR) ./$(ROOTDIR)/$$V ;\
 				cp -vRp $(MAKESERVERD)/$(ROOTDIR)/$$V/* $(ROOTDIR)/$$V/ ) ;\
 		done ;\
+		test -d ./$(ROOTDIR)/roles/bootstrap || \
+			cp -Rvp $(MAKESERVERD)/$(ROOTDIR)/roles/bootstrap ./$(ROOTDIR)/roles/ ;\
 	fi
 	if [ ! -f "./$(ANSIBLECFG)" ]; then \
 		cp $(MAKESERVERD)/$(ANSIBLECFG) ./$(ANSIBLECFG) ;\
@@ -143,10 +145,11 @@ role-index:
 		fi ;\
 	fi
 
-init-server: server key-pair
+init-server: server
 	ansible-playbook -i $(INVENTORY) \
 		$(ROOTDIR)/10-build-stage.yml $(ROOTDIR)/11-selinux-off.yml $(ROOTDIR)/20-deploy-user.yml
 
+# -----------------------------------------------------------------------------
 # serverspec related targets
 install-serverspec:
 	sudo gem install serverspec highline
@@ -160,8 +163,15 @@ update-serverspec-files:
 	fi
 
 test:
-	rake spec
+	rake INVENTORY=$(INVENTORY) spec
 
+# -----------------------------------------------------------------------------
+# Infrataster related targets
+install-infrataster:
+	sudo gem install infrataster
+
+
+# -----------------------------------------------------------------------------
 # Vagrant related targets
 vagrant:
 	test -f ./$(VAGRANTCFG)
@@ -224,6 +234,7 @@ down: vagrant
 restart: vagrant
 	vagrant reload
 
+# -----------------------------------------------------------------------------
 # Targets for make-server authors
 push:
 	for G in `git remote show -n`; do \
