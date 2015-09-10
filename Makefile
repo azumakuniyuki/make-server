@@ -5,7 +5,7 @@
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 # ---------------------------------------------------------------------------
-VERSION := '2.2.6'
+VERSION := '2.2.7'
 HEREIAM := $(shell pwd)
 ANSIBLE := $(shell which ansible)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
@@ -78,7 +78,7 @@ server: key-pair
 	$(MAKEDIR) ./$(SPECDIR)
 	$(MAKEDIR) ./$(LIBRARYDIR)
 	for V in Rakefile .rspec; do \
-		test -e $(MAKESERVERD)/$$V || cp -vp $(MAKESERVERD)/$$V ./$$V ;\
+		test -e ./$$V || cp -vp $(MAKESERVERD)/$$V ./$$V ;\
 	done
 	test -e ./$(SPECDIR) || cp -vRp $(MAKESERVERD)/$(SPECDIR)/* ./$(SPECDIR)/*
 	cp -vRp $(MAKESERVERD)/$(SCRIPTDIR)/* ./$(SCRIPTDIR)/
