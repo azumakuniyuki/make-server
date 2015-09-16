@@ -84,6 +84,6 @@
     - name: deploy-user | Authorized key should be deployed
       authorized_key: >
         user={{ user.username }}
-        key="{{ lookup('file', '../.ssh/id2-deploy-rsa.pub') }}"
+        key="{{ lookup('file', '../.ssh/ssh.deploy-rsa.pub') }}"
 
 

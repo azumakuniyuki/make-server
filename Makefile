@@ -5,7 +5,7 @@
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 # ---------------------------------------------------------------------------
-VERSION := '2.2.7'
+VERSION := '2.2.8'
 HEREIAM := $(shell pwd)
 ANSIBLE := $(shell which ansible)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
@@ -17,7 +17,7 @@ MAKEDIR := mkdir -p
 MAKESERVERD := ~/var/rhosts/make-server
 LIBRARYDIR  := lib
 SCRIPTDIR   := bin
-DEPLOYKEY    = ./.ssh/id2-deploy-rsa
+DEPLOYKEY    = ./.ssh/ssh.deploy-rsa.key
 DEPLOYUSER  := deploy
 ANSIBLELOG  := $(ROOTDIR)/log
 ANSIBLECFG  := $(ROOTDIR)/ansible-config
