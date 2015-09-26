@@ -122,6 +122,6 @@ clean:
 	$(MAKE) -f Ansible.mk $@
 	$(MAKE) -f Serverspec.mk $@
 	$(MAKE) -f Vagrant.mk $@
-	cd $(UBINDIR) && make $@
+	test -d $(UBINDIR) && cd $(UBINDIR) && make $@ || true
 	cd $(ROOTDIR) && make $@
 
