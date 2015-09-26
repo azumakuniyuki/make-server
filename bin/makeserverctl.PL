@@ -5,7 +5,6 @@
 =head1 USAGE
     Try --help option
 =cut
-
 #   ____ _     ___ 
 #  / ___| |   |_ _|
 # | |   | |    | | 
@@ -159,10 +158,10 @@ BEGIN {
 use Getopt::Long qw/:config posix_default no_ignore_case bundling auto_help/;
 use File::Basename qw/basename/;
 use File::Copy;
-use Data::Dumper;
 
 my $Version = '0.0.1';
 my $RootDir = '@@MAKESERVER_DISTRIBUTION_DIRECTORY@@';
+my $SysRoot = '@@MAKESERVER_MAINPROGRAMS_DIRECTORY@@';
 my $Setting = {};
 my $Default = {};
 my $Options = {
@@ -171,6 +170,7 @@ my $Options = {
     'setup'  => ( 1 << 2 ),
     'update' => ( 1 << 3 ),
     'shadow' => ( 1 << 4 ),
+    'roles'  => ( 1 << 5 ),
 };
 my $Command = CLI->new( 
     'command' => join( ' ', $0, @ARGV ),
@@ -190,14 +190,16 @@ if( $Command->r & $Options->{'exec'} ) {
         my $currentdir = qx|pwd|; chomp $currentdir;
         my $makefiles0 = [ 
             'Makefile', 'Vagrant.mk', 'Ansible.mk', 'Serverspec.mk',
-            'Rakefile', '.rspec'
+            'Rakefile', '.rspec', 
+            '.make-server-directory', '.default-inventoryfile',
         ];
-        my $subdirlist = [ '.ssh', 'bin', 'lib', 'script', 'server' ];
+        my $subdirlist = [ 
+            '.ssh', 'lib', 'script', $SysRoot, $SysRoot.'/roles', $SysRoot.'/spec',
+        ];
         my $tobecopied = [];
 
         if( $RootDir ne $currentdir ) {
             # Current directory is not $RootDir
-
             while(1) {
                 if( -d $RootDir ) {
                     if( -x $RootDir ) {
@@ -255,11 +257,90 @@ if( $Command->r & $Options->{'exec'} ) {
                         copy( $f, $v ) 
                     }
                 }
+
+                for my $e ( @$subdirlist ) {
+                    # Copy files in each directory
+                    my $d = sprintf( "%s/%s", $RootDir, $e );
+                    my $v = sprintf( "%s/%s", $currentdir, $e );
+                }
                 last;
             }
         } else {
             # Current directory is the root directory
             $Command->e( 'Current directory is the root directory of "make-server": '.$currentdir );
+        }
+
+    } elsif( $Command->r & $Options->{'roles'} ) {
+        # Show available roles
+        require File::Find;
+        my $currentdir = qx|pwd|; chomp $currentdir;
+        my $rolestable = { 'root' => [], 'user' => [] };
+        my $copiedrole = [];
+        my $tobeseeked = [ $RootDir.'/'.$SysRoot.'/roles' ];
+        my $findoption = { 'wanted' => \&roleindex };
+
+        push @$tobeseeked, $currentdir unless $currentdir =~ m/$RootDir/;
+        for my $e ( @$tobeseeked ) {
+            # Find tasks/main.yml from each directory
+            my $v = $e; $v .= '/' unless $v =~ m|/\z|;
+            File::Find::finddepth( $findoption, $v );
+        }
+
+        sub roleindex {
+            my $foundfile = $_;
+            my $directory = '';
+            my $rolespath = '';
+            {
+                no warnings 'once'; 
+                $directory = $File::Find::dir;
+                $rolespath = $File::Find::name;
+            }
+
+            return undef unless $directory =~ m|/tasks\z|;
+            return undef unless $foundfile =~ m|\Amain[.]yml\z|;
+            $directory =~ s|/tasks\z||;
+
+            if( $rolespath =~ m|$RootDir/$SysRoot| ) {
+                # The role exists in $RootDir
+                push @{ $rolestable->{'root'} }, $directory;
+
+            } else {
+                # The role exists only in `pwd`
+                push @{ $rolestable->{'user'} }, $directory;
+            }
+            return 0;
+        }
+
+        for my $e ( @{ $rolestable->{'user'} } ) {
+            # Print roles in user's directory
+            my $v = $e; $v =~ s|\A.+$SysRoot/roles/||;
+            my $x = '.';
+
+            printf( "%s", '- ' );
+            printf( "%s", $v );
+            printf( " %s ", $x x ( 32 - length($v) ) );
+            if( -d sprintf( "%s/%s/roles/%s", $RootDir, $SysRoot, $v ) ) {
+                # Installed role
+                printf( "%s\n", 'Installed' );
+                push @$copiedrole, $v;
+
+            } else {
+                # User-defined role
+                printf( "%s\n", 'Only in '.$currentdir );
+            }
+        }
+
+        for my $e ( @{ $rolestable->{'root'} } ) {
+            # Print roles in user's directory
+            my $v = $e; $v =~ s|\A$RootDir/$SysRoot/roles/||;
+            my $x = '.';
+
+            next if grep { $v eq $_ } @$copiedrole;
+
+            printf( "%s", '- ' );
+            printf( "%s", $v );
+            printf( " %s ", $x x ( 32 - length($v) ) );
+            printf( "%s\n", 'Available to be installed using `make <role-name>-role`' );
         }
 
     } elsif( $Command->r & $Options->{'shadow'} ) {
@@ -298,30 +379,43 @@ if( $Command->r & $Options->{'exec'} ) {
         }
 
         printf( "%s\n", $hashedtext );
-    }
 
+    } else {
+        help();
+        exit;
+    }
 }
 
 sub location {
+    # @Description  Check the current directory is the root directory or not
+    # @Param <none>
+    # @Return       0 = is not the root directory, 1 = is in the root directory
     my $currdir = qx|pwd|; chomp $currdir;
+    my $rexpath = qr|$RootDir/.+|;
     return 1 if $RootDir eq $currdir;
+    return 1 if $currdir =~ $rexpath;
     return 0;
 }
 
 sub rootdir {
+    # @Description  Print the path to root directory of make-server
     exit 1 if $RootDir =~ m/\A[@].+[@]\z/;
     print $RootDir."\n";
     exit 0
 }
 
 sub parseoptions {
+    # @Description  Command line option parser
+    # @Param <none>
+    # @Return <v>   (Integer) The value of the run mode
     my $r = 0;      # Run mode value
     my $p = {};     # Parsed options
     my $o = [
         'setup',        # Setting up files at current directory
         'update',       # Update(Override) Makefiles and other files
         'shadow-passwd',# Make shadow password string
-        'algorithm|a=s' # For --shadow option
+        'algorithm|a=s',# For --shadow option
+        'role-index',   # Show installed roles and available roles
     ];
 
     Getopt::Long::GetOptions( $p, 'verbose|v+', @$o,
@@ -346,11 +440,25 @@ sub parseoptions {
         $Setting->{'algorithm'} ||= 'SHA512';
 
     } else {
-        # setup
-        $r |= $Options->{'setup'} if defined $p->{'setup'};
-        $r |= $Options->{'update'} if defined $p->{'update'};
+        if( defined $p->{'role-index'} ) {
+            # role index
+            $r |= $Options->{'roles'};
+
+        } elsif( defined $p->{'setup'} ) {
+            # setup
+            $r |= $Options->{'setup'};
+            $r |= $Options->{'update'} if defined $p->{'update'};
+            $p->{'verbose'}++;
+        }
     }
     $Setting = $Default unless keys %$Setting;
+
+    # Check the value of $RootDir, $SysRoot
+    $Command->e( 'Invalid value in $RootDir: '.$RootDir ) if $RootDir =~ m/\A[@].+[@]\z/;
+    $Command->e( 'Invalid value in $SysRoot: '.$SysRoot ) if $SysRoot =~ m/\A[@].+[@]\z/;
+    $Command->e( 'Empty value in $RootDir: '.$RootDir ) unless length $RootDir;
+    $Command->e( 'Empty value in $SysRoot: '.$SysRoot ) unless length $SysRoot;
+
     $r |= $Options->{'exec'};
 
     $Command->v( $p->{'verbose'} );
@@ -360,11 +468,13 @@ sub parseoptions {
 }
 
 sub help {
+    # @Description  Print help message
     printf( STDERR "%s OPTIONS \n", $0 );
     printf( STDERR "  --rootdir           : Print the distribution directory and exit\n" );
     printf( STDERR "  --location          : Check current directory is distribution directory or not\n" );
     printf( STDERR "                        This script exits at status 1 when here is distribution directory\n" );
     printf( STDERR "  --setup             : Setting up files at current directory\n" );
+    printf( STDERR "  --role-index        : Show available roles\n" );
     printf( STDERR "\n" );
     printf( STDERR "%s OPTIONS <plain-text>\n", $0 );
     printf( STDERR "  --shadow-passwd     : Create shadow password string\n" );
