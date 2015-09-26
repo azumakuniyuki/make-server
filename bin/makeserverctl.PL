@@ -159,7 +159,7 @@ use Getopt::Long qw/:config posix_default no_ignore_case bundling auto_help/;
 use File::Basename qw/basename/;
 use File::Copy;
 
-my $Version = '0.0.1';
+my $Version = '3.0.0';
 my $RootDir = '@@MAKESERVER_DISTRIBUTION_DIRECTORY@@';
 my $SysRoot = '@@MAKESERVER_MAINPROGRAMS_DIRECTORY@@';
 my $Setting = {};
@@ -192,6 +192,7 @@ if( $Command->r & $Options->{'exec'} ) {
             'Makefile', 'Vagrant.mk', 'Ansible.mk', 'Serverspec.mk',
             'Rakefile', '.rspec', 
             '.make-server-directory', '.default-inventoryfile',
+            '.default-playbook-file',
         ];
         my $subdirlist = [ 
             '.ssh', 'lib', 'script', $SysRoot, $SysRoot.'/roles', $SysRoot.'/spec',
@@ -236,9 +237,16 @@ if( $Command->r & $Options->{'exec'} ) {
                     if( -e $v ) {
                         # Target file already exists
                         if( $Command->r & $Options->{'update'} ) {
-                            # Update each Makefile
-                            $Command->p( '[UPDATE] '.$v, 1 );
-                            copy( $f, $v ) 
+
+                            if( $e =~ m/\A[.]default-.+/ ) {
+                                # .default-* files are not updated
+                                $Command->p( '[ SKIP ] '.$v.' is not updated', 1 );
+
+                            } else {
+                                # Update each Makefile
+                                $Command->p( '[UPDATE] '.$v, 1 );
+                                copy( $f, $v ) 
+                            }
 
                         } else {
                             # Each Makefile already exists
