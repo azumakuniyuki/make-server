@@ -1,6 +1,10 @@
+.make-server-directory
 server/log
 ansible.cfg
 .vagrant
 *.un~
 data/
 tmp/
+.ssh/*.key
+.ssh/*.pub
+bin/makeserverctl
