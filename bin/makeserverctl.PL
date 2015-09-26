@@ -419,11 +419,11 @@ sub parseoptions {
     my $r = 0;      # Run mode value
     my $p = {};     # Parsed options
     my $o = [
-        'setup',        # Setting up files at current directory
-        'update',       # Update(Override) Makefiles and other files
-        'shadow-passwd',# Make shadow password string
-        'algorithm|a=s',# For --shadow option
-        'role-index',   # Show installed roles and available roles
+        'setup',            # Setting up files at current directory
+        'update-makefile',  # Update(Override) Makefiles and other files
+        'shadow-passwd',    # Make shadow password string
+        'role-index',       # Show installed roles and available roles
+        'algorithm|a=s',    # For --shadow option
     ];
 
     Getopt::Long::GetOptions( $p, 'verbose|v+', @$o,
@@ -448,14 +448,15 @@ sub parseoptions {
         $Setting->{'algorithm'} ||= 'SHA512';
 
     } else {
+        # Options except --shadow-passwd
         if( defined $p->{'role-index'} ) {
             # role index
             $r |= $Options->{'roles'};
 
-        } elsif( defined $p->{'setup'} ) {
+        } elsif( defined $p->{'setup'} || defined $p->{'update-makefile'} ) {
             # setup
             $r |= $Options->{'setup'};
-            $r |= $Options->{'update'} if defined $p->{'update'};
+            $r |= $Options->{'update'} if defined $p->{'update-makefile'};
             $p->{'verbose'}++;
         }
     }
@@ -481,7 +482,8 @@ sub help {
     printf( STDERR "  --rootdir           : Print the distribution directory and exit\n" );
     printf( STDERR "  --location          : Check current directory is distribution directory or not\n" );
     printf( STDERR "                        This script exits at status 1 when here is distribution directory\n" );
-    printf( STDERR "  --setup             : Setting up files at current directory\n" );
+    printf( STDERR "  --setup             : Setting up Makefiles at current directory\n" );
+    printf( STDERR "  --update-makefile   : Update Makefiles in current directory\n" );
     printf( STDERR "  --role-index        : Show available roles\n" );
     printf( STDERR "\n" );
     printf( STDERR "%s OPTIONS <plain-text>\n", $0 );
