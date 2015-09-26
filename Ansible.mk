@@ -44,6 +44,7 @@ build:
 				sleep 1; t=14; while [ $$t -gt 0 ]; do printf "\x08"; t=`expr $$t - 1`; done; \
 				n=`expr $$n - 1`; \
 			done; \
+			echo; \
 			ansible-playbook -i $(INVENTORYFILE) $(BUILDPLAYBOOK) ;; \
 		[Nn]|[Nn]o|NO)   exit 0 ;; \
 		*)               false  ;; \
@@ -67,6 +68,7 @@ init-host:
 				sleep 1; t=14; while [ $$t -gt 0 ]; do printf "\x08"; t=`expr $$t - 1`; done; \
 				n=`expr $$n - 1`; \
 			done; \
+			echo; \
 			ansible-playbook -i $(INVENTORYFILE) $(INITPLAYBOOKS) ;; \
 		[Nn]|[Nn]o|NO)   exit 0 ;; \
 		*)               false  ;; \
