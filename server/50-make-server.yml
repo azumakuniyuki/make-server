@@ -32,4 +32,4 @@
     - rpm/svnserve
     - src/netqmail
     - src/vsftpd
-    - cleanup
+    - cleandown
