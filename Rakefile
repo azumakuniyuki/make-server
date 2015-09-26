@@ -10,10 +10,11 @@ RSpecDir = './server/spec'
 
 namespace :spec do
   # Serverspec related targets
-  hosttable  = MakeServer::Ansible.load_inventory( ENV["INVENTORY"] || "vagrant" )
-  roleindex  = MakeServer::Ansible.make_roleindex
-  rolespecs  = {}
-  tasknames  = []
+  inventory = File.read('.default-inventoryfile').chomp
+  hosttable = MakeServer::Ansible.load_inventory( ENV["INVENTORY"] || inventory )
+  roleindex = MakeServer::Ansible.make_roleindex
+  rolespecs = {}
+  tasknames = []
   roleindex.unshift('bootstrap')
 
   roleindex.each do |role|
