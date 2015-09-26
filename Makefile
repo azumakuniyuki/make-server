@@ -32,6 +32,10 @@ VG_TARGETS := addr destroy down init-vm list login os restart ssh up
 .directory-location:
 	$(MAKESERVERCTL) --location
 
+ansible.cfg:
+	cd $(ROOTDIR) && make ansible-config
+	test -L ./$(ROOTDIR)/ansible-cfg || ln -s $(ROOTDIR)/ansible-config ./$@
+
 env:
 	$(MAKE) install-ansible
 	$(MAKE) install-serverspec
@@ -72,6 +76,7 @@ tmp:
 # Sub directory: server/
 server: key-pair tmp lib
 	$(MAKE) -C $@
+	$(MAKE) ansible.cfg
 	@echo
 	@$(MAKE) role-index
 
