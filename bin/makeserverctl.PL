@@ -488,7 +488,7 @@ sub help {
     printf( STDERR "\n" );
     printf( STDERR "%s OPTIONS <plain-text>\n", $0 );
     printf( STDERR "  --shadow-passwd     : Create shadow password string\n" );
-    printf( STDERR "  -a, --algorithm <v> : Algorithm: MD5, SHA256, SHA512(default)\n" );
+    printf( STDERR "  -a, --algorithm <v> : Shadow password algorithm: MD5, SHA256, SHA512(default)\n" );
     printf( STDERR "\n" );
     printf( STDERR '  --help              : Help screen'."\n" );
     printf( STDERR '  --version           : Print the version number'."\n" );
