@@ -257,7 +257,6 @@ if( $Command->r & $Options->{'exec'} ) {
                         if( $e =~ m|.+/.+| ) {
                             # Make sub directory
                             my $d = sprintf( "%s/%s", $currentdir, [ split('/',$e) ]->[0] );
-                            $Command->p( '[ MAKE ] '.$d, 1 );
                             mkdir $d;
                         }
 
