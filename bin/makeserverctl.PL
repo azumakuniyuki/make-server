@@ -19,7 +19,6 @@ use Fcntl qw(:flock);
 use File::Basename qw/basename/;
 use Sys::Syslog;
 use Time::Piece;
-use Data::Dumper;
 
 sub new {
     my $class = shift;
