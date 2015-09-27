@@ -33,7 +33,8 @@ all: .directory-location
 
 $(AVAILABLEROLE):
 	$(MAKE) .directory-location
-	/bin/cp -vRp $(CPCOMMANDOPTS) $(MAKESERVERDIR)/$(DIRECTORYNAME)/$@ ./
+	$(MAKEDIR) `dirname $@`
+	/bin/cp -vRp $(CPCOMMANDOPTS) $(MAKESERVERDIR)/$(DIRECTORYNAME)/$@ ./`dirname $@`/
 
 %-role:
 	$(MAKE) $@-to-be-created
