@@ -51,6 +51,10 @@ packages:
 #   $ perl -MCrypt::Passwd::XS -lE 'print +Crypt::Passwd::XS::crypt( shift, q|$6$|.int(rand(2**32)))' password
 #   $ $6$7727282$k3l39lq5PyKPnqxew6jIiroBTs7.E5S7jBl2rJtlB.i6kbiiyFzmVzHVV0BUHXAYarA6oOa0DlDm18B2EUgVX/
 #
+# Or use makeserverctl command with --shadow-passwd option
+#   % makeserverctl --shadow-passwd <password-string>
+#   $6$SWVKPx9O$FAOSDIwwNbGTfRlGBcnupTVRf/nsErLD/BhA5sNX2AZZ7ZVfRBScavcvp2l9eFTlkD.mI6lHvGE/gPiokFb/y0
+#
 # See also
 #   http://docs.ansible.com/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
 # 
