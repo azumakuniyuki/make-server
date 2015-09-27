@@ -156,6 +156,7 @@ BEGIN {
 
 use Getopt::Long qw/:config posix_default no_ignore_case bundling auto_help/;
 use File::Basename qw/basename/;
+use File::Compare;
 use File::Copy;
 
 my $Version = '3.0.0';
@@ -243,8 +244,14 @@ if( $Command->r & $Options->{'exec'} ) {
 
                             } else {
                                 # Update each Makefile
-                                $Command->p( '[UPDATE] '.$v, 1 );
-                                copy( $f, $v ) 
+                                if( File::Compare::compare( $f, $v ) == 0 ) {
+                                    # They are the same file
+                                    $Command->p( '[ SAME ] '.$v, 1 );
+
+                                } else {
+                                    $Command->p( '[UPDATE] '.$v, 1 );
+                                    File::Copy::copy( $f, $v ) 
+                                }
                             }
 
                         } else {
