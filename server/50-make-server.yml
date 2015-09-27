@@ -10,6 +10,7 @@
   remote_user: deploy
   roles:
     - bootstrap
+    - env/selinux
     - src/firewall
     - src/openssl
     - src/perl

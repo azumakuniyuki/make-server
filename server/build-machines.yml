@@ -10,6 +10,7 @@
   remote_user: deploy
   roles:
     - bootstrap
+    - env/selinux
     - role1-you-want-to-execute
     - role2-you-want-to-execute
     - cleandown
