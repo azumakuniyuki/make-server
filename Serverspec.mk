@@ -17,11 +17,14 @@ INVENTORYFILE  = $(shell head -1 .default-inventoryfile)
 
 # ---------------------------------------------------------------------------
 .PHONY: clean all $(SUBDIRS)
+.directory-location:
+	@$(MAKESERVERCTL) --location
 
 install:
 	gem install $(TOBEINSTALLED)
 
 test:
+	@$(MAKE) .directory-location
 	rake INVENTORY=$(INVENTORYFILE) spec
 
 clean:
