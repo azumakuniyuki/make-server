@@ -26,7 +26,7 @@ INITPLAYBOOKS := $(ROOTDIRECTORY)/10-build-stage.yml \
 				 $(ROOTDIRECTORY)/20-deploy-user.yml
 
 # ---------------------------------------------------------------------------
-.PHONY: clean all $(SUBDIRS)
+.PHONY: clean
 .directory-location:
 	@$(MAKESERVERCTL) --location
 
