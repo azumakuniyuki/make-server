@@ -71,11 +71,10 @@ install -o root -m 0755 makeserverctl /usr/local/bin
 * ノードディレクトリ内にある各Makefileのターゲットから呼び出される機能がいくつか
 
 ## Make Node | ノードの作成
-The following commands are example for creating directory tree to build 2 web
-servers and 1 mail server at `example.jp` domain.  `makeserverctl --setup` 
-command create the required directory tree and copy some Makefiles from the 
-directory which is the result of `makeserverctl --rootdir` command to the 
-`example.jp/` directory.
+The following commands are example for creating directory tree to build a web
+server at `example.jp` domain.  `makeserverctl --setup` command create required
+directory tree and copy some Makefiles from the directory which is the result of
+`makeserverctl --rootdir` command to the `example.jp/` directory.
 
 ```shell
 % mkdir -p /tmp/example.jp
@@ -102,9 +101,9 @@ directory which is the result of `makeserverctl --rootdir` command to the
  * debug1: [ COPY ] /tmp/example.jp/.default-playbook-file
 ```
 
-ここでは`example.jp`配下のWebサーバ2台とメールサーバ1台を構築・構成管理すること
-にします。`makeserverctl --setup`コマンドは現在のディレクトリに必要なディレクトリ
-構造を作り、そして`makeserverctl --rootdir`コマンドの実行結果で示されるディレクトリ
+ここでは`example.jp`配下のWebサーバ1台を構築・構成管理することにします。
+`makeserverctl --setup`コマンドは現在のディレクトリに必要なディレクトリ構造を
+作り、そして`makeserverctl --rootdir`コマンドの実行結果で示されるディレクトリ
 から複数のMakefileを`exampel.jp/`ディレクトリにコピーします。
 
 ### make server
@@ -139,11 +138,12 @@ Makefileの`server`ターゲットを実行すると、以下のようなディ�
 | server/roles/ | Ansible用bootstrapとcleandownロール                         |
 | server/spec/  | Serverspec用テストコード                                    |
 
-## Use Vagrant ? | Vagrantを使う場合
-### Targets for Making a Virtual Machine | 仮想マシンを作るターゲット
+## Use Vagrant as a Sandbox | Vagrantを使う場合
+### Targets for Making a VM | 仮想マシンを作るターゲット
 If you want to use Vagrant as a machine for testing your playbooks and test codes,
-the following commands may be useful. `make <box-name>-box` command creates a 
-virtual box machine and the inventory file: `server/vagrant` for Ansible.
+the following commands may be useful. `make list`` command shows the list of 
+available vagrant boxes, and `make <box-name>-box` command creates a virtual 
+box machine and the inventory file: `server/vagrant` for Ansible.
 
 ```shell
 % make list
@@ -176,9 +176,10 @@ VMIPV4ADDRESS="`/usr/bin/make addr`"; \
 ```
 
 もしもPlaybookやServerspecのテストコードの試験用にVagrantを使う場合は下記の
-コマンド実行例が役に立つかもしれません。`make <ボックス名>-box`コマンドは
-インストール済のVagrant boxから仮想マシンを作り、Ansibleのインベントリファイル
-として`server/vagrant`を生成します。
+コマンド実行例が役に立つかもしれません。`make list`コマンドは利用可能なVagrant
+仮想マシンの一覧を表示し、`make <ボックス名>-box`コマンドはインストール済の
+Vagrant boxから仮想マシンを作り、Ansibleのインベントリファイルとして
+`server/vagrant`を生成します。
 
 ### Other Targets for Vagrant | その他のVagrant用ターゲット
 Some useful targets for Vagrant are defined in `./Vagrant.mk` file such as
@@ -345,76 +346,226 @@ cd roles && /usr/bin/make src/postgresql-role
 として取り込むのに便利です。例えば、`make src/postgresql-role`を実行すると上記
 のように`server/roles/src/postgresql`ディレクトリにファイルが取り込まれます。
 
-------- I've wrote README.md until here ---------
-
 ### Create Roles | ロールの作成
+When you want to create a role which is not included in make-server, for example
+installing Postfix from RPM, `make rpm/postfix-role` command makes a directory
+tree following 
+[Ansible Best Practices](http://docs.ansible.com/ansible/playbooks_best_practices.html) .
+
+```shell
+% make rpm/postfix-role
+make rpm/postfix-role
+cd server && /usr/bin/make rpm/postfix-role
+cd roles && /usr/bin/make rpm/postfix-role
+/usr/bin/make rpm/postfix-role-to-be-created
+...
+
+% find server/roles/rpm/postfix -type d
+server/roles/rpm/postfix
+server/roles/rpm/postfix/defaults
+server/roles/rpm/postfix/files
+server/roles/rpm/postfix/handlers
+server/roles/rpm/postfix/meta
+server/roles/rpm/postfix/spec
+server/roles/rpm/postfix/tasks
+server/roles/rpm/postfix/templates
+server/roles/rpm/postfix/vars
+
+% make role-index | grep postfix
+- rpm/postfix ..................... Only in /tmp/example.jp/server/roles
+```
+
+make-serverに含まれていないロール、例えばRPMからPostfixをインストールするロール
+`rpm/postfix`を作る場合、`make rpm/postfix-role`を実行すると
+[Ansible Best Practices](http://docs.ansible.com/ansible/playbooks_best_practices.html)
+に従ったディレクトリ構造を作ります。
 
 ## Inventory Files | インベントリファイル
+Inventory files in `server/` directory of make-server are common between Ansible
+and Serverspec. In other ways, Serverspec(`Rakefile` and helper scripts in `lib/`
+directory) read Ansible's inventory files.
 
-## Execute Ansible Playbooks | Playbookの実行
+| Inventory Filename |   Description                                     |
+|--------------------|---------------------------------------------------|
+| install            | Inventory file for initializing host as root      |
+| develop            | Inventory file for development                    |
+| staging            | Inventory file for staging servers                |
+| product            | Inventory file for production servers             |
+| sandbox            | Inventory file for sandbox servers                |
+| vagrant            | Inventory file for Vagrant virtual machine        |
+
+make-serverの`server/`ディレクトリにあるインベントリファイルはAnsibleとServerspec
+で共通になっています。言い換えると、Serverspec(`Rakefile`と`lib/`以下の補助スクリプト)
+がAnsibleのインベントリファイルを読込むようになっています。
+
+### server/install
+`server/install` is an inventory file to build up Python and `sudo` program 
+environment on the server you want to build for executing Ansible's playbook.
+
+```ini
+[install]
+192.0.2.1
+
+[install:vars]
+ansible_ssh_port=22
+ansible_ssh_user=root
+ansible_ssh_pass=root-password
+# ansible_ssh_private_key_file=/path/to/.ssh/ssh.root-seckey-rsa.key
+ansible_python_interpreter=/usr/local/bin/python2.7
+# ansible_connection=paramiko
+```
+
+`server/install`は構築したいサーバにPythonと`sudo`の環境を構築する為に使う事を
+想定したPlaybookです。
+
+After edit the inventory file, the following command builds Python and sudo 
+environment and create `deploy` user on the  server.
+
+```shell
+% ansible-playbook -i server/install server/10-build-stage.yml server/20-deploy-user.yml
+PLAY [all] ******************************************************************** 
+
+GATHERING FACTS *************************************************************** 
+ok: [vm]
+
+TASK: [build-stage | Python 2.7 should have been installed(0)] **************** 
+ok: [vm]
+...
+TASK: [deploy-user | Authorized key should be deployed] *********************** 
+changed: [vm]
+
+PLAY RECAP ******************************************************************** 
+vm                         : ok=7    changed=6    unreachable=0    failed=0   
+```
+
+インベントリファイルを編集した後で上記のコマンドを実行するとPython環境の準備と
+`sudo`の設定、そして`deploy`ユーザの作成が行われます。
+
+### server/vagrant
+`server/vagrant` is an inventory file for Vagrant vitual machine. The file is
+automatically generated by `make <box-name>-box` command.
+
+```ini
+[vagrant]
+vm ansible_ssh_host=172.25.221.81
+
+[vagrant:vars]
+ansible_ssh_port=22
+ansible_ssh_user=vagrant
+ansible_ssh_private_key_file=./.vagrant/machines/default/virtualbox/private_key
+ansible_python_interpreter=/usr/bin/python
+```
+
+`server/vagrant`はVagrant仮想マシン専用のインベントリファイルで、`make <box-name>-box`
+コマンドを実行すると自動的に生成されます。
 
 ## Execute Serverspec Tests | Serverspecテストの実行
 
+### rake
+`rake -T` command show the list of available targets for Serverspec test. These
+targets are automatically generated by `lib/ansible_helper.rb` script when `rake`
+command is executed.
+
+```shell
+% rake -T
+rake spec:172.25.243.35:all          # Run all the serverspec tests to 172.25.243.35
+rake spec:172.25.243.35:ansible-env  # Run tests for Ansible environment
+rake spec:172.25.243.35:bootstrap    # Run serverspec tests to 172.25.243.35(bootstrap)
+rake spec:172.25.243.35:src/nginx    # Run serverspec tests to 172.25.243.35(src/nginx)
+
+% rake spec:172.25.243.35:ansible-env
+/usr/local/bin/ruby -I/usr/local/lib/ruby/gems/2.2.0/gems/rspec-support-3.3.0/lib:/usr/local/lib/ruby/gems/2.2.0/gems/rspec-core-3.3.2/lib /usr/local/lib/ruby/gems/2.2.0/gems/rspec-core-3.3.2/exe/rspec --pattern ./server/spec/\[0-9\]\[0-9\]-\*.rb
+* hostname = 172.25.243.35
+* username = vagrant
+* sshdport = 22
+* identity = ./.vagrant/machines/default/virtualbox/private_key
+...
+  1) 30-update-sshd File "/etc/ssh/sshd_config" content 
+     # Temporarily skipped with xdescribe
+     # ./server/spec/30-update-sshd.rb:10
+
+
+Finished in 0.3407 seconds (files took 1.28 seconds to load)
+12 examples, 0 failures, 1 pending
+```
+
+`rake -T`コマンドを実行するとServerspecのテストで実行可能なターゲットの一覧が
+表示されます。これらのターゲットは`rake`コマンドを実行したときに`lib/ansible_helper.rb`
+スクリプトによって自動的に生成されます。
+
 ## .default-* Files | .default-*ファイル
 
+`.default-inventoryfile` is called from `Makefile` and `Rakefile` to get default
+inventory file name. `.default-playbook-file` is called from `Makefile` to get
+default playbook file name to execute `ansible-playbook` command.
+
+```shell
+% cat .default-inventoryfile
+vagrant
+
+% cat .default-playbook-file
+build-machines.yml
+
+% make build
+/usr/bin/make -f Ansible.mk build
+makeserverctl --location
+*** The following playbook will be executed by ansible-playbook command:
+  - Playbook to be executed    : server/build-machines.yml
+  - Inventory file to be loaded: server/vagrant
+*** Are you sure you want to execute the playbook above? [Y/n]
+
+% make test
+/usr/bin/make -f Serverspec.mk test
+rake INVENTORY=vagrant spec
+/usr/local/bin/ruby -I/usr/local/lib/ruby/gems/2.2.0/gems/rspec-support-3.3.0/lib:/usr/local/lib/ruby/gems/2.2.0/gems/rspec-core-3.3.2/lib /usr/local/lib/ruby/gems/2.2.0/gems/rspec-core-3.3.2/exe/rspec --pattern ./server/spec/\[0-9\]\[0-9\]-\*.rb
+* hostname = 172.25.243.35
+* username = vagrant
+* sshdport = 22
+* identity = ./.vagrant/machines/default/virtualbox/private_key
+
+10-build-stage
+  Python environment
+    Command "which python"
+      stdout
+        should match /\/bin\/python/
+...
 ```
-$ vi ansible/product
-[product]
-    www[01:25].example.jp
-    mail.example.jp
 
-    [webservers]
-    www[01:25].example.jp
+`.default-inventoryfile`は`Makefile`と`Rakefile`から既定のインベントリファイル名
+を取得する為に呼び出され、`.default-playbook-file`は`ansible-playbook`コマンドで
+実行するPlaybookのファイル名を取得する為に呼び出されます。
 
-    [mailservers]
-    mail.example.jp
+### "init-host" Target | "init-host"ターゲット
 
-## Prepare Vagrant vm as a sandbox
+```shell
+% make init-host
+/usr/bin/make -f Ansible.mk init-host
+makeserverctl --location
+*** The following playbooks are executed by ansible-playbook command:
+  - Playbooks to be executed:
+    - server/10-build-stage.yml
+    - server/11-selinux-off.yml
+    - server/20-deploy-user.yml
+  - Inventory file to be loaded:
+    - server/vagrant
+*** Are you sure you want to execute the playbooks above? [Y/n] y
+*** make-server execute playbooks after  6 seconds ...
+```
 
-"make list" command shows the list of available vagrant boxes.
+KNOWN BUGS | 既知のバグ
+-----------------------
+See [GitHub/azumakuniyuki/make-server/issues](https://github.com/azumakuniyuki/make-server/issues)
 
-    $ cd ~/var/rhosts/example.jp
-    $ make list
-    vagrant box list
-    centos56-i386    (virtualbox)
-    centos64-x86_64  (virtualbox)
-    centos65-x86_64  (virtualbox)
-    freebsd92-i386   (virtualbox)
-    openbsd53-x86_64 (virtualbox)
+AUTHOR | 作者
+-------------
+[@azumakuniyuki](https://twitter.com/azumakuniyuki)
 
-    $ make centos64-x86_64-box ansible
-    if [ ! -f "./Vagrantfile" ]; then \
-        ...
-    `vagrantup.com` for more information on using Vagrant.
-    mkdir -p ./server
-    make common-role
-    ...
-    $ make up
-    ==> default: Importing base box 'centos64-x86_64'...
-    Progress: 50%
-    ...
+COPYRIGHT | 著作権
+------------------
+Copyright (C) 2014-2015 azumakuniyuki <github.com@azumakuniyuki.org>,
+All Rights Reserved.
 
-## Copy roles
-
-    $ cd ~/var/rhosts/example.jp
-    $ make src/nginx-role src/sendmail-system-role src/mysql-5.5-role
-    ...
-
-When `make apache-role` executed, roles/apache will be copied from
-make-server/ansible/roles directory to current `ansible/` directory if 
-roles/apache exists in this repository. 
-
-However, when make-server/ansible/roles/apache does not exist, only directory
-tree will be created in ./ansible/roles directory followed Best Practices.
-
-`make apache-role`を実行すると、このリポジトリにansible/roles/apacheがある場合は
-それがコピーされ、無ければBest Practicesに従ったディレクトリ構造だけを作ります。
-
-REPOSITORY
-----------
-https://github.com/azumakuniyuki/make-server
-
-AUTHOR
-------
-azumakuniyuki
+LICENSE | ライセンス
+--------------------
+This software is distributed under The BSD 2-Clause License.
 
