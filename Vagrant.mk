@@ -96,3 +96,7 @@ init-vm: $(VAGRANTCONFIG)
 
 clean:
 
+clean-vm:
+	rm -f  ./$(VAGRANTCONFIG) ./$(VAG_INVENTORY)
+	rm -rf ./$(VIRTUALBOXDIR)
+
