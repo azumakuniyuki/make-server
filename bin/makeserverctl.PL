@@ -238,7 +238,7 @@ if( $Command->r & $Options->{'exec'} ) {
                         # Target file already exists
                         if( $Command->r & $Options->{'update'} ) {
 
-                            if( $e =~ m/\A[.]default-.+/ ) {
+                            if( $e =~ m/\A[.]default-.+/ || $e eq 'NodeLocal.mk' ) {
                                 # .default-* files are not updated
                                 $Command->p( '[ SKIP ] '.$v.' is not updated', 1 );
 
