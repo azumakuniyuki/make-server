@@ -190,7 +190,7 @@ if( $Command->r & $Options->{'exec'} ) {
         my $currentdir = qx|pwd|; chomp $currentdir;
         my $makefiles0 = [ 
             'Makefile', 'Vagrant.mk', 'Ansible.mk', 'Serverspec.mk',
-            'Rakefile', '.rspec', 
+            'NodeLocal.mk', 'Rakefile', '.rspec', 
             '.make-server-directory', '.default-inventoryfile',
             '.default-playbook-file',
         ];
