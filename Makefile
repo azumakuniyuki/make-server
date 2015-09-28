@@ -22,7 +22,7 @@ MAKESERVERDIR  = $(shell head -1 .make-server-directory)
 DEPLOYKEY   = ./.ssh/ssh.deploy-rsa.key
 DEPLOYUSER := deploy
 AS_TARGETS := ping vars node init-host
-VG_TARGETS := addr destroy down init-vm list login os restart ssh up
+VG_TARGETS := addr destroy down init-vm list login os restart ssh up clean-vm
 
 # -----------------------------------------------------------------------------
 .PHONY: clean all $(SUBDIRS)
@@ -124,4 +124,8 @@ clean:
 	$(MAKE) -f Vagrant.mk $@
 	test -d $(UBINDIR) && cd $(UBINDIR) && make $@ || true
 	cd $(ROOTDIR) && make $@
+
+# -----------------------------------------------------------------------------
+# include NodeLocal.mk, User-defined macros and targets are defined in the file.
+include NodeLocal.mk
 
