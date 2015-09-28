@@ -6,7 +6,7 @@
 # |_| \_|\___/ \__,_|\___|_____\___/ \___\__,_|_(_)_| |_| |_|_|\_\
 # This file is not updated by `makeserverctl --update-makefile`.
 # ---------------------------------------------------------------------------
-INVENTORYFILE  = $(ROOTDIRECTORY)/$(shell head -1 .default-inventoryfile)
+INVENTORYFILE  = $(ROOTDIR)/$(shell head -1 .default-inventoryfile)
 PATHTOANSIBLE  = $(shell which ansible)
 
 # -----------------------------------------------------------------------------
