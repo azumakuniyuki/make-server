@@ -102,9 +102,6 @@ role-index:
 test:
 	$(MAKE) -f Serverspec.mk test
 
-install-serverspec:
-	$(MAKE) -f Serverspec.mk install
-
 # -----------------------------------------------------------------------------
 # Vagrant related targets
 $(VG_TARGETS):
