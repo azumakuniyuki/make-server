@@ -3,4 +3,15 @@
 #  / __| |/ _ \/ _` | '__/ _` |/ _ \ \ /\ / / '_ \  / /| __/ _` / __| |/ / __|
 # | (__| |  __/ (_| | | | (_| | (_) \ V  V /| | | |/ / | || (_| \__ \   <\__ \
 #  \___|_|\___|\__,_|_|  \__,_|\___/ \_/\_/ |_| |_/_/   \__\__,_|___/_|\_\___/
-- include: delete-swap.yml
+# delete-swap
+- name: delete-swap | Swap off
+  when: swap1|failed or swap3|success
+  ignore_errors: True
+  register: swap9
+  changed_when: swap9.rc == 0
+  command: swapoff {{ swapfile }}
+
+- name: delete-swap | Delete {{ swapfile }}
+  when: swap9|success
+  command: rm -f {{ swapfile }}
+  
