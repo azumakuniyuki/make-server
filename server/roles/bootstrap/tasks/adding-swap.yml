@@ -20,32 +20,32 @@
   always_run: True
   shell: echo '( {{ ansible_memtotal_mb }} / 2 * 1024 )' | bc
 
-- name: adding-swap | /swapfile exists
+- name: adding-swap | {{ swapfile }} exists
   when: swap0|success
   register: swap1
   changed_when: swap1.rc == 255
   ignore_errors: True
-  shell: swapon -s | grep /swapfile > /dev/null 2>&1
+  shell: swapon -s | grep {{ swapfile }} > /dev/null 2>&1
 
-- name: adding-swap | Prepare swapfile
+- name: adding-swap | Prepare {{ swapfile }}
   when: swap1|failed and ansible_memtotal_mb < {{ config.useswap }}
   register: swap2
   command: >
     chdir=/
-    creates=/swapfile
-    dd if=/dev/zero of=/swapfile bs=1024 count={{ swap0.stdout }}
+    creates={{ swapfile }}
+    dd if=/dev/zero of={{ swapfile }} bs=1024 count={{ swap0.stdout }}
 
-- name: adding-swap | Make swapfile
+- name: adding-swap | Make {{ swapfile }}
   when: swap2.changed
   register: swap3 
   changed_when: swap2.rc == 0
   ignore_errors: True
-  command: mkswap /swapfile 
+  command: mkswap { swapfile }}
       
 - name: adding-swap | Swap on
   when: swap1|failed and swap3|success
   register: swap4
   changed_when: swap4.rc == 0
   ignore_errors: True
-  command: swapon /swapfile
+  command: swapon {{ swapfile }}
 
