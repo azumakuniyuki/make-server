@@ -7,3 +7,4 @@
 #
 localroot: /usr/local
 buildroot: /usr/local/src
+swapfile:  /swapfile-for-make-server
