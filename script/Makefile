@@ -13,8 +13,8 @@ CURNODE := $(shell echo $(dir $(HEREIAM)) | xargs basename )
 .DEFAULT_GOAL := files
 MAKESERVERCTL := makeserverctl
 MAKESERVERDIR  = $(shell head -1 ../.make-server-directory)
-HELPERSCRIPTS := 12-sudo-config.sh 15-rewrite-dns.sh 41-vagrant-uid.sh \
-				 80-setup-repos.sh 95-install-pkg.sh
+HELPERSCRIPTS := 11-selinux-off.sh 12-sudo-config.sh 15-rewrite-dns.sh \
+				 41-vagrant-uid.sh 80-setup-repos.sh 95-install-pkg.sh
 DIRECTORYNAME  = $(notdir $(HEREIAM))
 
 # ---------------------------------------------------------------------------
