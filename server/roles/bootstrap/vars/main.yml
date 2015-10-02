@@ -32,7 +32,7 @@ packages:
         'bzip2', 'zip', 'zlib', 'zlib-devel', 'bc', 'wget', 'telnet', 'finger',
         'nkf',
       ]
-      python: [ 'python-pip', 'libselinux-python', 'python-virtualenv' ]
+      python: [ 'python-setuptools', 'libselinux-python' ]
   debian:
     removed: []
     install:
@@ -45,26 +45,4 @@ packages:
         'bzip2', 'zip', 'zlib1g', 'zlib1g-dev', 'bc', 'wget', 'telnet', 'finger'
       ]
       python: [ 'python-pip', 'python-selinux', 'python-virtualenv' ]
-
-# How do I generate crypted passwords for the user module?
-#   $ python -c 'import crypt; print crypt.crypt("password", "$1$Hakata$")'
-#   $ perl -MCrypt::Passwd::XS -lE 'print +Crypt::Passwd::XS::crypt( shift, q|$6$|.int(rand(2**32)))' password
-#   $ $6$7727282$k3l39lq5PyKPnqxew6jIiroBTs7.E5S7jBl2rJtlB.i6kbiiyFzmVzHVV0BUHXAYarA6oOa0DlDm18B2EUgVX/
-#
-# Or use makeserverctl command with --shadow-passwd option
-#   % makeserverctl --shadow-passwd <password-string>
-#   $6$SWVKPx9O$FAOSDIwwNbGTfRlGBcnupTVRf/nsErLD/BhA5sNX2AZZ7ZVfRBScavcvp2l9eFTlkD.mI6lHvGE/gPiokFb/y0
-#
-# See also
-#   http://docs.ansible.com/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
-# 
-unixusers:
-  - username: admin
-    password: $1$HakataNo$9.s0dLxBeUTgTarKe3uU//
-    shell: /bin/sh
-    group: admin
-    groups: wheel
-    home: /home/admin
-    uid: 1001
-    gid: 1001
 

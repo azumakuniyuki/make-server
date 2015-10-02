@@ -1,0 +1,28 @@
+#  _                 _       _                     __                    
+# | |__   ___   ___ | |_ ___| |_ _ __ __ _ _ __   / /_   ____ _ _ __ ___ 
+# | '_ \ / _ \ / _ \| __/ __| __| '__/ _` | '_ \ / /\ \ / / _` | '__/ __|
+# | |_) | (_) | (_) | |_\__ \ |_| | | (_| | |_) / /  \ V / (_| | |  \__ \
+# |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/    \_/ \__,_|_|  |___/
+#                                         |_|                            
+# How do I generate crypted passwords for the user module?
+#   $ python -c 'import crypt; print crypt.crypt("password", "$1$Hakata$")'
+#   $ perl -MCrypt::Passwd::XS -lE 'print +Crypt::Passwd::XS::crypt( shift, q|$6$|.int(rand(2**32)))' password
+#   $ $6$7727282$k3l39lq5PyKPnqxew6jIiroBTs7.E5S7jBl2rJtlB.i6kbiiyFzmVzHVV0BUHXAYarA6oOa0DlDm18B2EUgVX/
+#
+# Or use makeserverctl command with --shadow-passwd option
+#   % makeserverctl --shadow-passwd <password-string>
+#   $6$SWVKPx9O$FAOSDIwwNbGTfRlGBcnupTVRf/nsErLD/BhA5sNX2AZZ7ZVfRBScavcvp2l9eFTlkD.mI6lHvGE/gPiokFb/y0
+#
+# See also
+#   http://docs.ansible.com/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
+# 
+unixusers:
+  - username: admin
+    password: $1$HakataNo$9.s0dLxBeUTgTarKe3uU//
+    shell: /bin/sh
+    group: admin
+    groups: wheel
+    home: /home/admin
+    uid: 1001
+    gid: 1001
+

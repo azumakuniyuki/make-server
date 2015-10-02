@@ -5,6 +5,8 @@
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/   \__\__,_|___/_|\_\___/
 #                                         |_|                              
 # create-user
+- include_vars: login-users.yml
+
 - name: create-user | Each group should be created(1)
   when: config.adduser == True
   group: >
