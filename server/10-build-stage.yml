@@ -51,6 +51,12 @@
       raw: test -x /usr/local/bin/python
 
 
+    - name: build-stage | RedHat | libselinux-python should have been installed
+      register: install_python
+      when: ansible_os_family == "RedHat"
+      raw:  /usr/bin/yum -y install libselinux-python
+
+
     - name: build-stage | RedHat | sudo(8) should be installed
       when: ansible_os_family == "RedHat"
       yum:  name=sudo state=present
