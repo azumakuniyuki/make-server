@@ -26,6 +26,7 @@
 
     - name: setup-repos | RedHat | Install Remi repository
       when: ansible_distribution == "CentOS"
+      ignore_erros: True
       shell: >
         creates=/etc/yum.repos.d/remi.repo
         rpm -hUv {{ remiserver }}/remi-release-{{ ansible_distribution_major_version }}.rpm
