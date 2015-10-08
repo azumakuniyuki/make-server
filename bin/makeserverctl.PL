@@ -159,7 +159,7 @@ use File::Basename qw/basename/;
 use File::Compare;
 use File::Copy;
 
-my $Version = '3.0.0';
+my $Version = '3.0.3';
 my $RootDir = '@@MAKESERVER_DISTRIBUTION_DIRECTORY@@';
 my $SysRoot = '@@MAKESERVER_MAINPROGRAMS_DIRECTORY@@';
 my $Setting = {};
@@ -353,7 +353,7 @@ if( $Command->r & $Options->{'exec'} ) {
             printf( "%s", '- ' );
             printf( "%s", $v );
             printf( " %s ", $x x ( 32 - length($v) ) );
-            printf( "%s\n", 'Available to be installed using `make <role-name>-role`' );
+            printf( "%s\n", 'Available to be installed' );
         }
 
     } elsif( $Command->r & $Options->{'shadow'} ) {
