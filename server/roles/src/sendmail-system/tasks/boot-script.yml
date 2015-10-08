@@ -27,3 +27,10 @@
   ignore_errors: True
   service: name=postfix enabled=no state=stopped
 
+- name: boot-script | Start Sendmail
+  when: sendmail.started == True
+  service: name={{ sendmail.initscript }} state=started
+
+- name: boot-script | Stop Sendmail
+  when: sendmail.started == False
+  service: name={{ sendmail.initscript }} state=stopped

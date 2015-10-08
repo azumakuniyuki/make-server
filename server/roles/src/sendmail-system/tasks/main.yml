@@ -12,12 +12,6 @@
 - include: compile-src.yml
 - include: make-config.yml
   when: sendmail.updateonly == False
+- include: set-mailbox.yml
 - include: boot-script.yml
 
-- name: Start Sendmail
-  when: sendmail.started == True
-  service: name={{ sendmail.initscript }} state=started
-
-- name: Stop Sendmail
-  when: sendmail.started == False
-  service: name={{ sendmail.initscript }} state=stopped

@@ -1,0 +1,31 @@
+#  ____                 _                 _ _    ___            _        
+# / ___|  ___ _ __   __| |_ __ ___   __ _(_) |  / / |_ __ _ ___| | _____ 
+# \___ \ / _ \ '_ \ / _` | '_ ` _ \ / _` | | | / /| __/ _` / __| |/ / __|
+#  ___) |  __/ | | | (_| | | | | | | (_| | | |/ / | || (_| \__ \   <\__ \
+# |____/ \___|_| |_|\__,_|_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
+#                                                                        
+- include_vars: email-users.yml
+
+- name: set-mailbox | Create mailboxes of each user
+  when: email.creatembox == True
+  register: sendmail_create_mailbox
+  changed_when: sendmail_create_mailbox.rc < 0
+  shell: >
+    {{ virtmail.install }}/sbin/make-vmailbox {{ item.address }}
+  with_items: email.accounts
+
+- name: set-mailbox | Configure SMTP-AUTH account
+  when: email.creatembox == True
+  shell: >
+    chdir=/etc
+    {{ virtmail.install }}/sbin/make-sasl-passwd {{ item.address }} {{ item.password }}
+  with_items: email.accounts
+
+- name: set-mailbox | /etc/sasldb2 should be created
+  file: >
+    path=/etc/sasldb2
+    mode=0640
+    owner=root
+    group=root
+    state=file
+

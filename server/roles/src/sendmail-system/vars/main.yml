@@ -7,7 +7,7 @@
 sendmail:
   started: True
   rebuild: False
-  version: 8.15.1
+  version: 8.15.2
   updateonly: False
   initscript: sendmail
   configroot: /etc/mail
@@ -81,10 +81,13 @@ sendmail:
 procmail:
   rebuild: False
   version: 3.22
-  install: /usr/local
-  spool: /var/spool/procmail
+  install: /opt/virtmail
+  spool: /opt/virtmail/var/spool
 maildrop:
   rebuild: False
-  version: 2.7.2
-  install: /usr/local
+  version: 2.7.1
+  install: /opt/virtmail
+  spool: /opt/vartmail/var/spool
+virtmail:
+  install: /opt/virtmail
 

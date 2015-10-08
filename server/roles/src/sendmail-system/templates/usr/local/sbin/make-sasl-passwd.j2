@@ -1,0 +1,43 @@
+#!/bin/sh
+LANG=C
+PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
+
+MAILADDR="$1"
+PASSWORD="$2"
+
+if [ -n "$MAILADDR" -a -n "$PASSWORD" ]; then
+    # $0 <kijitora@example.jp> <password-text>
+    localpart="`echo $MAILADDR | cut -d'@' -f1`"
+    domstring="`echo $MAILADDR | cut -d'@' -f2`"
+
+    if [ -n "$localpart" -a -n "$domstring" ]; then
+        # Valid email address
+
+        if [ -n "`sasldblistusers2 | grep ${MAILADDR}: 2> /dev/null`" ]; then
+            # Password entry already exist
+            exit 0
+        else
+            # Password entry did not exist, create SMTP-AUTH account
+            echo $PASSWORD | saslpasswd2 -c -u $domstring $localpart -p 
+
+            # Check the password db file again
+            if [ -n "`sasldblistusers2 | grep ${MAILADDR}:`" ]; then
+                # Successfully created the account
+                exit 0
+
+            else
+                echo 'Failed to create SMTP-AUTH account'
+                exit 1
+            fi
+        fi
+
+    else
+        echo 'Invalid format'
+        exit 1
+    fi
+
+else
+    echo 'Usage:'
+    echo "`basename $0` <email-address> <password>"
+    exit 1
+fi

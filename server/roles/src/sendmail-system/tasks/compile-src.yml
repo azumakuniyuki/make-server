@@ -62,6 +62,25 @@
 # ||__|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+- name: compile-src | maildrop | courier-unicode should be configured
+  shell: >
+    chdir={{ buildroot }}/courier-unicode-1.4
+    creates=Makefile
+    /bin/sh ./configure --prefix={{ maildrop.install }}
+
+- name: compile-src | maildrop | Build courier-unicode
+  register: make_courier_unicode_binary
+  shell: >
+    chdir={{ buildroot }}/courier-unicode-1.4
+    creates=unicode.o
+    make
+
+- name: compile-src | maildrop | Install courier-unicode
+  when: make_courier_unicode_binary.changed
+  shell: >
+    chdir={{ buildroot }}/courier-unicode-1.4
+    make install-strip
+
 - name: compile-src | maildrop | REBUILD | make clean
   when: maildrop.rebuild == True
   shell: >
@@ -77,7 +96,7 @@
     --prefix={{ maildrop.install }}
     --bindir={{ maildrop.install }}/bin
     --sysconfdir={{ maildrop.install }}/etc
-    --localstatedir={{ maildrop.install }}/var
+    --localstatedir={{ maildrop.spool }}
     --enable-sendmail=/usr/sbin/sendmail
     --enable-keep-fromline=1
     --enable-unicode
@@ -173,4 +192,22 @@
   shell: >
     chdir={{ buildroot }}/sendmail-{{ sendmail.version }}/libmilter
     /bin/sh ./Build install
+
+#  ____ ____ ____ ____ ____ ____ ____ ____ 
+# ||v |||i |||r |||t |||m |||a |||i |||l ||
+# ||__|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#
+- name: compile-src | Install commands
+  template: >
+    src=usr/local/sbin/{{ item }}.j2
+    dest={{ virtmail.install }}/sbin/{{ item }}
+    mode=0755
+    owner=root
+    backup=no
+  with_items:
+    - sendmailctl
+    - make-vmailbox
+    - make-sasl-passwd
+
 

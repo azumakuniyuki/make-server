@@ -7,7 +7,6 @@
 # get-archive
 - name: get-archive | Download procmail {{ procmail.version }} at {{ buildroot }}
   ignore_errors: True
-  chagend_when: get_procmail.rc == 0
   register: get_procmail
   get_url: >
     url=ftp://ftp.ring.gr.jp/pub/net/mail/procmail/procmail-{{ procmail.version }}.tar.gz
@@ -26,12 +25,31 @@
     creates={{ buildroot }}/procmail-{{ procmail.version }}
     copy=no
 
+- name: get-archive | Download Courier Unicode Library
+  ignore_errors: True
+  register: get_courier_unicode_lib
+  get_url: >
+    url=http://jaist.dl.sourceforge.net/project/courier/courier-unicode/1.4/courier-unicode-1.4.tar.bz2
+    dest={{ buildroot }}/courier-unicode-1.4.tar.bz2
+
+- name: get-archive | Deploy courier-unicode-1.4.tar.bz2
+  when: get_courier_unicode_lib|failed
+  copy: >
+    src=courier-unicode-1.4.tar.bz2
+    dest={{ buildroot }}
+
+- name: get-archive | Extract {{ buildroot }}/courier-unicode-1.4.tar.bz2
+  unarchive: >
+      src={{ buildroot }}/courier-unicode-1.4.tar.bz2
+      dest={{ buildroot }}
+      creates={{ buildroot }}/courier-unicode-1.4
+      copy=no
+
 - name: get-archive | Download maildrop {{ maildrop.version }} at {{ buildroot }}
   ignore_errors: True
-  changed_when: get_maildrop.rc == 0
   register: get_maildrop
   get_url: >
-    url=ftp://ftp.jaist.ac.jp/pub/sourceforge/c/co/courier/maildrop/{{ maildrop.version }}/maildrop-{{ maildrop.version }}.tar.bz2
+    url=http://jaist.dl.sourceforge.net/project/courier/maildrop/{{ maildrop.version }}/maildrop-{{ maildrop.version }}.tar.bz2
     dest={{ buildroot }}/maildrop-{{ maildrop.version }}.tar.bz2
 
 - name: get-archive | Deploy maildrop-{{ maildrop.verison }}.tar.bz2

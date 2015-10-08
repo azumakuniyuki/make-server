@@ -274,3 +274,10 @@
     - maildroprc
     - procmailrc
 
+- name: make-config | Deploy SMTP-AUTH configuraiton file
+  template: >
+    src=usr/lib/sasl2/Sendmail.conf.j2
+    dest=/usr/lib64/sasl2/Sendmail.conf
+    mode=0644
+    owner=root
+
