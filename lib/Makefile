@@ -10,18 +10,14 @@ PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
 CURNODE := $(shell echo $(dir $(HEREIAM)) | xargs basename )
 
 .DEFAULT_GOAL := files
-MAKESERVERCTL := makeserverctl
 MAKESERVERDIR  = $(shell head -1 ../.make-server-directory)
-HELPERSCRIPTS := ansible_helper.rb spec_helper.rb
 DIRECTORYNAME  = $(notdir $(HEREIAM))
+HELPERSCRIPTS := ansible_helper.rb spec_helper.rb
 
 # ---------------------------------------------------------------------------
 .PHONY: clean all
 .SUFFIXES: .rb
-.directory-location:
-	@$(MAKESERVERCTL) --location
-
-files: .directory-location $(HELPERSCRIPTS)
+files: $(HELPERSCRIPTS)
 
 $(HELPERSCRIPTS):
 	/bin/cp $(MAKESERVERDIR)/$(DIRECTORYNAME)/$@ ./
