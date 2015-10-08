@@ -11,7 +11,6 @@ SCRIPTS := makeserverctl
 PREFIX   = /usr/local
 
 .DEFAULT_GOAL := command
-MAKESERVERCTL := makeserverctl
 MAKESERVERDIR  = $(shell head -1 ../.make-server-directory)
 MAKESERVERSYS := server
 
