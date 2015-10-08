@@ -110,7 +110,7 @@ install-serverspec:
 # -----------------------------------------------------------------------------
 # Vagrant related targets
 $(VG_TARGETS):
-	@$(MAKE) -f Vagrant.mk $@
+	@$(MAKE) -f Vagrant.mk DEPLOYKEY=$(DEPLOYKEY) DEPLOYUSER=$(DEPLOYUSER) $@
 
 %-box:
 	$(MAKE) -f Vagrant.mk $@
