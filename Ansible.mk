@@ -4,7 +4,7 @@
 #   / _ \ | '_ \/ __| | '_ \| |/ _ \ | '_ ` _ \| |/ /
 #  / ___ \| | | \__ \ | |_) | |  __/_| | | | | |   < 
 # /_/   \_\_| |_|___/_|_.__/|_|\___(_)_| |_| |_|_|\_\
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 HEREIAM := $(shell pwd)
 ANSIBLE := $(shell which ansible)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
@@ -13,7 +13,6 @@ MAKEDIR := mkdir -p
 
 .DEFAULT_GOAL := login
 ROOTDIRECTORY := server
-MAKESERVERCTL := makeserverctl
 MAKESERVERDIR  = $(shell head -1 .make-server-directory)
 DEPENDENCIES0 := pip
 DEPENDENCIES1 := paramiko PyYAML Jinja2 httplib2 six
@@ -25,13 +24,9 @@ INITPLAYBOOKS := $(ROOTDIRECTORY)/10-build-stage.yml \
 				 $(ROOTDIRECTORY)/11-selinux-off.yml \
 				 $(ROOTDIRECTORY)/20-deploy-user.yml
 
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 .PHONY: clean
-.directory-location:
-	@$(MAKESERVERCTL) --location
-
 build:
-	@$(MAKE) .directory-location
 	@echo '*** The following playbook will be executed by ansible-playbook command:'
 	@echo '  - Playbook to be executed    :' $(BUILDPLAYBOOK)
 	@echo '  - Inventory file to be loaded:' $(INVENTORYFILE)
@@ -51,7 +46,6 @@ build:
 	 esac
 
 init-host:
-	@$(MAKE) .directory-location
 	@echo    '*** The following playbooks are executed by ansible-playbook command:'
 	@echo    '  - Playbooks to be executed:'
 	@echo    '    - $(ROOTDIRECTORY)/10-build-stage.yml'
@@ -84,15 +78,12 @@ install-depends:
 	pip install  $(DEPENDENCIES1)
 
 node:
-	$(MAKE) .directory-location
 	$(ANSIBLE) all -i $(INVENTORYFILE) -m raw -a 'hostname'
 
 ping:
-	$(MAKE) .directory-location
 	$(ANSIBLE) all -i $(INVENTORYFILE) -m ping
 
 vars:
-	$(MAKE) .directory-location
 	$(ANSIBLE) all -i $(INVENTORYFILE) -m setup > $@
 
 clean:
