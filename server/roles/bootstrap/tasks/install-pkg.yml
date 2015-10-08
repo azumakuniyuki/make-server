@@ -41,15 +41,15 @@
   yum:  name={{ item }} state=present
   with_items: packages.redhat.install.utils
 
-- name: install-pkg | RedHat | pip command should be installed
-  shell: >
-    creates=/usr/bin/pip
-    easy_install pip
-
 - name: install-pkg | RedHat | Each package for Python should be installed
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
   with_items: packages.redhat.install.python
+
+- name: install-pkg | RedHat | pip command should be installed
+  shell: >
+    creates=/usr/bin/pip
+    easy_install pip
 
 
 - name: install-pkg | Debian | Each packages should be removed
