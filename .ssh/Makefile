@@ -10,17 +10,13 @@ PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
 CURNODE := $(shell echo $(dir $(HEREIAM)) | xargs basename )
 
 .DEFAULT_GOAL := all
-MAKESERVERCTL := makeserverctl
 SSH2SECRETKEY  = $(notdir $(DEPLOYKEY))
 SSH2PUBLICKEY  = $(subst key,pub,$(SSH2SECRETKEY))
 
 # ---------------------------------------------------------------------------
 .PHONY: clean all
 .SUFFIXES: .key .pub
-.directory-location:
-	@$(MAKESERVERCTL) --location
-
-all: .directory-location $(SSH2PUBLICKEY)
+all: $(SSH2PUBLICKEY)
 
 $(SSH2SECRETKEY):
 	ssh-keygen -vf $(SSH2SECRETKEY) -N '' -C "$(DEPLOYUSER)@$(CURNODE)"

@@ -4,8 +4,8 @@
 # | |\/| |/ _` | |/ / _ \ |_| | |/ _ \
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
-# ---------------------------------------------------------------------------
-VERSION := '3.0.1'
+# -----------------------------------------------------------------------------
+VERSION := '3.0.3'
 HEREIAM := $(shell pwd)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
 MAKEDIR := mkdir -p
@@ -16,7 +16,7 @@ UBINDIR := bin
 ULIBDIR := lib
 
 .DEFAULT_GOAL := login
-MAKESERVERCTL := makeserverctl
+MAKESERVERCTL  = $(shell which makeserverctl)
 MAKESERVERDIR  = $(shell head -1 .make-server-directory)
 
 DEPLOYKEY   = ./.ssh/ssh.deploy-rsa.key
@@ -29,9 +29,6 @@ VG_TARGETS := addr destroy down init-vm list login os restart ssh up clean-vm
 .make-server-directory:
 	echo $(HEREIAM) > ./$@
 
-.directory-location:
-	$(MAKESERVERCTL) --location
-
 ansible.cfg:
 	cd $(ROOTDIR) && make ansible-config
 	test -L ./$(ROOTDIR)/ansible-cfg || ln -s $(ROOTDIR)/ansible-config ./$@
@@ -41,7 +38,6 @@ env:
 	$(MAKE) install-serverspec
 
 setup:
-	$(MAKE) .directory-location
 	$(MAKE) server
 
 version:
@@ -95,7 +91,13 @@ install-ansible:
 	$(MAKE) -f Ansible.mk install
 
 role-index:
-	@cd $(ROOTDIR) && $(MAKE) $@
+	@if [ -x "$(MAKESERVERCTL)" ]; then \
+		echo '*****************************************************************************'; \
+		echo ' `make <role-name>-role` command copy or create specified role directories in'; \
+		echo ' ./$(ROOTDIR)/roles/. Available roles are below:'                             ; \
+		echo '*****************************************************************************'; \
+		$(MAKESERVERCTL) --role-index; \
+	fi
 
 # -----------------------------------------------------------------------------
 # serverspec related targets

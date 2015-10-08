@@ -5,14 +5,13 @@
 #   \ V / (_| | (_| | | | (_| | | | | |_ _| | | | | |   < 
 #    \_/ \__,_|\__, |_|  \__,_|_| |_|\__(_)_| |_| |_|_|\_\
 #              |___/                                      
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 HEREIAM := $(shell pwd)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
 CURNODE := $(shell echo $(dir $(HEREIAM)) | xargs basename )
 MAKEDIR := mkdir -p
 
 .DEFAULT_GOAL := login
-MAKESERVERCTL := makeserverctl
 MAKESERVERDIR := $(shell head -1 .make-server-directory)
 ROOTDIRECTORY := server
 VAGRANTCONFIG := Vagrantfile
@@ -24,13 +23,9 @@ VIRTUALBOXNET := 172.25
 SSHCOMMAND    := ssh -v42
 SECRETKEY     := $(VIRTUALBOXDIR)/machines/default/virtualbox/private_key
 
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 .PHONY: clean all
-.directory-location:
-	@$(MAKESERVERCTL) --location
-
 %-box:
-	$(MAKE) .directory-location
 	- ! test -f ./$(VAGRANTCONFIG)
 	vagrant init $*
 	rm -f ./$(VAGRANTCONFIG)
@@ -55,7 +50,7 @@ $(VAGRANTCONFIG):
 		-e "s/__IPV4ADDRESS__/$(VIRTUALBOXNET).$$O3.$$O4/g" \
 		-e 's/__VIRTUALBOX__/$(VIRTUALBOXSET)/g' > ./$@
 
-$(VAGRANTSCRIPT): .directory-location
+$(VAGRANTSCRIPT):
 	$(MAKE) -C $@
 
 addr:

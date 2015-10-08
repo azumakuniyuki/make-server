@@ -4,13 +4,12 @@
 # / __|/ _ \ '__\ \ / / _ \ '__/ / '__/ _ \| |/ _ \/ __| / /| |\/| |/ _` | |/ / _ \ |_| | |/ _ \
 # \__ \  __/ |   \ V /  __/ | / /| | | (_) | |  __/\__ \/ / | |  | | (_| |   <  __/  _| | |  __/
 # |___/\___|_|    \_/ \___|_|/_/ |_|  \___/|_|\___||___/_/  |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
-# ---------------------------------------------------------------------------
+# 00---------------------------------------------------------------------------
 HEREIAM := $(shell pwd)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
 MAKEDIR := mkdir -p
 
 .DEFAULT_GOAL := all
-MAKESERVERCTL := makeserverctl
 MAKESERVERDIR  = $(shell head -1 ../../.make-server-directory)
 DIRECTORYNAME  = server/roles
 SUBDIRSINROLE := files handlers tasks templates vars defaults meta spec
@@ -26,13 +25,9 @@ endef
 # -----------------------------------------------------------------------------
 .PHONY: clean all
 .SUFFIXES:
-.directory-location:
-	@$(MAKESERVERCTL) --location
-
-all: .directory-location
+all:
 
 $(AVAILABLEROLE):
-	$(MAKE) .directory-location
 	$(MAKEDIR) `dirname $@`
 	/bin/cp -vRp $(CPCOMMANDOPTS) $(MAKESERVERDIR)/$(DIRECTORYNAME)/$@ ./`dirname $@`/
 
@@ -58,13 +53,6 @@ $(AVAILABLEROLE):
 			fi \
 		done \
 	fi
-
-role-index:
-	@echo '*****************************************************************************'
-	@echo ' `make <role-name>-role` command copy or create specified role directories in'
-	@echo ' ./$(DIRECTORYNAME). Available roles are below:'
-	@echo '*****************************************************************************'
-	@$(MAKESERVERCTL) --role-index
 
 clean:
 

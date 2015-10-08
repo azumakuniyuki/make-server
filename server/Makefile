@@ -15,7 +15,6 @@ MAKEDIR := mkdir -p
 
 .DEFAULT_GOAL := all
 ROOTDIRECTORY := server
-MAKESERVERCTL := makeserverctl
 MAKESERVERDIR  = $(shell head -1 ../.make-server-directory)
 INVENTORYFILE  = $(shell head -1 ../.default-inventoryfile)
 DIRECTORYNAME  = $(notdir $(HEREIAM))
@@ -31,14 +30,10 @@ ANSIBLETARGET := $(INVENTORYLIST) $(PLAYBOOKFILES)
 # -----------------------------------------------------------------------------
 .PHONY: clean all
 .SUFFIXES:
-.directory-location:
-	@$(MAKESERVERCTL) --location
-
 %-role:
 	cd $(ROLEDIR) && $(MAKE) $@
 
 all:
-	$(MAKE) .directory-location
 	$(MAKE) $(ANSIBLECONFIG) $(INVENTORYLIST) $(PLAYBOOKFILES) $(ANSIBLECMDLOG)
 	$(MAKE) $(BUILDPLAYBOOK)
 	$(MAKE) group_vars

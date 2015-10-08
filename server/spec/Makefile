@@ -5,25 +5,21 @@
 # \__ \  __/ |   \ V /  __/ | / /\__ \ |_) |  __/ (__ / / | |  | | (_| |   <  __/  _| | |  __/
 # |___/\___|_|    \_/ \___|_|/_/ |___/ .__/ \___|\___/_/  |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 #                                    |_|                                                      
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 HEREIAM := $(shell pwd)
 PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
 MAKEDIR := mkdir -p
 
 .DEFAULT_GOAL := all
-MAKESERVERCTL := makeserverctl
 MAKESERVERDIR  = $(shell head -1 ../../.make-server-directory)
 DIRECTORYNAME  = server/spec
 RSPECFILELIST := 10-build-stage.rb 11-selinux-off.rb 20-deploy-user.rb \
 				 30-update-sshd.rb
 
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 .PHONY: clean all
 .SUFFIXES: .rb
-.directory-location:
-	@$(MAKESERVERCTL) --location
-
-all: .directory-location $(RSPECFILELIST)
+all: $(RSPECFILELIST)
 
 $(RSPECFILELIST):
 	/bin/cp $(MAKESERVERDIR)/$(DIRECTORYNAME)/$@ ./
