@@ -11,19 +11,15 @@ PWDNAME := $(shell echo $(HEREIAM) | xargs basename)
 CURNODE := $(shell echo $(dir $(HEREIAM)) | xargs basename )
 
 .DEFAULT_GOAL := files
-MAKESERVERCTL := makeserverctl
 MAKESERVERDIR  = $(shell head -1 ../.make-server-directory)
+DIRECTORYNAME  = $(notdir $(HEREIAM))
 HELPERSCRIPTS := 11-selinux-off.sh 12-sudo-config.sh 15-rewrite-dns.sh \
 				 41-vagrant-uid.sh 80-setup-repos.sh 95-install-pkg.sh
-DIRECTORYNAME  = $(notdir $(HEREIAM))
 
 # ---------------------------------------------------------------------------
 .PHONY: clean all
 .SUFFIXES: .sh
-.directory-location:
-	@$(MAKESERVERCTL) --location
-
-files: .directory-location $(HELPERSCRIPTS)
+files: $(HELPERSCRIPTS)
 
 $(HELPERSCRIPTS):
 	/bin/cp $(MAKESERVERDIR)/$(DIRECTORYNAME)/$@ ./
