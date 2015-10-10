@@ -2,6 +2,7 @@ require 'serverspec'
 require 'net/ssh'
 
 set :backend, :ssh
+set :request_pty, true
 
 if ENV['ASK_SUDO_PASSWORD']
   begin
