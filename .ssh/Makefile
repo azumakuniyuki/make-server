@@ -19,7 +19,8 @@ SSH2PUBLICKEY  = $(subst key,pub,$(SSH2SECRETKEY))
 all: $(SSH2PUBLICKEY)
 
 $(SSH2SECRETKEY):
-	ssh-keygen -vf $(SSH2SECRETKEY) -N '' -C "$(DEPLOYUSER)@$(CURNODE)"
+	ssh-keygen -vf $@ -N '' -C "$(DEPLOYUSER)@$(CURNODE)"
+	chmod 0600 $@
 
 .key.pub:
 	test -f $(SSH2SECRETKEY).pub && mv $(SSH2SECRETKEY).pub $(SSH2PUBLICKEY)
