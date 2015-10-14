@@ -47,6 +47,8 @@ version:
 # Sub directory: .ssh/
 key-pair:
 	cd .ssh && $(MAKE) DEPLOYKEY=$(DEPLOYKEY) DEPLOYUSER=$(DEPLOYUSER)
+	chmod 0600 $(DEPLOYKEY)
+	chmod 0644 $(subst key,pub,$(DEPLOYKEY))
 
 remove-host-key:
 	test -f ./Vagrantfile
