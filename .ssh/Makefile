@@ -24,6 +24,7 @@ $(SSH2SECRETKEY):
 
 .key.pub:
 	test -f $(SSH2SECRETKEY).pub && mv $(SSH2SECRETKEY).pub $(SSH2PUBLICKEY)
+	chmod 0644 $(SSH2PUBLICKEY)
 
 clean:
 
