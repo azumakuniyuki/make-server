@@ -5,7 +5,7 @@
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/ |___/ .__/ \___|\___|
 #                                         |_|          |_|              
 describe 'bootstrap/create-user' do
-  ansiblevars = MakeServer::Ansible.load_variables
+  ansiblevars = MakeServer::Ansible.load_variables('login-users.yml')
 
   if ansiblevars['role']['config']['adduser'] then
     ansiblevars['role']['unixusers'].each do |e|

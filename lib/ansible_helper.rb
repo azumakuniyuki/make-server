@@ -118,13 +118,14 @@ module MakeServer
         return roleindex
       end
 
-      def load_variables
+      def load_variables( f = 'main.yml' )
         # Function to load server/roles/*/vars/main.yml
+        # or load the first argument file in vars/ directory
         variables = { 'role' => nil, 'host' => nil, 'group' => nil, 'all' => nil }
 
         # Role variables
         v = caller[0].split(':')[0]
-        v = v.gsub( %r|\A.+/(#{@@RoleDir}/.+)/spec/.+[.]rb|, '\1/vars/main.yml' )
+        v = v.gsub( %r|\A.+/(#{@@RoleDir}/.+)/spec/.+[.]rb|, '\1/vars/' + f )
 
         if File.exists?(v) then
           # Load server/roles/*/vars/main.yml
