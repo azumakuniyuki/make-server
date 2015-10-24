@@ -24,5 +24,11 @@ files: $(HELPERSCRIPTS)
 $(HELPERSCRIPTS):
 	/bin/cp $(MAKESERVERDIR)/$(DIRECTORYNAME)/$@ ./
 
+update:
+	for v in $(HELPERSCRIPTS); do mv $$v $$v.tmp; done
+	$(MAKE) files clean
+
 clean:
+	rm -f ./*.tmp
+
 
