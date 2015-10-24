@@ -5,7 +5,6 @@
 # |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
 #        |___/                                          
 # create-user
-#
 - name: create-user | Group {{ nginx.user.group }}({{ nginx.user.gid }}) should be created
   group: >
     name={{ nginx.user.group }}

@@ -5,7 +5,6 @@
 # |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
 #        |___/                                          
 # get-archive
-#
 - name: get-archive | Download nginx {{ nginx.version }} at {{ buildroot }}
   get_url: >
     url=http://nginx.org/download/nginx-{{ nginx.version }}.tar.gz

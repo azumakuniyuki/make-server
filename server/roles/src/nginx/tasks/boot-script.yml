@@ -5,7 +5,6 @@
 # |_| |_|\__, |_|_| |_/_/\_\/_/   \__\__,_|___/_|\_\___/
 #        |___/                                          
 # boot-script
-#
 - name: boot-script | RedHat | Deploy /etc/init.d/{{ nginx.initscript }}
   when: ansible_os_family == "RedHat"
   template: >
