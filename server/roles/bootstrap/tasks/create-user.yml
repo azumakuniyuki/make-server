@@ -6,18 +6,12 @@
 #                                         |_|                              
 # create-user
 - include_vars: login-users.yml
-
-- name: create-user | Each group should be created(1)
+- name: create-user | Each group should be created
   when: config.adduser == True
   group: >
     name={{ item.group }}
     gid={{ item.gid }}
     state=present
-  with_items: unixusers
-
-- name: create-user | Each group should be created(2)
-  when: config.adduser == True
-  group: name={{ item.groups }} state=present
   with_items: unixusers
 
 - name: create-user | wheel group should be created
@@ -35,4 +29,14 @@
     createhome=yes
     state=present
   with_items: unixusers
+
+- name: create-user | Belongs to other group
+  when: config.adduser == True
+  user: >
+    name={{ item.1 }} 
+    groups={{ item.0.group }}
+    state=present
+  with_subelements:
+    - belongsto
+    - users
 

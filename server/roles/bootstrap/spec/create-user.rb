@@ -5,18 +5,32 @@
 # |_.__/ \___/ \___/ \__|___/\__|_|  \__,_| .__/_/ |___/ .__/ \___|\___|
 #                                         |_|          |_|              
 describe 'bootstrap/create-user' do
-  ansiblevars = MakeServer::Ansible.load_variables('login-users.yml')
+  ansiblevars = MakeServer::Ansible.load_variables
+  accountdata = MakeServer::Ansible.load_variables('login-users.yml')
 
   if ansiblevars['role']['config']['adduser'] then
-    ansiblevars['role']['unixusers'].each do |e|
+    accountdata['role']['unixusers'].each do |e|
       # Test each user
       describe user(e['username']) do
         it { should exist }
         it { should belong_to_group e['group'] }
-        it { should belong_to_group e['groups'] } if e['groups'].length > 0
         it { should have_uid e['uid'] }
         it { should have_home_directory e['home'] }
         it { should have_login_shell e['shell'] }
+      end
+    end
+
+    accountdata['role']['belongsto'].each do |e|
+      # Belongs to other group
+      describe group(e['group']) do
+        it { should exist }
+      end
+
+      e['users'].each do |u|
+        describe user(u) do
+          it { should exist }
+          it { should belong_to_group e['group'] }
+        end
       end
     end
   end
