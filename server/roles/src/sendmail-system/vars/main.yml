@@ -27,6 +27,11 @@ sendmail:
         - cyrus-sasl-md5
         - cyrus-sasl-plain
         - cyrus-sasl-ntlm
+        - sendmail
+        - sendmail-devel
+        - open-sendmail
+        - sendmail-cf
+        - sendmail-milter
   conf:
     ostype: linux
     mtaqueue: /var/spool/queues
