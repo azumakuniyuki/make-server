@@ -1,0 +1,26 @@
+#  ____                 _                 _ _    ___            _        
+# / ___|  ___ _ __   __| |_ __ ___   __ _(_) |  / / |_ __ _ ___| | _____ 
+# \___ \ / _ \ '_ \ / _` | '_ ` _ \ / _` | | | / /| __/ _` / __| |/ / __|
+#  ___) |  __/ | | | (_| | | | | | | (_| | | |/ / | || (_| \__ \   <\__ \
+# |____/ \___|_| |_|\__,_|_| |_| |_|\__,_|_|_/_/   \__\__,_|___/_|\_\___/
+#                                                                        
+# to-sendmail
+- name: to-sendmail | RedHat | /usr/sbin/sendmail.sendmail exists
+  when: ansible_os_family == "RedHat"
+  register: sendmail_binary
+  changed_when: sendmail_binary.rc < 0
+  command: test -x /usr/sbin/sendmail.sendmail
+
+- name: to-sendmail | RedHat
+  when: ansible_os_family == "RedHat"
+  register: sendmail_link
+  ignore_errors: True
+  shell: /bin/ls -l /etc/alternatives/mta | grep /usr/sbin/sendmail.sendmail
+
+- name: to-sendmail | RedHat | Switch to sendmail
+  when: ansible_os_family == "RedHat" 
+        and sendmail_binary|success
+        and sendmail_link|failed
+  shell: >
+    /usr/sbin/alternatives --set mta /usr/sbin/sendmail.sendmail
+

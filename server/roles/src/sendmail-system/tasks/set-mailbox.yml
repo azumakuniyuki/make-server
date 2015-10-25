@@ -16,6 +16,9 @@
 
 - name: set-mailbox | Configure SMTP-AUTH account
   when: email.creatembox == True
+  register: make_smtp_auth_passwd
+  changed_when: make_smtp_auth_passwd.rc == 0
+  failed_when: make_smtp_auth_passwd.rc == 1
   shell: >
     chdir=/etc
     {{ virtmail.install }}/sbin/make-sasl-passwd {{ item.address }} {{ item.password }}

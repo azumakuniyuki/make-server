@@ -6,6 +6,8 @@
 #                                                                        
 - include: install-pkg.yml
   when: sendmail.updateonly == False
+- include: to-sendmail.yml
+  when: ansible_os_family == "RedHat"
 - include: create-user.yml
   when: sendmail.updateonly == False
 - include: get-archive.yml
