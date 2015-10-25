@@ -15,7 +15,7 @@ if [ -n "$MAILADDR" -a -n "$PASSWORD" ]; then
 
         if [ -n "`sasldblistusers2 | grep ${MAILADDR}: 2> /dev/null`" ]; then
             # Password entry already exist
-            exit 0
+            exit -1
         else
             # Password entry did not exist, create SMTP-AUTH account
             echo $PASSWORD | saslpasswd2 -c -u $domstring $localpart -p 
