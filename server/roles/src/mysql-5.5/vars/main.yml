@@ -5,6 +5,7 @@
 # |_|  |_|\__, |____/ \__\_\_____|   |____(_)____/_/    \_/ \__,_|_|  |___/
 #         |___/                                                            
 mysql:
+  daemon: True
   started: True
   rebuild: False
   version: 5.5.39
