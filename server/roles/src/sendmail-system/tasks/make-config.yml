@@ -200,12 +200,20 @@
     make install-sendmail-cf MAILDIR={{ sendmail.nextconfig }}
 
 - name: make-config | Deploy files into {{ sendmail.configroot }}
+  register: deploy_dbmap_files
   template: >
     src=etc/mail/{{ item }}.j2
     dest={{ sendmail.configroot }}/{{ item }}
     backup=yes
   with_items: 
     - '{{ sendmail.conf.dbmapfiles }}'
+
+- name: make-config | Deploy files into {{ sendmail.configroot }}
+  template: >
+    src=etc/mail/{{ item }}.j2
+    dest={{ sendmail.configroot }}/{{ item }}
+    backup=yes
+  with_items: 
     - '{{ sendmail.conf.classfiles }}'
     - '{{ sendmail.conf.parameters }}'
 
@@ -220,10 +228,10 @@
     - submit.cf
 
 - name: make-config | Initial makemap(8)
+  when: deploy_dbmap_files|changed
   ignore_errors: True
   shell: >
     chdir={{ sendmail.configroot }}
-    creates={{ sendmail.configroot }}/{{ item }}.db
     make {{ item }}.db
   with_items: sendmail.conf.dbmapfiles
 
@@ -280,4 +288,5 @@
     dest=/usr/lib64/sasl2/Sendmail.conf
     mode=0644
     owner=root
+
 
