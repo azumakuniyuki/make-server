@@ -5,6 +5,14 @@
 # |_|   \___/|___/\__\__, |_|  \___|____/ \__\_\_____/_/   \__\__,_|___/_|\_\___/
 #                    |___/                                                       
 # make-config
+- name: make-config | {{ postgresql.serverroot }} should be 0755
+  file: >
+    path={{ postgresql.serverroot }}
+    mode=0755
+    state=directory
+    owner={{ postgresql.user.username }}
+    group={{ postgresql.user.group }}
+# 
 - name: make-config | {{ postgresql.datadirectory }} should be 0700
   file: >
     path={{ postgresql.datadirectory }}
@@ -23,6 +31,18 @@
   with_items:
     - dump
     - logs
+
+- name: make-config | Symbolic link to pgsql related command should be created
+  file: >
+    src={{ postgresql.serverroot }}/bin/{{ item }}
+    dest=/usr/local/bin/{{ item }}
+    state=link
+  with_items:
+    - psql
+    - pg_dump
+    - pg_dumpall
+    - createuser
+    - createdb
 
 - name: make-config | {{ postgresql.datadirectory }} should be initialized
   shell: >
