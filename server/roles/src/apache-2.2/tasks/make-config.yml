@@ -39,6 +39,15 @@
     replace='LoadModule php5_module modules/libphp5.so'
     validate='{{ apache.serverroot }}/bin/apachectl -f %s -t'
 
+- name: make-config | Disable PHP5 module
+  when: libphp5|failed
+  replace: >
+    backup=yes
+    dest={{ apache.serverroot }}/conf/httpd.conf
+    regexp='^LoadModule php5_module.*$'
+    replace='# LoadModule php5_module modules/libphp5.so'
+    validate='{{ apache.serverroot }}/bin/apachectl -tf %s'
+
 - name: make-config | Deploy log rotation script
   when: ansible_system == "Linux"
   template: >

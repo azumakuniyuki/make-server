@@ -5,7 +5,6 @@
 # /_/   \_\ .__/ \__,_|\___|_| |_|\___/_/   \__\__,_|___/_|\_\___/
 #         |_|                                                     
 # boot-script
-#
 - name: boot-script | RedHat | Deploy /etc/init.d/{{ apache.initscript }}
   when: ansible_os_family == "RedHat"
   template: >
@@ -16,6 +15,7 @@
     group=root
 
 - name: boot-script | RedHat | Install init script /etc/rc.d/init.d/{{ apache.initscript }}
+  notify: Start Apache
   when: ansible_os_family == "RedHat"
   shell: >
     /sbin/chkconfig --add {{ apache.initscript }}
