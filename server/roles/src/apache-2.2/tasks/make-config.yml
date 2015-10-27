@@ -23,6 +23,31 @@
     - mpm
     - vhosts
 
+- name: make-config | Create virtual host root
+  file:
+    path={{ apache.conf.vhostroot }}
+    mode=0755
+    owner=root
+    state=directory
+
+- name: make-config | Create virtual host directory
+  file:
+    path={{ apache.conf.vhostroot }}/{{ apache.conf.servername }}
+    mode=0755
+    owner=root
+    state=directory
+
+- name: make-config | Create virtual host sub directories
+  file:
+    path={{ apache.conf.vhostroot }}/{{ apache.conf.servername }}/{{ item }}
+    mode=0755
+    owner=root
+    state=directory
+  with_items:
+    - html
+    - conf
+    - logs
+
 - name: make-config | Enable PHP5 module(0)
   register: libphp5
   changed_when: libphp5.rc < 0
