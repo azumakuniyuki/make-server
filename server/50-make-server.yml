@@ -33,4 +33,5 @@
     - rpm/svnserve
     - src/netqmail
     - src/vsftpd
+    - src/mailman
     - cleandown
