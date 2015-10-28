@@ -1,0 +1,85 @@
+#                  _ _                          ___            _        
+#  _ __ ___   __ _(_) |_ __ ___   __ _ _ __    / / |_ __ _ ___| | _____ 
+# | '_ ` _ \ / _` | | | '_ ` _ \ / _` | '_ \  / /| __/ _` / __| |/ / __|
+# | | | | | | (_| | | | | | | | | (_| | | | |/ / | || (_| \__ \   <\__ \
+# |_| |_| |_|\__,_|_|_|_| |_| |_|\__,_|_| |_/_/   \__\__,_|___/_|\_\___/
+# make-config
+- name: make-config | Fix permission of each directory
+  register: mailman_check_permission.rc < 0
+  shell: >
+    chdir={{ mailman.mmlistroot }}/{{ item.domain }}
+    ./bin/check_perms -f
+  with_items: mailman.list
+
+- name: make-config | Create mailman list
+  shell: >
+    chdir={{ mailman.mmlistroot }}/{{ item.domain }}
+    creates={{ mailman.mmlistroot }}/{{ item.domain }}/lists/mailman
+    ./bin/newlist -q --urlhost=ml.{{ item.domain }} --emailhost={{ item.domain }} mailman {{ mailman.conf.listmaster }} {{ mailman.conf.listmaster }}-password
+  with_items: mailman.list
+
+- name: make-config | Create maildebug list
+  shell: >
+    chdir={{ mailman.mmlistroot }}/{{ item.domain }}
+    creates={{ mailman.mmlistroot }}/{{ item.domain }}/lists/mailman
+    ./bin/newlist -q --urlhost=ml.{{ item.domain }} --emailhost={{ item.domain }} maildebug postmaster@{{ item.domain }} postmaster-password
+  with_items: mailman.list
+
+- name: make-config | Create each list
+  shell: >
+    chdir={{ mailman.mmlistroot }}/{{ item.0.domain }}
+    creates={{ mailman.mmlistroot }}/{{ item.0.domain }}/lists/{{ item.1.listname }}
+    ./bin/newlist -q --urlhost=ml.{{ item.0.domain }} --emailhost={{ item.0.domain }} {{ item.1.listname }} {{ item.1.listname }}-admin@{{ item.0.domain }} {{ item.1.listname }}-password
+  with_subelements: 
+    - mailman.list
+    - tables
+
+- name: make-config | Make temporary aliases file
+  register: mailman_aliases
+  changed_when: mailman_aliases.rc < 0
+  shell:
+    chdir={{ mailman.mmlistroot }}/{{ item.domain }}
+    ./bin/genaliases -q
+  with_items: mailman.list
+
+- name: make-config | Generate aliases(0)
+  register: sendmail_aliases
+  changed_when: sendmail_aliases.rc < 0
+  shell: >
+    chdir={{ mailman.mmlistroot }}/{{ item.domain }}
+    cat ./data/aliases | sed -e 's/:/.ml.{{ item.domain }}:/g' > /tmp/mailman-aliases
+  with_items: mailman.list
+
+- name: make-config | Check {{ mailman.configroot }}/mailman-aliases
+  register: check_mailman_aliases
+  changed_when: check_mailman_aliases.rc == 1
+  failed_when:  check_mailman_aliases.rc == 2
+  ignore_errors: True
+  shell: >
+    chdir={{ mailman.configroot }}
+    test -f mailman-aliases && diff mailman-aliases /tmp/mailman-aliases
+
+- name: make-config | Deploy /etc/mail/mailman-aliases
+  when: check_mailman_aliases|changed or check_mailman_aliases|failed
+  register: update_mailman_aliases
+  command: cp /tmp/mailman-aliases {{ mailman.configroot }}/mailman-aliases
+
+- name: make-config | New aliases
+  when: update_mailman_aliases|changed
+  command: newaliases
+
+- name: make-config | Deploy mm_cfg.py
+  template: >
+    src=etc/mm_cfg.py.j2
+    dest={{ mailman.mmlistroot }}/{{ item.domain }}/Mailman/mm_cfg.py
+    backup=no
+  with_items: mailman.list
+
+- name: make-config | Deploy mailman-update-cfg
+  template: >
+    src=usr/bin/mailman-update-cfg.j2
+    dest={{ mailman.mmlistroot }}/{{ item.domain }}/Mailman/mailman-update-cfg
+    mode=0755
+    backup=no
+  with_items: mailman.list
+      

@@ -1,0 +1,43 @@
+#                  _ _                          ___            _        
+#  _ __ ___   __ _(_) |_ __ ___   __ _ _ __    / / |_ __ _ ___| | _____ 
+# | '_ ` _ \ / _` | | | '_ ` _ \ / _` | '_ \  / /| __/ _` / __| |/ / __|
+# | | | | | | (_| | | | | | | | | (_| | | | |/ / | || (_| \__ \   <\__ \
+# |_| |_| |_|\__,_|_|_|_| |_| |_|\__,_|_| |_/_/   \__\__,_|___/_|\_\___/
+# boot-script
+- name: boot-script | RedHat | Deploy /etc/init.d/{{ mailman.initscript }}
+  when: ansible_os_family == "RedHat"
+  template: >
+    src=etc/init.d/mailman.RedHat.j2
+    dest=/etc/init.d/{{ mailman.initscript }}-{{ item.domain }}
+    mode=0755
+    owner=root
+    group=root
+  with_items: mailman.list
+
+- name: boot-script | RedHat | Install /etc/rc.d/init.d/{{ mailman.initscript }}
+  when: ansible_os_family == "RedHat"
+  shell: >
+    creates=/etc/rc.d/rc0.d/K12{{ mailman.initscript }}-{{ item.domain }}
+    /sbin/chkconfig --add {{ mailman.initscript }}-{{ item.domain }}
+  with_items: mailman.list
+
+- name: boot-script | Turn on init script
+  when: mailman.enabled == True
+  service: name={{ mailman.initscript }}-{{ item.domain }} enabled=yes
+  with_items: mailman.list
+
+- name: boot-script | Start each mailman process
+  when: mailman.started == True
+  service: name={{ mailman.initscript }}-{{ item.domain }} state=started
+  with_items: mailman.list
+
+- name: boot-script | Turn off init script
+  when: mailman.enabled == False
+  service: name={{ mailman.initscript }}-{{ item.domain }} enabled=no
+  with_items: mailman.list
+
+- name: boot-script | Stop each mailman process
+  when: mailman.started == False
+  service: name={{ mailman.initscript }}-{{ item.domain }} state=stopped
+  with_items: mailman.list
+

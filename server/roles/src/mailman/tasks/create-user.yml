@@ -1,0 +1,30 @@
+#                  _ _                          ___            _        
+#  _ __ ___   __ _(_) |_ __ ___   __ _ _ __    / / |_ __ _ ___| | _____ 
+# | '_ ` _ \ / _` | | | '_ ` _ \ / _` | '_ \  / /| __/ _` / __| |/ / __|
+# | | | | | | (_| | | | | | | | | (_| | | | |/ / | || (_| \__ \   <\__ \
+# |_| |_| |_|\__,_|_|_|_| |_| |_|\__,_|_| |_/_/   \__\__,_|___/_|\_\___/
+#                                                                       
+# create-user.yml                                                                      
+- name: create-user | Group {{ mailman.user.group }}({{ mailman.user.gid }}) should be created
+  group: >
+    name={{ mailman.user.group }}
+    gid={{ mailman.user.gid }}
+    state=present
+
+- name: create-user | User {{ mailman.user.username }}({{ mailman.user.uid }}) should be created
+  user: >
+    name={{ mailman.user.username }} 
+    uid={{ mailman.user.uid }}
+    group={{ mailman.user.group }} 
+    shell={{ mailman.user.shell }}
+    home={{ mailman.serverroot }}
+    comment={{ mailman.user.comment }}
+    createhome=no
+    state=present
+
+- name: create-user | MTA user should belong to mailman group
+  user: >
+    name={{ mailman.mail_owner }}
+    groups={{ mailman.user.group }}
+    state=present
+

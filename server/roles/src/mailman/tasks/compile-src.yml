@@ -1,0 +1,60 @@
+#                  _ _                          ___            _        
+#  _ __ ___   __ _(_) |_ __ ___   __ _ _ __    / / |_ __ _ ___| | _____ 
+# | '_ ` _ \ / _` | | | '_ ` _ \ / _` | '_ \  / /| __/ _` / __| |/ / __|
+# | | | | | | (_| | | | | | | | | (_| | | | |/ / | || (_| \__ \   <\__ \
+# |_| |_| |_|\__,_|_|_|_| |_| |_|\__,_|_| |_/_/   \__\__,_|___/_|\_\___/
+# compile-src
+- name: compile-src | Make destination directory
+  file: >
+    path={{ mailman.mmlistroot }}
+    mode=0755
+    owner={{ mailman.user.username }}
+    group={{ mailman.user.group }}
+    state=directory
+
+- name: compile-src | Make virtual list directories
+  file: >
+    path={{ mailman.mmlistroot }}/{{ item.domain }}
+    mode=2775
+    owner={{ mailman.user.username }}
+    group={{ mailman.user.group }}
+    state=directory
+  with_items: mailman.list
+
+- name: compile-src | REBUILD | make clean
+  when: mailman.rebuild == True
+  command: >
+    chdir={{ buildroot }}/mailman/{{ item.domain }}/mailman-{{ mailman.version }}
+    removes=Makefile
+    make clean
+  when: mailman.rebuild == True
+  with_items: mailman.list
+
+- name: compile-src | mailman should be configured
+  notify: Restart mailman
+  command: >
+    chdir={{ buildroot }}/mailman/{{ item.domain }}/mailman-{{ mailman.version }}/
+    creates=Makefile
+    /bin/sh configure
+    --prefix={{ mailman.mmlistroot }}/{{ item.domain }}
+    --with-mail-gid={{ mailman.mail_group }}
+    --with-cgi-gid={{ mailman.conf.httpdgroup }}
+  with_items: mailman.list
+
+- name: compile-src | make mailman
+  notify: Restart mailman
+  register: make_mailman_binary
+  command: >
+    chdir={{ buildroot }}/mailman/{{ item.domain }}/mailman-{{ mailman.version }}/
+    creates=src/mailman
+    make
+  with_items: mailman.list
+
+- name: compile-src | mailman should be installed
+  when: make_mailman_binary.changed
+  notify: Restart mailman
+  command: >
+    chdir={{ buildroot }}/mailman/{{ item.domain }}/mailman-{{ mailman.version }}/
+    make install
+  with_items: mailman.list
+

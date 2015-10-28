@@ -1,0 +1,42 @@
+#                  _ _                          __                    
+#  _ __ ___   __ _(_) |_ __ ___   __ _ _ __    / /_   ____ _ _ __ ___ 
+# | '_ ` _ \ / _` | | | '_ ` _ \ / _` | '_ \  / /\ \ / / _` | '__/ __|
+# | | | | | | (_| | | | | | | | | (_| | | | |/ /  \ V / (_| | |  \__ \
+# |_| |_| |_|\__,_|_|_|_| |_| |_|\__,_|_| |_/_/    \_/ \__,_|_|  |___/
+#                                                                     
+mailman:
+  started: True
+  enabled: True
+  rebuild: False
+  version: 2.1.20
+  updateonly: False
+  initscript: mailman
+  rotatefile: mailman
+  serverroot: /opt/mailman
+  mmlistroot: /home/virtlist
+  configroot: /etc/mail
+  mail_owner: sendmail
+  mail_group: sendmail
+  packages:
+    redhat:
+      install: [ 'python-devel', 'python-dns' ]
+    debian:
+      install: []
+  user:
+    username: mailman
+    password: ''
+    uid: 661
+    gid: 661
+    group: mailman
+    shell: /bin/bash
+    comment: "'GNU Mailman'"
+  conf:
+    httpdgroup: apache
+    defaultmta: Postfix
+    listmaster: listmaster@example.jp
+    listpasswd: 'nekochan'
+  list:
+    - domain: example.jp
+      tables:
+        - listname: maildebug
+

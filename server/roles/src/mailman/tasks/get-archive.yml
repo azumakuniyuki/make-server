@@ -1,0 +1,27 @@
+#                  _ _                          ___            _        
+#  _ __ ___   __ _(_) |_ __ ___   __ _ _ __    / / |_ __ _ ___| | _____ 
+# | '_ ` _ \ / _` | | | '_ ` _ \ / _` | '_ \  / /| __/ _` / __| |/ / __|
+# | | | | | | (_| | | | | | | | | (_| | | | |/ / | || (_| \__ \   <\__ \
+# |_| |_| |_|\__,_|_|_|_| |_| |_|\__,_|_| |_/_/   \__\__,_|___/_|\_\___/
+# get-archive
+- name: get-archive | Create directory for each virtual domain
+  file: >
+    path={{ buildroot }}/mailman/{{ item.domain }}
+    mode=0755
+    owner=root
+    state=directory
+  with_items: mailman.list
+
+- name: get-archive | Download mailman {{ mailman.version }} at {{ buildroot }}
+  get_url: >
+    url=http://ftp.gnu.org/gnu/mailman/mailman-{{ mailman.version }}.tgz
+    dest={{ buildroot }}/mailman-{{ mailman.version }}.tgz
+
+- name: get-archive | Extract {{ buildroot }}/mailman
+  unarchive: >
+    src={{ buildroot }}/mailman-{{ mailman.version }}.tgz
+    dest={{ buildroot }}/mailman/{{ item.domain }}
+    creates={{ buildroot }}/mailman/{{ item.domain }}/mailman-{{ mailman.version }}
+    copy=no
+  with_items: mailman.list
+
