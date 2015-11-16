@@ -1,0 +1,36 @@
+#        _                                 _           _          ___            _        
+#  _ __ | |__  _ __  _ __   __ _  __ _  __| |_ __ ___ (_)_ __    / / |_ __ _ ___| | _____ 
+# | '_ \| '_ \| '_ \| '_ \ / _` |/ _` |/ _` | '_ ` _ \| | '_ \  / /| __/ _` / __| |/ / __|
+# | |_) | | | | |_) | |_) | (_| | (_| | (_| | | | | | | | | | |/ / | || (_| \__ \   <\__ \
+# | .__/|_| |_| .__/| .__/ \__, |\__,_|\__,_|_| |_| |_|_|_| |_/_/   \__\__,_|___/_|\_\___/
+# |_|         |_|   |_|    |___/                                                          
+# make-config.yml
+- name: make-config | Create document root directory
+  file: >
+    path={{ phppgadmin.install }}
+    mode=0755
+    owner={{ phppgadmin.config.user }}
+    group={{ phppgadmin.config.group }}
+    state=directory
+
+- name: make-config | Install phpPgAdmin {{ phppgadmin.version }}
+  shell: >
+    chdir={{ buildroot }}
+    creates={{ phppgadmin.install }}/phpPgAdmin
+    cp -r phpPgAdmin-{{ phppgadmin.version }} {{ phppgadmin.install }}/phpPgAdmin
+
+- name: make-config | Change owner of phpPgAdmin
+  file: >
+    path={{ phppgadmin.install }}/phpPgAdmin
+    owner={{ phppgadmin.config.user }}
+    group={{ phppgadmin.config.group }}
+    recurse=yes
+
+- name: make-config | Deploy config.inc
+  template: >
+    src=config.inc.php.j2
+    dest={{ phppgadmin.install }}/phpPgAdmin/conf/config.inc.php
+    owner={{ phppgadmin.config.user }}
+    group={{ phppgadmin.config.group }}
+    backup=yes
+

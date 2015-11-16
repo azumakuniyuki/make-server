@@ -27,6 +27,7 @@
     - src/php-5.3
     - src/php-5.5
     - src/phpmyadmin
+    - src/phppgadmin
     - src/dovecot
     - src/sendmail-local
     - src/sendmail-system
