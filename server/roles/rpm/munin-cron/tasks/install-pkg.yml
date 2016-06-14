@@ -7,5 +7,5 @@
 - name: install-pkg | Install munin
   when: ansible_os_family == "RedHat"
   yum:  name={{ item }} state=present
-  with_items: munin.node.packages.install
+  with_items: munin.cron.packages.install
 
