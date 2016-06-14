@@ -149,10 +149,10 @@
 
 
 - name: setup-httpd | Start nginx httpd for munin
-  when: nginx.started == True
+  when: munin.httpd.started == True
   service: name={{ munin.httpd.initscript }} state=started
 
 - name: setup-httpd | Stop nginx httpd for munin
-  when: nginx.started == False
+  when: munin.httpd.started == False
   service: name={{ munin.httpd.initscript }} state=stopped
 
