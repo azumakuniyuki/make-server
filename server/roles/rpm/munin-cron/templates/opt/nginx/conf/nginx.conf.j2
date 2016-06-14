@@ -6,7 +6,7 @@
 #        |___/                                   
 # {{ nginx.serverroot }}/conf/nginx.conf
 #
-user    {{ nginx.user.username }} {{ nginx.user.group }};
+user    {{ munin.httpd.user.username }} {{ munin.httpd.user.group }};
 pid     logs/nginx.pid;
 
 # Defines the number of worker processes.
@@ -128,12 +128,12 @@ http {
     #include virthosts/example.jp.conf;
 
     server {
-        listen {{ nginx.conf.listen }};
-        server_name {{ nginx.conf.servername }};
+        listen {{ munin.httpd.conf.listen }};
+        server_name {{ munin.httpd.conf.servername }};
         server_name_in_redirect off;
 
         location ~ /(images|css|js|\.ico|\.txt) {
-            root {{ nginx.conf.documentroot }};
+            root {{ munin.httpd.conf.documentroot }};
             expires 7d;
 
             # cache informations about FDs, frequently accessed files
@@ -146,7 +146,7 @@ http {
         }
 
         location / {
-            root    {{ nginx.conf.documentroot }};
+            root    {{ munin.httpd.conf.documentroot }};
             index   index.html index.htm;
 
             # http://nginx.org/en/docs/http/ngx_http_access_module.html
@@ -166,7 +166,7 @@ http {
     }
 
     server {
-        listen 127.0.0.1 {{ nginx.conf.listen }};
+        listen 127.0.0.1 {{ munin.httpd.conf.listen }};
         server_name localhost;
 
         location /nginx_status {
@@ -177,3 +177,4 @@ http {
         }
     }
 }
+
