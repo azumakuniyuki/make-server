@@ -64,7 +64,7 @@
     chdir={{ buildroot }}/nginx-{{ munin.httpd.version }}/
     removes=Makefile
     make clean
-  when: nginx.rebuild == True
+  when: munin.httpd.rebuild == True
 
 - name: setup-httpd | nginx should be configured
   notify: Restart nginx
