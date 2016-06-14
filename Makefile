@@ -72,9 +72,10 @@ tmp:
 
 # -----------------------------------------------------------------------------
 # Sub directory: server/
-server: key-pair tmp lib
+server: key-pair tmp lib script
 	$(MAKE) -C $@
 	$(MAKE) ansible.cfg
+	cd script && make
 	@echo
 	@$(MAKE) role-index
 
