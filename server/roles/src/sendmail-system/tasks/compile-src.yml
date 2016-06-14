@@ -198,6 +198,13 @@
 # ||__|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+- name: compile-src | Create directory {{ virtmail.install }}/sbin
+  file: >
+    path={{ virtmail.install }}/sbin
+    mode=0755
+    owner=root
+    state=directory
+
 - name: compile-src | Install commands
   template: >
     src=usr/local/sbin/{{ item }}.j2
