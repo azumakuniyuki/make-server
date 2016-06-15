@@ -166,7 +166,7 @@ http {
     }
 
     server {
-        listen 127.0.0.1 {{ munin.httpd.conf.listen }};
+        listen 127.0.0.1:{{ munin.httpd.conf.listen }};
         server_name localhost;
 
         location /nginx_status {
