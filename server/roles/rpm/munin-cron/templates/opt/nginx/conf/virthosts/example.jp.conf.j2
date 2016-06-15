@@ -4,7 +4,7 @@
 # | | | | (_| | | | | |>  <  / /  \ V /| | |  | |_| | | | (_) \__ \ |_ 
 # |_| |_|\__, |_|_| |_/_/\_\/_/    \_/ |_|_|   \__|_| |_|\___/|___/\__|
 #        |___/                                                         
-# {{ nginx.serverroot }}/conf/virthosts/*.conf
+# {{ munin.httpd.serverroot }}/conf/virthosts/*.conf
 
 # http://nginx.org/en/docs/http/ngx_http_upstream_module.html
 upstream example.jp.app {
@@ -13,7 +13,7 @@ upstream example.jp.app {
 
 server {
     listen 80;
-    server_name {{ nginx.conf.servername }};
+    server_name {{ munin.httpd.conf.servername }};
     port_in_redirect on;
 
     if ( $http_host = www.example.jp ) {
