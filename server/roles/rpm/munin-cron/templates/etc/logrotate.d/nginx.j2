@@ -1,4 +1,4 @@
-{{ nginx.serverroot }}/logs/*log
+{{ munin.httpd.serverroot }}/logs/*log
 {
     daily
     rotate 64
@@ -7,7 +7,7 @@
     compress
     sharedscripts
     postrotate
-        [ ! -f {{ nginx.serverroot }}/logs/nginx.pid ] || kill -USR1 `cat {{ nginx.serverroot }}/logs/nginx.pid`
+        [ ! -f {{ munin.httpd.serverroot }}/logs/nginx.pid ] || kill -USR1 `cat {{ munin.httpd.serverroot }}/logs/nginx.pid`
     endscript
 }
 

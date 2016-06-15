@@ -6,9 +6,9 @@
 # description:  Nginx is an HTTP(S) server, HTTP(S) reverse \
 #               proxy and IMAP/POP3 proxy server
 # processname: nginx
-# config:      {{ nginx.serverroot }}/conf/nginx.conf
+# config:      {{ munin.httpd.serverroot }}/conf/nginx.conf
 # config:      /etc/sysconfig/nginx
-# pidfile:     {{ nginx.serverroot }}/logs/nginx.pid
+# pidfile:     {{ munin.httpd.serverroot }}/logs/nginx.pid
 #
 # http://wiki.nginx.org/RedHatNginxInitScript
  
@@ -21,10 +21,10 @@
 # Check that networking is up.
 [ "$NETWORKING" = "no" ] && exit 0
  
-nginx="{{ nginx.serverroot }}/sbin/nginx"
+nginx="{{ munin.httpd.serverroot }}/sbin/nginx"
 prog=$(basename $nginx)
  
-NGINX_CONF_FILE="{{ nginx.serverroot }}/conf/nginx.conf"
+NGINX_CONF_FILE="{{ munin.httpd.serverroot }}/conf/nginx.conf"
  
 [ -f /etc/sysconfig/nginx ] && . /etc/sysconfig/nginx
  
